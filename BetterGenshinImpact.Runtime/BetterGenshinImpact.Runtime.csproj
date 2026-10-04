@@ -8,6 +8,55 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../BetterGenshinImpact/Core/Recorder/KeyMouseMacroPlayer.cs" Link="Core/Recorder/KeyMouseMacroPlayer.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/Extensions/PointExtension.cs" Link="Helpers/Extensions/PointExtension.cs" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.4" />
+    <PackageReference Include="HungarianAlgorithm" Version="1.1.0" />
+    <EmbeddedResource Include="../BetterGenshinImpact/GameTask/Common/BgiVision/BvResxHelper.*.resx" Link="GameTask/Common/BgiVision/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../BetterGenshinImpact/GameTask/AutoTrackPath/TpTask.*.resx" Link="GameTask/AutoTrackPath/%(Filename)%(Extension)" />
+
+    <Compile Include="../BetterGenshinImpact/Core/Config/KeyBindingsConfig.cs" Link="Core/Config/KeyBindingsConfig.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Simulator/Extensions/Enums.cs" Link="Core/Simulator/Extensions/Enums.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Simulator/Extensions/SimulateKeyHelper.cs" Link="Core/Simulator/Extensions/SimulateKeyHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Simulator/Extensions/InputSimulatorExtension.cs" Link="Core/Simulator/Extensions/InputSimulatorExtension.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/BgiVision/BvStatus.cs" Link="GameTask/Common/BgiVision/BvStatus.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/BgiVision/BvImage.cs" Link="GameTask/Common/BgiVision/BvImage.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/BgiVision/BvResxHelper.cs" Link="GameTask/Common/BgiVision/BvResxHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Job/ReturnMainUiTask.cs" Link="GameTask/Common/Job/ReturnMainUiTask.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Job/BlessingOfTheWelkinMoonTask.cs" Link="GameTask/Common/Job/BlessingOfTheWelkinMoonTask.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/NewRetry.cs" Link="GameTask/Common/NewRetry.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Exceptions/RetryException.cs" Link="GameTask/Common/Exceptions/RetryException.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Exceptions/NormalEndException.cs" Link="GameTask/Common/Exceptions/NormalEndException.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Exceptions/TpPointNotActivate.cs" Link="GameTask/Common/Exceptions/TpPointNotActivate.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoTrackPath/TpTask.cs" Link="GameTask/AutoTrackPath/TpTask.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoTrackPath/TpTaskParam.cs" Link="GameTask/AutoTrackPath/TpTaskParam.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoTrackPath/TpConfig.cs" Link="GameTask/AutoTrackPath/TpConfig.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/QuickTeleport/QuickTeleportConfig.cs" Link="GameTask/QuickTeleport/QuickTeleportConfig.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/BaseTaskParam.cs" Link="GameTask/Model/BaseTaskParam.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/CameraRotateTask.cs" Link="GameTask/AutoPathing/CameraRotateTask.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/NavigationInstance.cs" Link="GameTask/AutoPathing/NavigationInstance.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/CultureHelper.cs" Link="Helpers/CultureHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/ServerTimeHelper.cs" Link="Helpers/ServerTimeHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/Extensions/EnumExtensions.cs" Link="Helpers/Extensions/EnumExtensions.cs" />
+    <Compile Include="../BetterGenshinImpact/Model/EnumItem.cs" Link="Model/EnumItem.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/AncientSacredMountainMap.cs" Link="GameTask/Common/Map/Maps/AncientSacredMountainMap.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/EnkanomiyaMap.cs" Link="GameTask/Common/Map/Maps/EnkanomiyaMap.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/EnkanomiyaMapTest.cs" Link="GameTask/Common/Map/Maps/EnkanomiyaMapTest.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/MapManager.cs" Link="GameTask/Common/Map/Maps/MapManager.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/MoonCanonMap.cs" Link="GameTask/Common/Map/Maps/MoonCanonMap.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/SeaOfBygoneErasMap.cs" Link="GameTask/Common/Map/Maps/SeaOfBygoneErasMap.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/TempleOfSpaceMap.cs" Link="GameTask/Common/Map/Maps/TempleOfSpaceMap.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/TeyvatMapTest.cs" Link="GameTask/Common/Map/Maps/TeyvatMapTest.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/TheChasmMap.cs" Link="GameTask/Common/Map/Maps/TheChasmMap.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/TheChasmMapTest.cs" Link="GameTask/Common/Map/Maps/TheChasmMapTest.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/Base/BaseMapLayerByTemplateMatch.cs" Link="GameTask/Common/Map/Maps/Base/BaseMapLayerByTemplateMatch.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/Base/DisplayMapTypes.cs" Link="GameTask/Common/Map/Maps/Base/DisplayMapTypes.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/Base/SceneBaseMapByTemplateMatch.cs" Link="GameTask/Common/Map/Maps/Base/SceneBaseMapByTemplateMatch.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/TemplateMatch/FastSqDiffMatcher.cs" Link="Core/Recognition/OpenCv/TemplateMatch/FastSqDiffMatcher.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/TemplateMatch/MatchContext.cs" Link="Core/Recognition/OpenCv/TemplateMatch/MatchContext.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/TemplateMatch/MiniMapMatchConfig.cs" Link="Core/Recognition/OpenCv/TemplateMatch/MiniMapMatchConfig.cs" />
+
     <Compile Include="../BetterGenshinImpact/GameTask/AutoTrackPath/Model/GiWorldScene.cs" Link="GameTask/AutoTrackPath/Model/GiWorldScene.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/AutoSkip/Model/PaddleOcrResultRect.cs" Link="GameTask/AutoSkip/Model/PaddleOcrResultRect.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Recorder/Model/KeyMouseScript.cs" Link="Core/Recorder/Model/KeyMouseScript.cs" />

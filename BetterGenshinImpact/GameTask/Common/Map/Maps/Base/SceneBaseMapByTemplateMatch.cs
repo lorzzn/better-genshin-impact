@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -68,7 +68,7 @@ public abstract class SceneBaseMapByTemplateMatch : SceneBaseMap
     
     public override void WarmUp()
     {
-        Console.WriteLine("提前加载地图，层数：" + Layers.Count);
+        TaskControl.Logger.LogDebug("提前加载地图，层数：{Count}", Layers.Count);
     }
     
     public override Point2f GetMiniMapPosition(Mat colorMiniMapMat)

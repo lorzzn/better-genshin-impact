@@ -1,5 +1,4 @@
 using BetterGenshinImpact.Core.Recognition;
-using BetterGenshinImpact.GameTask.AutoFight.Assets;
 using BetterGenshinImpact.GameTask.Common.Element.Assets;
 using BetterGenshinImpact.GameTask.Model.Area;
 using BetterGenshinImpact.GameTask.QuickTeleport.Assets;
@@ -255,7 +254,11 @@ public static partial class Bv
             });
 
             CultureInfo cultureInfo = new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
+            #if BETTERGI_PORTABLE
+            IStringLocalizer stringLocalizer = Runtime.RuntimeEnvironment.Localizer<BvResxHelper>();
+#else
             IStringLocalizer stringLocalizer = App.GetService<IStringLocalizer<BvResxHelper>>() ?? throw new Exception();
+#endif
             string revival = stringLocalizer.WithCultureGet(cultureInfo, "复苏");
             if (list.Any(r => r.Text.Contains(revival)))
             {

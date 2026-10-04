@@ -15,7 +15,8 @@ public static partial class Bv
     
     public static Mat ImRead(string fileName, ImreadModes flags = ImreadModes.Color)
     {
-        return Mat.FromStream(File.OpenRead(fileName), flags);
+        using var stream = File.OpenRead(fileName);
+        return Mat.FromStream(stream, flags);
     }
     
     /// <summary>

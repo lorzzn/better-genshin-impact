@@ -1,4 +1,6 @@
-﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 #if BETTERGI_PORTABLE
@@ -12,6 +14,17 @@ namespace BetterGenshinImpact.Core.Recorder.Model;
 [Serializable]
 public class KeyMouseScript
 {
+    public static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        AllowTrailingCommas = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
+
     public List<MacroEvent> MacroEvents { get; set; } = [];
     public KeyMouseScriptInfo? Info { get; set; }
 

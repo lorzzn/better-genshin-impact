@@ -146,7 +146,7 @@ public class MatchTemplateHelper
         return list;
     }
 
-    internal readonly record struct TemplateMatchResult(Point Location, double Score);
+    public readonly record struct TemplateMatchResult(Point Location, double Score);
 
     /// <summary>
     ///     返回源图中的最佳模板匹配，并保留匹配得分。
@@ -172,7 +172,7 @@ public class MatchTemplateHelper
     /// <param name="threshold">匹配阈值，值越大筛选越严格。</param>
     /// <param name="maxCount">最大结果数；小于 0 时根据源图与模板面积自动估算。</param>
     /// <returns>按匹配质量从优到劣排列的模板左上角坐标及分数。</returns>
-    internal static List<TemplateMatchResult> FindMatches(
+    public static List<TemplateMatchResult> FindMatches(
         Mat srcMat,
         Mat template,
         TemplateMatchModes matchMode,

@@ -18,13 +18,17 @@ public sealed class GameSession : IDisposable
     public CancellationToken CancellationToken { get; }
     public GameSystemInfo SystemInfo { get; private set; }
     public DrawContent Overlay { get; } = new();
+    public GameConfiguration Config { get; }
+    /// <summary>Optional binding to the official path executor when that component is installed.</summary>
+    public Func<GameTask.AutoPathing.Model.Waypoint, string, string, CancellationToken, Task>? Pathing { get; init; }
     public Point PointerPosition { get; private set; }
 
-    public GameSession(IGameHost host, CancellationToken cancellationToken = default)
+    public GameSession(IGameHost host, CancellationToken cancellationToken = default, GameConfiguration? configuration = null)
     {
         ArgumentNullException.ThrowIfNull(host);
         Host = host;
         CancellationToken = cancellationToken;
+        Config = configuration ?? new();
         initialFrame = host.Capture(cancellationToken);
         if (initialFrame.Empty()) { initialFrame.Dispose(); throw new InvalidDataException("Game host returned an empty frame"); }
         SystemInfo = new(initialFrame.Width, initialFrame.Height);
@@ -93,6 +97,24 @@ public sealed class GameSession : IDisposable
         if (errors.Count > 0) throw new AggregateException("Game host could not release input", errors);
     }
 
+    public void Scroll(int notches)
+    {
+        ObjectDisposedException.ThrowIf(disposed, this);
+        CancellationToken.ThrowIfCancellationRequested();
+        Host.Scroll(notches);
+    }
+
+    public void RequirePathing()
+    {
+        if (Pathing is null) throw new NotSupportedException("The official path executor is not bound to this game session");
+    }
+
+    public Task MoveToWaypoint(GameTask.AutoPathing.Model.Waypoint waypoint, string map, string method, CancellationToken token)
+    {
+        RequirePathing();
+        return Pathing!(waypoint, map, method, token);
+    }
+
     public void Dispose()
     {
         if (disposed) return;
@@ -106,6 +128,6 @@ public sealed record GameSystemInfo(int Width, int Height)
     public Rect CaptureAreaRect => new(0, 0, Width, Height);
     public Rect ScaleMax1080PCaptureRect => Width <= 1920 ? CaptureAreaRect : new(0, 0, 1920, (int)Math.Round(Height * 1920d / Width));
     public double ScaleTo1080PRatio => Width / 1920d;
-    public double AssetScale => ScaleTo1080PRatio;
-    public double ZoomOutMax1080PRatio => Width < 1920 ? 1920d / Width : 1;
+    public double AssetScale => Math.Min(1, ScaleTo1080PRatio);
+    public double ZoomOutMax1080PRatio => AssetScale;
 }

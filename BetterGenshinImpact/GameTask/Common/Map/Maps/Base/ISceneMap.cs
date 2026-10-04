@@ -9,6 +9,7 @@ namespace BetterGenshinImpact.GameTask.Common.Map.Maps.Base;
 /// </summary>
 public interface ISceneMap
 {
+    Size MapSize { get; }
     void WarmUp();
     
     /// <summary>

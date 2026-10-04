@@ -7,6 +7,17 @@ namespace BetterGenshinImpact.RuntimeTest;
 public sealed class GameSessionTests
 {
     [Theory]
+    [InlineData(1280, 720, 2d / 3d, 2d / 3d)]
+    [InlineData(3840, 2160, 1d, 2d)]
+    public void SystemInfoKeepsOfficialAssetAndCaptureScale(int width, int height, double assetScale, double captureScale)
+    {
+        using var session = new GameSession(new TestHost { Width = width, Height = height });
+        Assert.Equal(assetScale, session.SystemInfo.AssetScale, 8);
+        Assert.Equal(assetScale, session.SystemInfo.ZoomOutMax1080PRatio, 8);
+        Assert.Equal(captureScale, session.SystemInfo.ScaleTo1080PRatio, 8);
+    }
+
+    [Theory]
     [InlineData(3840, 2160, 1920, 1080, 500, 300)]
     [InlineData(1280, 720, 1280, 720, 250, 150)]
     public void OfficialRegionConvertsCropClickToTargetCoordinates(int width, int height, int normalizedWidth, int normalizedHeight, int x, int y)

@@ -34,8 +34,12 @@ public class NavigationInstance
             (_prevX, _prevY) = (p.X, p.Y);
             _captureTime = captureTime;
         }
+        #if BETTERGI_PORTABLE
+        Runtime.RuntimeEnvironment.ReportPosition(p);
+#else
         WeakReferenceMessenger.Default.Send(new PropertyChangedMessage<object>(typeof(Navigation),
             "SendCurrentPosition", new object(), p));
+#endif
         return p;
     }
 
@@ -69,8 +73,12 @@ public class NavigationInstance
             _captureTime = captureTime;
         }
 
+        #if BETTERGI_PORTABLE
+        Runtime.RuntimeEnvironment.ReportPosition(p);
+#else
         WeakReferenceMessenger.Default.Send(new PropertyChangedMessage<object>(typeof(Navigation),
             "SendCurrentPosition", new object(), p));
+#endif
         return p;
     }
 

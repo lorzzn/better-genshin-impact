@@ -1,6 +1,5 @@
 using BetterGenshinImpact.Core.Recognition;
 using BetterGenshinImpact.Core.Recognition.OpenCv;
-using BetterGenshinImpact.Core.Script.Dependence;
 using BetterGenshinImpact.Core.Simulator;
 using BetterGenshinImpact.Core.Simulator.Extensions;
 using BetterGenshinImpact.GameTask.AutoGeniusInvokation.Exception;
@@ -19,7 +18,9 @@ using BetterGenshinImpact.GameTask.Model.Area;
 using BetterGenshinImpact.GameTask.QuickTeleport.Assets;
 using BetterGenshinImpact.Helpers;
 using BetterGenshinImpact.Helpers.Extensions;
+#if !BETTERGI_PORTABLE
 using Fischless.GameCapture;
+#endif
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
@@ -30,7 +31,10 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+#if !BETTERGI_PORTABLE
 using Vanara.PInvoke;
+#endif
+using BetterGenshinImpact.Core.Config;
 using static BetterGenshinImpact.GameTask.Common.TaskControl;
 
 namespace BetterGenshinImpact.GameTask.AutoTrackPath;
@@ -273,6 +277,10 @@ public class TpTask
     /// </summary>
     public async Task TpToStatueOfTheSeven()
     {
+#if BETTERGI_PORTABLE
+        if (_tpConfig.ShouldMove || _tpConfig.IsReviveInNearestStatueOfTheSeven)
+            Runtime.GameSession.Current.RequirePathing();
+#endif
         await CheckInBigMapUi();
 
         string? country = _tpConfig.ReviveStatueOfTheSevenCountry;
@@ -303,8 +311,12 @@ public class TpTask
                 Type = WaypointType.Path.Code,
                 MoveMode = MoveModeEnum.Walk.Code
             };
+#if BETTERGI_PORTABLE
+            await Runtime.GameSession.Current.MoveToWaypoint(waypoint, nameof(MapTypes.Teyvat), _mapMatchingMethod, ct);
+#else
             var waypointForTrack = new WaypointForTrack(waypoint, nameof(MapTypes.Teyvat), _mapMatchingMethod);
             await new PathExecutor(ct).MoveTo(waypointForTrack);
+#endif
             Simulation.SendInput.SimulateAction(GIActions.Drop);
         }
 
@@ -1253,7 +1265,7 @@ public class TpTask
                 // 同一视野内点击后未出现面板，重试只会重复点击同一位置。
                 
                 // 抛出异常按下 ESC 退出大地图，避免影响后续路径追踪任务
-                Simulation.SendInput.Keyboard.KeyPress(User32.VK.VK_ESCAPE);
+                Simulation.KeyPress(KeyId.Escape);
                 await Delay(300, ct);
                 
                 throw;
@@ -1262,7 +1274,7 @@ public class TpTask
             {
                 // 未激活点位的详情面板会遮挡后续地图操作，重试前先关闭。
                 // 最后一次失败也需要执行清理，避免影响脚本组中的下一个任务。
-                Simulation.SendInput.Keyboard.KeyPress(User32.VK.VK_ESCAPE);
+                Simulation.KeyPress(KeyId.Escape);
                 await Delay(300, ct);
                 // throw; // 不抛出异常，继续重试
                 Logger.LogWarning(e.Message + "  重试");
@@ -1656,12 +1668,12 @@ public class TpTask
         // GlobalMethod.MoveMouseTo(x1, y1);
         GameCaptureRegion.GameRegionMove((rect, scale) => (x1 * scale, y1 * scale));
         await Delay(GetTeleportOperationDelay(50), ct);
-        GlobalMethod.LeftButtonDown();
+        Simulation.SendInput.Mouse.LeftButtonDown();
         await Delay(GetTeleportOperationDelay(50), ct);
         // GlobalMethod.MoveMouseTo(x2, y2);
         GameCaptureRegion.GameRegionMove((rect, scale) => (x2 * scale, y2 * scale));
         await Delay(GetTeleportOperationDelay(50), ct);
-        GlobalMethod.LeftButtonUp();
+        Simulation.SendInput.Mouse.LeftButtonUp();
         await Delay(GetTeleportOperationDelay(50), ct);
         GameCaptureRegion.GameRegionMove((rect, scale) => (rect.Width / 2d, rect.Height / 2d));
     }
@@ -1797,7 +1809,11 @@ public class TpTask
 
     private static (double X, double Y) GetCursorPositionInCapture()
     {
+#if BETTERGI_PORTABLE
+        var cursor = Runtime.GameSession.Current.PointerPosition;
+#else
         User32.GetCursorPos(out var cursor);
+#endif
         var captureRect = TaskContext.Instance().SystemInfo.CaptureAreaRect;
         return (cursor.X - captureRect.X, cursor.Y - captureRect.Y);
     }
@@ -2747,7 +2763,7 @@ public class TpTask
 
     private async Task PressTeleportConfirmKey()
     {
-        Simulation.SendInput.Keyboard.KeyPress(User32.VK.VK_F);
+        Simulation.KeyPress(KeyId.F);
         await Delay(30, ct);
     }
 
@@ -3338,7 +3354,11 @@ public class TpTask
     private List<MapChooseCandidate> GetMapChooseCandidates(ImageRegion imageRegion)
     {
         var candidates = new List<MapChooseCandidate>();
+#if BETTERGI_PORTABLE
+        var isHdrCapture = Runtime.GameSession.Current.Config.IsHdrCapture;
+#else
         var isHdrCapture = TaskContext.Instance().Config.CaptureMode == nameof(CaptureModes.WindowsGraphicsCaptureHdr);
+#endif
         var threshold = isHdrCapture ? 0.7 : 0.8;
 
         // 在 MapChooseIconRoi 内全匹配一遍图标。

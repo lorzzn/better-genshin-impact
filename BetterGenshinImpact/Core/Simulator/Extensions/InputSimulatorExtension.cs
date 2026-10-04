@@ -1,10 +1,14 @@
-﻿using BetterGenshinImpact.Core.Config;
+using BetterGenshinImpact.Core.Config;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using BetterGenshinImpact.Core.Simulator;
 using System.Threading;
+#if BETTERGI_PORTABLE
+using InputSimulator = BetterGenshinImpact.Runtime.HostInputSimulator;
+#else
 using Fischless.WindowsInput;
+#endif
 
 namespace BetterGenshinImpact.Core.Simulator.Extensions;
 
@@ -71,7 +75,10 @@ public static class InputSimulatorExtension
                 self.Mouse.XButtonClick(0x0001);
                 break;
             default:
-                var k = key.ToVK();
+#if BETTERGI_PORTABLE
+                self.Keyboard.KeyPress((int)key);
+#else
+                var k = (key).ToVK();
                 // 解决 shift 之类的键位没法正常使用的问题
                 if (InputBuilder.IsExtendedKey(k))
                 {
@@ -81,6 +88,7 @@ public static class InputSimulatorExtension
                 {
                     self.Keyboard.KeyPress(k);
                 }
+#endif
                 break;
         }
     }
@@ -108,7 +116,10 @@ public static class InputSimulatorExtension
                 self.Mouse.XButtonDown(0x0001);
                 break;
             default:
-                var k = key.ToVK();
+#if BETTERGI_PORTABLE
+                self.Keyboard.KeyDown((int)key);
+#else
+                var k = (key).ToVK();
                 // 解决 shift 之类的键位没法正常使用的问题
                 if (InputBuilder.IsExtendedKey(k))
                 {
@@ -118,6 +129,7 @@ public static class InputSimulatorExtension
                 {
                     self.Keyboard.KeyDown(k);
                 }
+#endif
                 break;
         }
     }
@@ -145,7 +157,10 @@ public static class InputSimulatorExtension
                 self.Mouse.XButtonUp(0x0001);
                 break;
             default:
-                var k = key.ToVK();
+#if BETTERGI_PORTABLE
+                self.Keyboard.KeyUp((int)key);
+#else
+                var k = (key).ToVK();
                 // 解决 shift 之类的键位没法正常使用的问题
                 if (InputBuilder.IsExtendedKey(k))
                 {
@@ -155,6 +170,7 @@ public static class InputSimulatorExtension
                 {
                     self.Keyboard.KeyUp(k);
                 }
+#endif
                 break;
         }
     }

@@ -22,15 +22,7 @@ public class KeyMouseRecorder
 
     public double MergedEventTimeMax { get; set; } = 20.0;
 
-    public static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
-        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        AllowTrailingCommas = true,
-        ReadCommentHandling = JsonCommentHandling.Skip,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-    };
+    public static readonly JsonSerializerOptions JsonOptions = KeyMouseScript.JsonOptions;
 
     public string ToJsonMacro()
     {

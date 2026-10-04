@@ -11,10 +11,14 @@ using System.Drawing;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+#if BETTERGI_PORTABLE
+using MouseButtons = BetterGenshinImpact.Runtime.RecordedMouseButtons;
+#else
 using System.Windows.Forms;
 using Fischless.WindowsInput;
 using Vanara.PInvoke;
 using Wpf.Ui.Violeta.Controls;
+#endif
 
 namespace BetterGenshinImpact.Core.Recorder;
 
@@ -22,15 +26,19 @@ public class KeyMouseMacroPlayer
 {
     public static async Task PlayMacro(string macro, CancellationToken ct, bool withDelay = true)
     {
+#if !BETTERGI_PORTABLE
         if (!TaskContext.Instance().IsInitialized)
         {
             Toast.Warning("请先在启动页，启动截图器再使用本功能");
             return;
         }
 
-        var script = JsonSerializer.Deserialize<KeyMouseScript>(macro, KeyMouseRecorder.JsonOptions) ?? throw new Exception("Failed to deserialize macro");
+#endif
+        var script = JsonSerializer.Deserialize<KeyMouseScript>(macro, KeyMouseScript.JsonOptions) ?? throw new Exception("Failed to deserialize macro");
         script.Adapt(TaskContext.Instance().SystemInfo.CaptureAreaRect, TaskContext.Instance().DpiScale);
+#if !BETTERGI_PORTABLE
         SystemControl.ActivateWindow();
+#endif
 
         if (withDelay)
         {
@@ -48,7 +56,12 @@ public class KeyMouseMacroPlayer
 
     public static async Task PlayMacro(List<MacroEvent> macroEvents, CancellationToken ct)
     {
+#if BETTERGI_PORTABLE
+        var surface = Runtime.GameSession.Current.SystemInfo;
+        WorkingArea = new Size(surface.Width, surface.Height);
+#else
         WorkingArea = PrimaryScreen.WorkingArea;
+#endif
         var startTime = DateTime.UtcNow;
         foreach (var e in macroEvents)
         {
@@ -70,6 +83,9 @@ public class KeyMouseMacroPlayer
             switch (e.Type)
             {
                 case MacroEventType.KeyDown:
+#if BETTERGI_PORTABLE
+                    Simulation.SendInput.Keyboard.KeyDown(e.KeyCode!.Value);
+#else
                     var vkDown = (User32.VK)e.KeyCode!;
                     if (InputBuilder.IsExtendedKey(vkDown))
                     {
@@ -80,9 +96,13 @@ public class KeyMouseMacroPlayer
                         Simulation.SendInput.Keyboard.KeyDown(vkDown);
                     }
 
+#endif
                     break;
                 case MacroEventType.KeyUp:
 
+#if BETTERGI_PORTABLE
+                    Simulation.SendInput.Keyboard.KeyUp(e.KeyCode!.Value);
+#else
                     var vkUp = (User32.VK)e.KeyCode!;
                     if (InputBuilder.IsExtendedKey(vkUp))
                     {
@@ -93,6 +113,7 @@ public class KeyMouseMacroPlayer
                         Simulation.SendInput.Keyboard.KeyUp(vkUp);
                     }
 
+#endif
                     break;
 
                 case MacroEventType.MouseDown:

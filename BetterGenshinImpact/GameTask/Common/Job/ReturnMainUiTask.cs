@@ -1,10 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
-using BetterGenshinImpact.Core.BgiVision;
 using BetterGenshinImpact.Core.Simulator;
 using BetterGenshinImpact.GameTask.Common.BgiVision;
 using BetterGenshinImpact.GameTask.Common.Element.Assets;
+#if !BETTERGI_PORTABLE
 using Vanara.PInvoke;
+#endif
+using BetterGenshinImpact.Core.Config;
 using static BetterGenshinImpact.GameTask.Common.TaskControl;
 
 namespace BetterGenshinImpact.GameTask.Common.Job;
@@ -23,7 +25,7 @@ public class ReturnMainUiTask
 
         for (var i = 0; i < 8; i++)
         {
-            Simulation.SendInput.Keyboard.KeyPress(User32.VK.VK_ESCAPE);
+            Simulation.KeyPress(KeyId.Escape);
             await Delay(900, ct);
 
             var region = CaptureToRectArea();
@@ -50,8 +52,8 @@ public class ReturnMainUiTask
             }
         }
         await Delay(500, ct);
-        Simulation.SendInput.Keyboard.KeyPress(User32.VK.VK_RETURN);
+        Simulation.KeyPress(KeyId.Enter);
         await Delay(500, ct);
-        Simulation.SendInput.Keyboard.KeyPress(User32.VK.VK_ESCAPE);
+        Simulation.KeyPress(KeyId.Escape);
     }
 }

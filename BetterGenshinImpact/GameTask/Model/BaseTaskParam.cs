@@ -22,6 +22,10 @@ public abstract class BaseTaskParam<T> where T : class
     public BaseTaskParam(CultureInfo? gameCultureInfo, IStringLocalizer<T>? stringLocalizer)
     {
         GameCultureInfo = gameCultureInfo ?? new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
+        #if BETTERGI_PORTABLE
+        StringLocalizer = stringLocalizer ?? Runtime.RuntimeEnvironment.Localizer<T>();
+#else
         StringLocalizer = stringLocalizer ?? App.GetService<IStringLocalizer<T>>() ?? throw new Exception();
+#endif
     }
 }

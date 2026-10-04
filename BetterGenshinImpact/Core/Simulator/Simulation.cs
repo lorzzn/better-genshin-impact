@@ -1,4 +1,4 @@
-﻿using Fischless.WindowsInput;
+using Fischless.WindowsInput;
 using System;
 using BetterGenshinImpact.GameTask.Common;
 using Microsoft.Extensions.Logging;
@@ -9,6 +9,8 @@ namespace BetterGenshinImpact.Core.Simulator;
 public class Simulation
 {
     public static InputSimulator SendInput { get; } = new();
+
+    public static void KeyPress(BetterGenshinImpact.Core.Config.KeyId key) => SendInput.Keyboard.KeyPress((User32.VK)key);
 
     public static MouseEventSimulator MouseEvent { get; } = new();
 
