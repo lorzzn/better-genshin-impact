@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <Version>0.66.0</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -8,6 +9,8 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Semver" Version="3.0.0" />
+    <Compile Include="../BetterGenshinImpact/Core/Config/Global.cs" Link="Core/Config/Global.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Recorder/KeyMouseMacroPlayer.cs" Link="Core/Recorder/KeyMouseMacroPlayer.cs" />
     <Compile Include="../BetterGenshinImpact/Helpers/Extensions/PointExtension.cs" Link="Helpers/Extensions/PointExtension.cs" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />

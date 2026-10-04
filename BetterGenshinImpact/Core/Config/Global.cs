@@ -9,7 +9,12 @@ namespace BetterGenshinImpact.Core.Config;
 
 public class Global
 {
-    public static string Version { get; } = Assembly.GetEntryAssembly()?.
+    public static string Version { get; } =
+#if BETTERGI_PORTABLE
+        typeof(Global).Assembly.
+#else
+        Assembly.GetEntryAssembly()?.
+#endif
         GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.
         InformationalVersion!;
 
@@ -27,7 +32,11 @@ public class Global
 
     public static string Absolute(string relativePath)
     {
+#if BETTERGI_PORTABLE
+        return Runtime.RuntimeEnvironment.ResolveResource(relativePath);
+#else
         return Path.Combine(StartUpPath, relativePath);
+#endif
     }
 
     public static string ScriptPath()

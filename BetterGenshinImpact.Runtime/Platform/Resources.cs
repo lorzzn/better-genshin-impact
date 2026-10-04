@@ -2,15 +2,6 @@ using BetterGenshinImpact.Runtime;
 using Microsoft.ML.OnnxRuntime;
 using OpenCvSharp;
 
-namespace BetterGenshinImpact.Core.Config
-{
-    public static class Global
-    {
-        public static string Version => "0.66.0";
-        public static string Absolute(string path) => RuntimeEnvironment.ResolveResource(path);
-    }
-}
-
 namespace BetterGenshinImpact.Core.Recognition.ONNX
 {
     public sealed class BgiOnnxFactory

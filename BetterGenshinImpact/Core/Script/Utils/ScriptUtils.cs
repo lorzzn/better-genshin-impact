@@ -27,12 +27,24 @@ public class ScriptUtils
         path = path.Replace('\\', '/');
 
         // 组合并获取绝对路径
+        root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
         var fullPath = Path.GetFullPath(Path.Combine(root, path));
+        var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
         // 防止越界访问
-        if (!fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase))
+        if (!fullPath.Equals(root, comparison) && !fullPath.StartsWith(root + Path.DirectorySeparatorChar, comparison))
         {
             throw new ArgumentException($"文件路径 '{path}' 越界访问!");
+        }
+
+        // A lexical child may point outside the package through a symlink or
+        // Windows junction. Script packages use ordinary files/directories.
+        for (var entry = fullPath; entry != null; entry = Path.GetDirectoryName(entry))
+        {
+            if ((File.Exists(entry) || Directory.Exists(entry)) &&
+                (File.GetAttributes(entry) & FileAttributes.ReparsePoint) != 0)
+                throw new ArgumentException($"文件路径 '{path}' 包含符号链接或目录联接!");
+            if (entry.Equals(root, comparison)) break;
         }
 
         return fullPath;

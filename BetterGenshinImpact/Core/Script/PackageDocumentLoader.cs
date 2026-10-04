@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.ClearScript;
 using Microsoft.ClearScript.JavaScript;
+using BetterGenshinImpact.Core.Script.Utils;
 
 namespace BetterGenshinImpact.Core.Script
 {
@@ -28,9 +29,8 @@ namespace BetterGenshinImpact.Core.Script
                 var stripped = Regex.Replace(specifier, @"^(?:\.\.?/)+", "");
                 if (!Path.IsPathRooted(stripped))
                 {
-                    var fullPath = Path.GetFullPath(Path.Combine(_scriptRootPath, stripped));
-                    if (fullPath.StartsWith(_scriptRootPath, StringComparison.OrdinalIgnoreCase)
-                        && File.Exists(fullPath))
+                    var fullPath = ScriptUtils.NormalizePath(_scriptRootPath, stripped);
+                    if (File.Exists(fullPath))
                     {
                         targetPath = fullPath;
                     }
@@ -170,9 +170,10 @@ namespace BetterGenshinImpact.Core.Script
         {
             try
             {
-                var normalized = Path.GetFullPath(path);
+                var normalized = ScriptUtils.NormalizePath(_scriptRootPath, path);
                 if (File.Exists(normalized)) return normalized;
-                if (File.Exists(normalized + ".js")) return normalized + ".js";
+                var scriptPath = ScriptUtils.NormalizePath(_scriptRootPath, normalized + ".js");
+                if (File.Exists(scriptPath)) return scriptPath;
             }
             catch { }
             return null;

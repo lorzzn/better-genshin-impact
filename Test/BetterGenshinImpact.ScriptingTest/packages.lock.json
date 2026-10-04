@@ -2,6 +2,12 @@
   "version": 1,
   "dependencies": {
     "net8.0": {
+      "Microsoft.ClearScript.V8.Native.win-x64": {
+        "type": "Direct",
+        "requested": "[7.4.5, )",
+        "resolved": "7.4.5",
+        "contentHash": "LvsaJoVgcf09FJ6mZ6SIptdeuwmy42s1N2sMVO3Wqp+HAta7PPksxVh8cGelrGQmmW1C5hT1Jzc6ykxrzU4Adg=="
+      },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[17.8.0, )",
@@ -11,12 +17,6 @@
           "Microsoft.CodeCoverage": "17.8.0",
           "Microsoft.TestPlatform.TestHost": "17.8.0"
         }
-      },
-      "OpenCvSharp4.runtime.win": {
-        "type": "Direct",
-        "requested": "[4.13.0.20260627, )",
-        "resolved": "4.13.0.20260627",
-        "contentHash": "POIxR+CTpwHJIdam6wd8U2fprWv5QnIUw50jw79WEGb37He3T1h11SdtwSj9p2PLSfrzonMjO2t71wqi5uFsoQ=="
       },
       "xunit": {
         "type": "Direct",
@@ -54,6 +54,26 @@
         "type": "Transitive",
         "resolved": "1.1.0",
         "contentHash": "zD6IBJFzpn3IPsG7wn5dNuPUBUiJsCeosw3bGuLLmICrGHkpxf0f7ar/HodDGAdFDMWrVR4djlX7pJtY+XeMiA=="
+      },
+      "Microsoft.ClearScript.Core": {
+        "type": "Transitive",
+        "resolved": "7.4.5",
+        "contentHash": "CIZCty2L4mXy1xg77IbNPqsz2pS0ZsFVJZ5YolPB4j62xzvDuCFU/MKnTnKve67FGIWaB9w4LVV7YUEFmjEwzw=="
+      },
+      "Microsoft.ClearScript.V8": {
+        "type": "Transitive",
+        "resolved": "7.4.5",
+        "contentHash": "/czu8ho8xEiiLF806QP6Iwgp0aN5QE1B/MsXnIIMxiaM/KccD8AfSsM68lVuyW+boGqjF7zjoSlUKs/ERUoLOQ==",
+        "dependencies": {
+          "Microsoft.ClearScript.Core": "7.4.5",
+          "Microsoft.ClearScript.V8.ICUData": "7.4.5",
+          "Newtonsoft.Json": "13.0.1"
+        }
+      },
+      "Microsoft.ClearScript.V8.ICUData": {
+        "type": "Transitive",
+        "resolved": "7.4.5",
+        "contentHash": "Ji6av4T2xtqZYp5Gm0MPxvez5V6s4NF/wflD8a49A/KOI3kJyPHcmL3xCRuhuHo24NbfQX6+f0YbTdwhd5VSvw=="
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
@@ -1185,6 +1205,13 @@
           "Semver": "[3.0.0, )",
           "SixLabors.ImageSharp": "[3.1.12, )",
           "YamlDotNet": "[16.3.0, )"
+        }
+      },
+      "bettergenshinimpact.scripting": {
+        "type": "Project",
+        "dependencies": {
+          "BetterGenshinImpact.Runtime": "[0.66.0, )",
+          "Microsoft.ClearScript.V8": "[7.4.5, )"
         }
       }
     }
