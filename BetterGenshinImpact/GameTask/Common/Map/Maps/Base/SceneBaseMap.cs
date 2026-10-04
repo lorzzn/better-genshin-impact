@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -110,7 +110,7 @@ public abstract class SceneBaseMap : ISceneMap
 
     public virtual void WarmUp()
     {
-        Console.WriteLine("提前加载地图，层数：" + Layers.Count);
+        TaskControl.Logger.LogDebug("提前加载地图，层数：{LayerCount}", Layers.Count);
     }
 
     public virtual Point2f GetBigMapPosition(Mat greyBigMapMat)

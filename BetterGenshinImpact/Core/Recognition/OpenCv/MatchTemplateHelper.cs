@@ -1,3 +1,6 @@
+﻿#if BETTERGI_PORTABLE
+using CmpType = OpenCvSharp.CmpTypes;
+#endif
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
 using System;
@@ -11,9 +14,13 @@ namespace BetterGenshinImpact.Core.Recognition.OpenCv;
 public class MatchTemplateHelper
 {
     // 单元测试和离线工具没有 WPF App，不应仅为了记录异常而初始化完整应用宿主。
+#if BETTERGI_PORTABLE
+    private static ILogger? Logger => Runtime.RuntimeEnvironment.Logger;
+#else
     private static ILogger<MatchTemplateHelper>? Logger => System.Windows.Application.Current is App
         ? App.GetLogger<MatchTemplateHelper>()
         : null;
+#endif
 
     /// <summary>
     ///  模板匹配

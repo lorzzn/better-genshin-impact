@@ -1,4 +1,7 @@
 using OpenCvSharp;
+#if BETTERGI_PORTABLE
+using CmpType = OpenCvSharp.CmpTypes;
+#endif
 using System;
 using System.Linq;
 

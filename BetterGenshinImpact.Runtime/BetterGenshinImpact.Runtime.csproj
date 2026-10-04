@@ -1,0 +1,246 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>$(DefineConstants);BETTERGI_PORTABLE</DefineConstants>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoTrackPath/Model/GiWorldScene.cs" Link="GameTask/AutoTrackPath/Model/GiWorldScene.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoSkip/Model/PaddleOcrResultRect.cs" Link="GameTask/AutoSkip/Model/PaddleOcrResultRect.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recorder/Model/KeyMouseScript.cs" Link="Core/Recorder/Model/KeyMouseScript.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recorder/Model/KeyMouseScriptInfo.cs" Link="Core/Recorder/Model/KeyMouseScriptInfo.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recorder/Model/MacroEvent.cs" Link="Core/Recorder/Model/MacroEvent.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/CameraOrientation.cs" Link="GameTask/Common/Map/CameraOrientation.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Camera/CameraOrientationFromGia.cs" Link="GameTask/Common/Map/Camera/CameraOrientationFromGia.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/MiniMap/CameraOrientationCalculator.cs" Link="GameTask/Common/Map/MiniMap/CameraOrientationCalculator.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/MiniMap/MaskCalculator.cs" Link="GameTask/Common/Map/MiniMap/MaskCalculator.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/MiniMap/MiniMapPreprocessor.cs" Link="GameTask/Common/Map/MiniMap/MiniMapPreprocessor.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/MiniMap/MiniMapPreprocessorUtils.cs" Link="GameTask/Common/Map/MiniMap/MiniMapPreprocessorUtils.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoTrackPath/Model/GiWorldPosition.cs" Link="GameTask/AutoTrackPath/Model/GiWorldPosition.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/Area/Region.cs" Link="GameTask/Model/Area/Region.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/Area/ImageRegion.cs" Link="GameTask/Model/Area/ImageRegion.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/Area/ImageRegionReferenceSearchHelper.cs" Link="GameTask/Model/Area/ImageRegionReferenceSearchHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/Area/GameCaptureRegion.cs" Link="GameTask/Model/Area/GameCaptureRegion.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/RecognitionObject.cs" Link="Core/Recognition/RecognitionObject.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/RecognitionObjectJsonLoader.cs" Link="Core/Recognition/RecognitionObjectJsonLoader.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/RecognitionAssets.cs" Link="Core/Recognition/RecognitionAssets.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/OpenCvCommonHelper.cs" Link="Core/Recognition/OpenCv/OpenCvCommonHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/QuickTeleportAssets.cs" Link="GameTask/QuickTeleport/Assets/QuickTeleportAssets.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/ElementRecognition.cs" Link="GameTask/Common/Element/Assets/ElementRecognition.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/RecognitionTypes.cs" Link="Core/Recognition/RecognitionTypes.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OcrEngineTypes.cs" Link="Core/Recognition/OcrEngineTypes.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/SearchOptions.cs" Link="Core/Recognition/SearchOptions.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/RecognitionObjectJsonConfig.cs" Link="Core/Recognition/RecognitionObjectJsonConfig.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/OcrResultExtension.cs" Link="Core/Recognition/OCR/OcrResultExtension.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/Assets/AssetsCache.cs" Link="GameTask/Model/Assets/AssetsCache.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/MapLazyAssets.cs" Link="GameTask/Common/Element/Assets/MapLazyAssets.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/StringUtils.cs" Link="Helpers/StringUtils.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/RegexHelper.cs" Link="Helpers/RegexHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/Extensions/RectCutExtension.cs" Link="Helpers/Extensions/RectCutExtension.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/Extensions/RectExtension.cs" Link="Helpers/Extensions/RectExtension.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/Area/Converter/ConvertRes.cs" Link="GameTask/Model/Area/Converter/ConvertRes.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/Area/Converter/INodeConverter.cs" Link="GameTask/Model/Area/Converter/INodeConverter.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/Area/Converter/ScaleConverter.cs" Link="GameTask/Model/Area/Converter/ScaleConverter.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/Area/Converter/TranslationConverter.cs" Link="GameTask/Model/Area/Converter/TranslationConverter.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/FeatureMatch/Feature2DExtensions.cs" Link="Core/Recognition/OpenCv/FeatureMatch/Feature2DExtensions.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/FeatureMatch/Feature2DFactory.cs" Link="Core/Recognition/OpenCv/FeatureMatch/Feature2DFactory.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/FeatureMatch/Feature2DType.cs" Link="Core/Recognition/OpenCv/FeatureMatch/Feature2DType.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/FeatureMatch/DescriptorMatcherType.cs" Link="Core/Recognition/OpenCv/FeatureMatch/DescriptorMatcherType.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/FeatureMatch/FeatureStorageHelper.cs" Link="Core/Recognition/OpenCv/FeatureMatch/FeatureStorageHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/FeatureMatch/KeyPointFeatureBlockHelper.cs" Link="Core/Recognition/OpenCv/FeatureMatch/KeyPointFeatureBlockHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/Model/KeyPointFeatureBlock.cs" Link="Core/Recognition/OpenCv/Model/KeyPointFeatureBlock.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/SpeedTimer.cs" Link="Helpers/SpeedTimer.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/Base/BaseMapLayer.cs" Link="GameTask/Common/Map/Maps/Base/BaseMapLayer.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/Base/SceneBaseMap.cs" Link="GameTask/Common/Map/Maps/Base/SceneBaseMap.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/Base/ISceneMap.cs" Link="GameTask/Common/Map/Maps/Base/ISceneMap.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/Base/MapTypes.cs" Link="GameTask/Common/Map/Maps/Base/MapTypes.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/TeyvatMap.cs" Link="GameTask/Common/Map/Maps/TeyvatMap.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Map/Maps/Layer/BigMapTeyvat256Layer.cs" Link="GameTask/Common/Map/Maps/Layer/BigMapTeyvat256Layer.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/MatchTemplateHelper.cs" Link="Core/Recognition/OpenCv/MatchTemplateHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/TemplateMatch/TemplateMatchHelper.cs" Link="Core/Recognition/OpenCv/TemplateMatch/TemplateMatchHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/TemplateMatch/TemplateMatchNormalizer.cs" Link="Core/Recognition/OpenCv/TemplateMatch/TemplateMatchNormalizer.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/TemplateMatch/SubPixMatch.cs" Link="Core/Recognition/OpenCv/TemplateMatch/SubPixMatch.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoFight/Script/JsonCombatStrategy.cs" Link="GameTask/AutoFight/Script/JsonCombatStrategy.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/ONNX/BgiOnnxModel.cs" Link="Core/Recognition/ONNX/BgiOnnxModel.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/ResizeHelper.cs" Link="Core/Recognition/OpenCv/ResizeHelper.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/IOcrService.cs" Link="Core/Recognition/OCR/IOcrService.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/OcrResult.cs" Link="Core/Recognition/OCR/OcrResult.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/Engine/OcrVersionConfig.cs" Link="Core/Recognition/OCR/Engine/OcrVersionConfig.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/Engine/OcrUtils.cs" Link="Core/Recognition/OCR/Engine/OcrUtils.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/Engine/data/OcrImgMode.cs" Link="Core/Recognition/OCR/Engine/data/OcrImgMode.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/Engine/data/OcrNormalizeImage.cs" Link="Core/Recognition/OCR/Engine/data/OcrNormalizeImage.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/Engine/data/OcrShape.cs" Link="Core/Recognition/OCR/Engine/data/OcrShape.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/Paddle/Det.cs" Link="Core/Recognition/OCR/Paddle/Det.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/Paddle/Rec.cs" Link="Core/Recognition/OCR/Paddle/Rec.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/Paddle/DbPostProcessor.cs" Link="Core/Recognition/OCR/Paddle/DbPostProcessor.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OCR/Paddle/PaddleOcrService.cs" Link="Core/Recognition/OCR/Paddle/PaddleOcrService.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/Model/MaterialInfo.cs" Link="GameTask/AutoPathing/Model/MaterialInfo.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/Model/Waypoint.cs" Link="GameTask/AutoPathing/Model/Waypoint.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/Model/Enum/ActionEnum.cs" Link="GameTask/AutoPathing/Model/Enum/ActionEnum.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/Model/Enum/MoveModeEnum.cs" Link="GameTask/AutoPathing/Model/Enum/MoveModeEnum.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/Model/Enum/WaypointType.cs" Link="GameTask/AutoPathing/Model/Enum/WaypointType.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Recognition/OpenCv/CommonExtension.Portable.cs" Link="Core/Recognition/OpenCv/CommonExtension.Portable.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/MapAssets.cs" Link="GameTask/Common/Element/Assets/MapAssets.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/Domain.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/Domain.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/Domain2.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/Domain2.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/GoTeleport.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/GoTeleport.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/Mansion.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/Mansion.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/MapChoose.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/MapChoose.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/MapCloseButton.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/MapCloseButton.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/MapScaleButton.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/MapScaleButton.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/MapSettingsButton.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/MapSettingsButton.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/MapUndergroundSwitchButton.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/MapUndergroundSwitchButton.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/MapUndergroundToGroundButton.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/MapUndergroundToGroundButton.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/MarkTransPointMoonTower.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/MarkTransPointMoonTower.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/NodKraiMeetingPoint.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/NodKraiMeetingPoint.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/ObsidianTotemPole.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/ObsidianTotemPole.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/PortableWaypoint.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/PortableWaypoint.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/StatueOfTheSeven.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/StatueOfTheSeven.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/SubSpaceWaypoint.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/SubSpaceWaypoint.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/TabletOfTona.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/TabletOfTona.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/TeleportTransparentBackground.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/TeleportTransparentBackground.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/TeleportWaypoint.png" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/1920x1080/TeleportWaypoint.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/Recognition.json" Link="UpstreamAssets/GameTask/QuickTeleport/Assets/Recognition.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/ayuan.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/ayuan.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/ayuan_cloth.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/ayuan_cloth.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/ayuan_magicmineralprecision.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/ayuan_magicmineralprecision.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/ayuan_mola.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/ayuan_mola.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/ayuan_resin.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/ayuan_resin.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_artifact_checked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_artifact_checked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_artifact_unchecked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_artifact_unchecked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_characterdevelopmentitem_checked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_characterdevelopmentitem_checked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_characterdevelopmentitem_unchecked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_characterdevelopmentitem_unchecked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_food_checked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_food_checked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_food_unchecked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_food_unchecked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_furnishing_checked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_furnishing_checked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_furnishing_unchecked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_furnishing_unchecked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_gadget_checked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_gadget_checked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_gadget_unchecked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_gadget_unchecked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_material_checked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_material_checked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_material_unchecked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_material_unchecked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_preciousitem_checked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_preciousitem_checked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_preciousitem_unchecked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_preciousitem_unchecked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_quest_checked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_quest_checked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_quest_unchecked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_quest_unchecked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_weapon_checked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_weapon_checked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/bag_weapon_unchecked.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/bag_weapon_unchecked.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/blue_track_point_28x.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/blue_track_point_28x.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_artifact_salvage.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_artifact_salvage.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_artifact_salvage_confirm.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_artifact_salvage_confirm.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_back_teyvat.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_back_teyvat.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_black_cancel.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_black_cancel.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_black_confirm.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_black_confirm.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_claim_encounter_points_rewards.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_claim_encounter_points_rewards.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_exit_door.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_exit_door.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_online_no.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_online_no.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_online_yes.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_online_yes.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_white_cancel.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_white_cancel.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_white_confirm.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_white_confirm.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_white_recover.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/btn_white_recover.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/chest_tip.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/chest_tip.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/collect.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/collect.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/condensed_resin_count.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/condensed_resin_count.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/craft_condensed_resin.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/craft_condensed_resin.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/current_avatar_threshold.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/current_avatar_threshold.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/esc_down.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/esc_down.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/esc_mail_reward.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/esc_mail_reward.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/esc_wonderland_home.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/esc_wonderland_home.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/exp_book.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/exp_book.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/exp_book_small.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/exp_book_small.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/exp_bottle_big.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/exp_bottle_big.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/exp_bottle_small.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/exp_bottle_small.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/finger.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/finger.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/fragile_resin_count.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/fragile_resin_count.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/friend_chat.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/friend_chat.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/in_domain.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/in_domain.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/index_1.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/index_1.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/index_2.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/index_2.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/index_3.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/index_3.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/index_4.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/index_4.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/inventory.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/inventory.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/key_increase.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/key_increase.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/key_reduce.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/key_reduce.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/key_space.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/key_space.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/key_x.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/key_x.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/leyline_disorder_icon.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/leyline_disorder_icon.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/page_close_white.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/page_close_white.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/paimon_menu.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/paimon_menu.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/party_btn_choose_view.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/party_btn_choose_view.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/party_btn_delete.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/party_btn_delete.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/primogem.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/primogem.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/prompt_dialog_left_bottom_star.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/prompt_dialog_left_bottom_star.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/SereniteaPot.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/SereniteaPot.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/sereniteapot_home.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/sereniteapot_home.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/sereniteapot_love.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/sereniteapot_love.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/sereniteapot_money.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/sereniteapot_money.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/sereniteapot_page_close.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/sereniteapot_page_close.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/sereniteapot_shop_number_btn.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/sereniteapot_shop_number_btn.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/ui_left_top_cook_icon.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/ui_left_top_cook_icon.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/wonderland_close.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/wonderland_close.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/wonderland_enter.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/wonderland_enter.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/yellow_track_point_28x.png" Link="UpstreamAssets/GameTask/Common/Element/Assets/1920x1080/yellow_track_point_28x.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/冒险家协会_挪德卡莱.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/冒险家协会_挪德卡莱.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/冒险家协会_枫丹.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/冒险家协会_枫丹.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/冒险家协会_璃月.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/冒险家协会_璃月.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/冒险家协会_稻妻.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/冒险家协会_稻妻.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/冒险家协会_蒙德.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/冒险家协会_蒙德.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/冒险家协会_须弥.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/冒险家协会_须弥.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/合成台_枫丹.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/合成台_枫丹.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/合成台_璃月.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/合成台_璃月.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/合成台_稻妻.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/合成台_稻妻.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Json/合成台_蒙德.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Json/合成台_蒙德.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/Recognition.json" Link="UpstreamAssets/GameTask/Common/Element/Assets/Recognition.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/1p.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/1p.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/abnormal_icon.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/abnormal_icon.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/artifact_flower_logo.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/artifact_flower_logo.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/click_any_close_tip.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/click_any_close_tip.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/condensed_resin_count.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/condensed_resin_count.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/condensed_resin_top_icon.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/condensed_resin_top_icon.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/confirm.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/confirm.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/exit.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/exit.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/experience_57.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/experience_57.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/experience_58.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/experience_58.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/experience_60.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/experience_60.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/fragile_resin_count.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/fragile_resin_count.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/original_resin_top_icon.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/original_resin_top_icon.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/p.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/p.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/wanderer_icon.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/wanderer_icon.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/wanderer_icon_no_active.png" Link="UpstreamAssets/GameTask/AutoFight/Assets/1920x1080/wanderer_icon_no_active.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/combat_avatar.json" Link="UpstreamAssets/GameTask/AutoFight/Assets/combat_avatar.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/Recognition.json" Link="UpstreamAssets/GameTask/AutoFight/Assets/Recognition.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/GameLoading/Assets/1920x1080/choose_enter_game.png" Link="UpstreamAssets/GameTask/GameLoading/Assets/1920x1080/choose_enter_game.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/GameLoading/Assets/1920x1080/enter_game.png" Link="UpstreamAssets/GameTask/GameLoading/Assets/1920x1080/enter_game.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/GameLoading/Assets/1920x1080/girl_moon.png" Link="UpstreamAssets/GameTask/GameLoading/Assets/1920x1080/girl_moon.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/GameLoading/Assets/1920x1080/welkin_moon_logo.png" Link="UpstreamAssets/GameTask/GameLoading/Assets/1920x1080/welkin_moon_logo.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/GameLoading/Assets/Recognition.json" Link="UpstreamAssets/GameTask/GameLoading/Assets/Recognition.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/UseRedeemCode/Assets/1920x1080/esc_return_button.png" Link="UpstreamAssets/GameTask/UseRedeemCode/Assets/1920x1080/esc_return_button.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoTrackPath/Assets/tp.json" Link="UpstreamAssets/GameTask/AutoTrackPath/Assets/tp.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoTrackPath/Assets/tp.json" Link="GameAssets/tp.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/GoTeleport.png" Link="GameAssets/GoTeleport.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/MapUndergroundToGroundButton.png" Link="GameAssets/MapUndergroundToGroundButton.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/QuickTeleport/Assets/1920x1080/MapScaleButton.png" Link="GameAssets/MapScaleButton.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/paimon_menu.png" Link="GameAssets/paimon_menu.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/Element/Assets/1920x1080/btn_exit_door.png" Link="GameAssets/btn_exit_door.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/AutoFight/Assets/1920x1080/confirm.png" Link="GameAssets/confirm.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/BgiVision/BvResxHelper.zh-Hans.resx" Link="GameAssets/BvResxHelper.zh-Hans.resx" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/BgiVision/BvResxHelper.zh-Hant.resx" Link="GameAssets/BvResxHelper.zh-Hant.resx" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/BgiVision/BvResxHelper.en.resx" Link="GameAssets/BvResxHelper.en.resx" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/BgiVision/BvResxHelper.fr.resx" Link="GameAssets/BvResxHelper.fr.resx" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../BetterGenshinImpact/GameTask/Common/BgiVision/BvResxHelper.it.resx" Link="GameAssets/BvResxHelper.it.resx" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.21.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <PackageReference Include="Clipper2" Version="2.0.0" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
+    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260627" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NCalc" Version="6.2.0" />
+  </ItemGroup>
+</Project>

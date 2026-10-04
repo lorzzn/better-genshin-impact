@@ -1,3 +1,6 @@
+﻿#if BETTERGI_PORTABLE
+using Pen = BetterGenshinImpact.Runtime.OverlayPen;
+#endif
 using BetterGenshinImpact.Core.Recognition.OpenCv;
 using BetterGenshinImpact.Helpers.Extensions;
 using OpenCvSharp;

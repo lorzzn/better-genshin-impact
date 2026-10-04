@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+#if BETTERGI_PORTABLE
+using Pen = BetterGenshinImpact.Runtime.OverlayPen;
+#endif
 using System.Drawing;
 using System.Linq;
 using BetterGenshinImpact.GameTask.AutoSkip.Model;

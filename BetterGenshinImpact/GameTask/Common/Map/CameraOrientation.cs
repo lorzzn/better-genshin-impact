@@ -1,3 +1,6 @@
+﻿#if BETTERGI_PORTABLE
+using Pen = BetterGenshinImpact.Runtime.OverlayPen;
+#endif
 using BetterGenshinImpact.GameTask.Model.Area;
 using OpenCvSharp;
 using System;

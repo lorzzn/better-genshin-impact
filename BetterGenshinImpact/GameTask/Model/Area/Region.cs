@@ -1,13 +1,24 @@
+﻿#if BETTERGI_PORTABLE
+using Pen = BetterGenshinImpact.Runtime.OverlayPen;
+#endif
 using BetterGenshinImpact.GameTask.Model.Area.Converter;
 using BetterGenshinImpact.View.Drawable;
+#if BETTERGI_PORTABLE
+
+#else
 using Fischless.WindowsInput;
+#endif
 using OpenCvSharp;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using BetterGenshinImpact.GameTask.Common;
+#if BETTERGI_PORTABLE
+
+#else
 using Vanara.PInvoke;
+#endif
 
 namespace BetterGenshinImpact.GameTask.Model.Area;
 
@@ -95,11 +106,15 @@ public class Region : IDisposable
     /// </summary>
     public void BackgroundClick()
     {
+#if BETTERGI_PORTABLE
+        Click(); // The host routes input exclusively to the bound Target.
+#else
         User32.GetCursorPos(out var p);
         this.Move();  // 必须移动实际鼠标
         TaskContext.Instance().PostMessageSimulator.LeftButtonClickBackground();
         Thread.Sleep(10);
         DesktopRegion.DesktopRegionMove(p.X, p.Y); // 鼠标移动回原来位置
+#endif
     }
 
     /// <summary>

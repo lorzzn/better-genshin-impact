@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -151,6 +151,7 @@ public class BaseMapLayer(SceneBaseMap baseMap)
         if (_lastMergedBlock == null || _lastMergedBlock.MergedCenterCellRow != cellRow || _lastMergedBlock.MergedCenterCellCol != cellCol)
         {
             Debug.WriteLine($"---------切换到新的特征块({cellRow},{cellCol})，合并特征点--------");
+            _lastMergedBlock?.Descriptor?.Dispose();
             _lastMergedBlock = KeyPointFeatureBlockHelper.MergeNeighboringFeatures(SplitBlocks, TrainDescriptors, cellRow, cellCol);
         }
 

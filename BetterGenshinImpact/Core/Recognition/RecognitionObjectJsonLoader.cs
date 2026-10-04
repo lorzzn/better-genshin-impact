@@ -1,3 +1,6 @@
+﻿#if BETTERGI_PORTABLE
+using Pen = BetterGenshinImpact.Runtime.OverlayPen;
+#endif
 using BetterGenshinImpact.Helpers.Extensions;
 using Microsoft.Extensions.Logging;
 using NCalc;
@@ -29,7 +32,11 @@ public static class RecognitionObjectJsonLoader
 {
     private sealed class LoggerTag;
 
+#if BETTERGI_PORTABLE
+    private static ILogger Logger => Runtime.RuntimeEnvironment.Logger;
+#else
     private static readonly ILogger Logger = App.GetLogger<LoggerTag>();
+#endif
 
     public static RecognitionObject LoadFromFile(string filePath, string objectName, RecognitionObjectJsonLoadContext context)
     {

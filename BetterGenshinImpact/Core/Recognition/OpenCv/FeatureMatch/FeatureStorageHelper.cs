@@ -12,11 +12,11 @@ public class FeatureStorageHelper
     {
         if (File.Exists(kpPath))
         {
-            using var fs = File.Open(kpPath, FileMode.Open);
+            using var fs = File.OpenRead(kpPath);
             var sizeOfKeyPoint = Marshal.SizeOf<KeyPoint>();
             if (fs.Length % sizeOfKeyPoint != 0)
             {
-                throw new FileFormatException("无法识别的KeyPoint格式");
+                throw new InvalidDataException("无法识别的KeyPoint格式");
             }
 
             using var kpVector = new VectorOfKeyPoint((nuint)(fs.Length / sizeOfKeyPoint));
@@ -30,7 +30,7 @@ public class FeatureStorageHelper
 
     public static unsafe void SaveKeyPointArray(KeyPoint[] kpArray, string kpPath)
     {
-        var kpVector = new VectorOfKeyPoint(kpArray);
+        using var kpVector = new VectorOfKeyPoint(kpArray);
         var sizeOfKeyPoint = Marshal.SizeOf<KeyPoint>();
         var kpSpan = new ReadOnlySpan<byte>((byte*)kpVector.ElemPtr, kpArray.Length * sizeOfKeyPoint);
         using var fs = new FileStream(kpPath, FileMode.Create);

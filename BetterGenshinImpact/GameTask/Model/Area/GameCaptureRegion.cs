@@ -1,4 +1,7 @@
-﻿using BetterGenshinImpact.GameTask.Model.Area.Converter;
+﻿#if BETTERGI_PORTABLE
+using Pen = BetterGenshinImpact.Runtime.OverlayPen;
+#endif
+using BetterGenshinImpact.GameTask.Model.Area.Converter;
 using BetterGenshinImpact.View.Drawable;
 using OpenCvSharp;
 using System;
@@ -26,7 +29,11 @@ public class GameCaptureRegion(Mat mat, int initX, int initY, Region? owner = nu
     public RectDrawable ConvertToRectDrawable(int x, int y, int w, int h, Pen? pen = null, string? name = null)
     {
         var scale = TaskContext.Instance().DpiScale;
+#if BETTERGI_PORTABLE
+        Rect2d newRect = new(x / scale, y / scale, w / scale, h / scale);
+#else
         System.Windows.Rect newRect = new(x / scale, y / scale, w / scale, h / scale);
+#endif
         return new RectDrawable(newRect, pen, name);
     }
 

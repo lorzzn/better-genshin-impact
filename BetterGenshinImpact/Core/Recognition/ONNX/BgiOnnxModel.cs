@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using BetterGenshinImpact.Core.Config;
@@ -171,11 +171,15 @@ public class BgiOnnxModel
     private static BgiOnnxModel Register(string name, string modelRelativePath, string cacheRelativePath)
     {
         var model = new BgiOnnxModel(name, modelRelativePath, cacheRelativePath);
+#if BETTERGI_PORTABLE
+        // The hosting application owns cache creation and write permissions.
+#else
         var cachePath = model.CachePath;
         if (!Directory.Exists(cachePath))
         {
             Directory.CreateDirectory(cachePath);
         }
+#endif
 
         RegisteredModels.Add(model);
         return model;

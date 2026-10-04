@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -7,9 +7,17 @@ using System.Linq;
 using BetterGenshinImpact.Core.Config;
 using BetterGenshinImpact.Core.Recognition.OCR.Engine;
 using BetterGenshinImpact.Core.Recognition.ONNX;
+#if BETTERGI_PORTABLE
+
+#else
 using BetterGenshinImpact.GameTask.Common.BgiVision;
+#endif
 using OpenCvSharp;
+#if BETTERGI_PORTABLE
+
+#else
 using OpenCvSharp.Extensions;
+#endif
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using Size = OpenCvSharp.Size;
@@ -256,8 +264,13 @@ public class PaddleOcrService : IOcrService, IDisposable
         _localRecModel = modelsRec;
 
         // 预热模型
+#if BETTERGI_PORTABLE
+        using var preHeatImageMat = Cv2.ImRead(Global.Absolute(modelType.PreHeatImagePath));
+        if (preHeatImageMat.Empty()) throw new FileNotFoundException($"预热图片未找到: {modelType.PreHeatImagePath}");
+#else
         using var preHeatImageMat = Bv.ImRead(modelType.PreHeatImagePath) ??
                                     throw new FileNotFoundException($"预热图片未找到: {modelType.PreHeatImagePath}");
+#endif
         // Debug输出结果
         var preHeatResult = RunAll(preHeatImageMat, 1);
         Debug.WriteLine(

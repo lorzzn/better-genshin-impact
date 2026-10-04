@@ -1,5 +1,8 @@
 using BetterGenshinImpact.GameTask.Model.Area;
 using OpenCvSharp;
+#if BETTERGI_PORTABLE
+using Pen = BetterGenshinImpact.Runtime.OverlayPen;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Drawing;

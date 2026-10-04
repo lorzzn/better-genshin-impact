@@ -1,8 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BetterGenshinImpact.Core.Recognition;
 using BetterGenshinImpact.GameTask.Model;
 using BetterGenshinImpact.GameTask.Model.Area;
-using BetterGenshinImpact.Model;
 using OpenCvSharp;
 
 namespace BetterGenshinImpact.GameTask.Common.Element.Assets;

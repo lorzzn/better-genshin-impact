@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+#if BETTERGI_PORTABLE
+using RECT = OpenCvSharp.Rect;
+#else
 using Vanara.PInvoke;
+#endif
 
 namespace BetterGenshinImpact.Core.Recorder.Model;
 

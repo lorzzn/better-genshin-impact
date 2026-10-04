@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using BetterGenshinImpact.Core.Config;
 using BetterGenshinImpact.Core.Recognition.OpenCv;
 using BetterGenshinImpact.Core.Recognition.OpenCv.FeatureMatch;
@@ -41,9 +41,9 @@ public class TeyvatMap : SceneBaseMap
 
     public override Point2f GetBigMapPosition(Mat greyBigMapMat)
     {
-        greyBigMapMat = ResizeHelper.Resize(greyBigMapMat, 1d / 4);
+        using var resized = ResizeHelper.Resize(greyBigMapMat, 1d / 4);
         var layer = BigMapTeyvat256Layer.GetInstance(this);
-        return SiftMatcher.Match(layer.TrainKeyPoints, layer.TrainDescriptors, greyBigMapMat);
+        return SiftMatcher.Match(layer.TrainKeyPoints, layer.TrainDescriptors, resized);
     }
 
     public override Point2f GetBigMapPosition(Mat greyBigMapMat, Point2f expectedCenter)

@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using BetterGenshinImpact.Core.Recognition.OpenCv.Model;
+#if BETTERGI_PORTABLE
+
+#else
 using BetterGenshinImpact.GameTask.Common.BgiVision;
+#endif
 using BetterGenshinImpact.Helpers;
 using OpenCvSharp;
 
@@ -25,8 +29,12 @@ public static class Feature2DExtensions
 
     public static void SaveFeatures(this Feature2D feature2D, string trainImagePath, string trainKeyPointsPath, string trainDescriptorsPath)
     {
-        Mat trainDescriptors = new();
+        using Mat trainDescriptors = new();
+#if BETTERGI_PORTABLE
+        using var img = Cv2.ImRead(trainImagePath, ImreadModes.Grayscale);
+#else
         var img = Bv.ImRead(trainImagePath, ImreadModes.Grayscale);
+#endif
 
         feature2D.DetectAndCompute(img, null, out var trainKeyPoints, trainDescriptors);
 
@@ -103,11 +111,11 @@ public static class Feature2DExtensions
         // algorithm RANSAC Filter the matched results
         var pQuery = pointsQuery.ToPoint2d();
         var pTrain = pointsTrain.ToPoint2d();
-        var outMask = new Mat();
+        using var outMask = new Mat();
         // If the original matching result is null, Skip the filtering step
-        if (pQuery.Count > 0 && pTrain.Count > 0)
+        if (pQuery.Count >= 4 && pTrain.Count >= 4)
         {
-            var hMat = Cv2.FindHomography(pQuery, pTrain, HomographyMethods.Ransac, mask: outMask);
+            using var hMat = Cv2.FindHomography(pQuery, pTrain, HomographyMethods.Ransac, mask: outMask);
             speedTimer.Record("FindHomography");
 
             // 1. 计算查询图像的中心点
@@ -178,7 +186,7 @@ public static class Feature2DExtensions
 
         // 使用RANSAC找到变换矩阵
         var mask = new Mat();
-        var hMat = Cv2.FindHomography(srcPts.ToList().ToPoint2d(), dstPts.ToList().ToPoint2d(), HomographyMethods.Ransac, 3.0, mask);
+        using var hMat = Cv2.FindHomography(srcPts.ToList().ToPoint2d(), dstPts.ToList().ToPoint2d(), HomographyMethods.Ransac, 3.0, mask);
         if (hMat.Empty())
         {
             return new Point2f();
@@ -287,7 +295,7 @@ public static class Feature2DExtensions
 
         // 使用RANSAC找到变换矩阵
         var mask = new Mat();
-        var hMat = Cv2.FindHomography(srcPts.ToList().ToPoint2d(), dstPts.ToList().ToPoint2d(), HomographyMethods.Ransac, 3.0, mask);
+        using var hMat = Cv2.FindHomography(srcPts.ToList().ToPoint2d(), dstPts.ToList().ToPoint2d(), HomographyMethods.Ransac, 3.0, mask);
         if (hMat.Empty())
         {
             return [];
