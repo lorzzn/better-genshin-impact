@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/HtmlMask.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/IHtmlWindowHost.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/IScriptInputSource.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/KeyMouseHook.cs" />
     <EmbeddedResource Include="../BetterGenshinImpact/Core/Script/Dependence/HtmlMaskBridge.js" LogicalName="BetterGI.HtmlMaskBridge.js" />
   </ItemGroup>
 </Project>

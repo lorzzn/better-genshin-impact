@@ -14,4 +14,5 @@ public interface IScriptHost
 public interface IScriptHostLifetime
 {
     void OnScriptEnding();
+    void OnScriptEnded() { }
 }

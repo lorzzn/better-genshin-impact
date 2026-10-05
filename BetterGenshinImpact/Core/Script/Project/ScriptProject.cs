@@ -145,6 +145,7 @@ public partial class ScriptProject
                 // 终止代码执行
                 try { engine.Interrupt(); }
                 catch (Exception e) { TaskControl.Logger.LogError(e, "中断脚本执行异常：" + e.Message); }
+                finally { (host as IScriptHostLifetime)?.OnScriptEnded(); }
             }
 
         }

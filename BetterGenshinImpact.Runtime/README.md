@@ -71,3 +71,13 @@ AutoPathing,KeyMouseScript}` 读取，未指定时沿用 `AssetRoot`；游戏识
 
 本轮 C# Release 构建通过（270 条分析器/平台/上游告警，0 错误），未运行测试或游戏。
 输入钩子的操作系统依赖仍需接入；完整 WPF 应用尚未完成本轮构建。
+
+### Target 输入事件与官方键鼠钩子
+
+`KeyMouseHook` 直接共享官方回调、队列和移动回调间隔，只把全局钩子与窗口坐标转换
+移入 `IScriptInputSource`。桌面使用 `KeyMouseHook.Windows`；嵌入宿主以 `ScriptInputScope`
+提供当前 Target 事件，未绑定时明确失败。脚本构造的监听器由作用域兜底回收，先停接收、
+中断 V8，再等待回调退出。注册/注销和回调快照受锁保护，执行 JS 时不持有集合锁。
+
+本次平台 C# Release 与 Go 构建通过（C# 270 警告、0 错误），未运行测试。
+源事件是否被目标游戏接收、其它系统表现与完整 WPF 应用构建仍未验证。

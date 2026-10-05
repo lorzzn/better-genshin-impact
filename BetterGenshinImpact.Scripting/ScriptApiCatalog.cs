@@ -16,6 +16,7 @@ public static class ScriptApiCatalog
             ["keyMouseScript"] = typeof(KeyMouseScript), ["strategyFile"] = typeof(StrategyFile),
             ["notification"] = typeof(Notification), ["log"] = typeof(Log),
             ["htmlMask"] = typeof(HtmlMask),
+            ["KeyMouseHook"] = typeof(KeyMouseHook),
             ["characterDevelopmentTask"] = typeof(BetterGenshinImpact.GameTask.CharacterDevelopment.CharacterDevelopmentTask),
             ["BvPage"] = typeof(BvPage), ["BvLocator"] = typeof(BvLocator), ["BvImage"] = typeof(BvImage),
         };
