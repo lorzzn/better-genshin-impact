@@ -17,12 +17,12 @@ public partial class Dispatcher
         await RunTask(soloTask, linked.Token);
     }
 
-    public Task<object?> RunTask(SoloTask soloTask, CancellationToken? customCt = null)
+    public async Task<object?> RunTask(SoloTask soloTask, CancellationToken? customCt = null)
     {
         ArgumentNullException.ThrowIfNull(soloTask);
-        var token = customCt ?? CancellationContext.Instance.Token;
-        token.ThrowIfCancellationRequested();
-        return taskHost.RunTask(soloTask, token);
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(customCt ?? default, CancellationContext.Instance.Token);
+        linked.Token.ThrowIfCancellationRequested();
+        return await taskHost.RunTask(soloTask, linked.Token);
     }
 }
 

@@ -10,6 +10,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="YoloSharp" Version="6.0.3" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Model/IGamePixelSource.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoMusicGame/**/*.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoOpenChest/AutoOpenChestTask.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/QuickBuy/QuickBuyTask.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/Model/IRecognitionSurface.cs" Link="GameTask/Model/IRecognitionSurface.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Recognition/ONNX/BgiOnnxFactory.cs" Link="Core/Recognition/ONNX/BgiOnnxFactory.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Recognition/ONNX/BgiYoloPredictor.cs" Link="Core/Recognition/ONNX/BgiYoloPredictor.cs" />

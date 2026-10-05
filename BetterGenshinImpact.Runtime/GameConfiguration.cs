@@ -41,4 +41,5 @@ public sealed class GameConfiguration
     public GameTask.AutoCook.AutoCookConfig AutoCookConfig { get; set; } = new();
     public GameTask.AutoCombo.ComboBuild.AutoComboBuildConfig AutoComboBuildConfig { get; set; } = new();
     public bool IsHdrCapture { get; set; }
+    public GameTask.AutoMusicGame.AutoMusicGameConfig AutoMusicGameConfig { get; set; } = new();
 }

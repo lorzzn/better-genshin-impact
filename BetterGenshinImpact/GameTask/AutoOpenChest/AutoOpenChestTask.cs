@@ -24,19 +24,17 @@ public class AutoOpenChestTask : ISoloTask
 
         if (initialCapture.Find(RecognitionAssets.Get("AutoOpenChest", "ChestFIcon", initialCapture)).IsExist())
         {
-            using CancellationTokenSource _ct = new();
-            using var cancellationRegistration = ct.Register(_ct.Cancel);
+            using var _ct = CancellationTokenSource.CreateLinkedTokenSource(ct);
             bool isFlower = false; // 是否是地脉花
             // 限制寻找宝箱的时间
             var timeLimit = 60;
-            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(timeLimit), _ct.Token)
-                .ContinueWith(_ => _ct.Cancel(), TaskContinuationOptions.OnlyOnRanToCompletion);
+            _ct.CancelAfter(TimeSpan.FromSeconds(timeLimit));
             try
             {
                 while (!_ct.IsCancellationRequested)
                 {
                     using var ra = CaptureToRectArea();
-                    Region chestIcon = ra.Find(RecognitionAssets.Get("AutoOpenChest", "ChestIcon", ra));
+                    using Region chestIcon = ra.Find(RecognitionAssets.Get("AutoOpenChest", "ChestIcon", ra));
                     int limit = chestIcon.Width;
                     if (!chestIcon.IsExist())
                     {
@@ -81,7 +79,6 @@ public class AutoOpenChestTask : ISoloTask
                 // 如果循环提前退出，取消计时任务
                 Simulation.SendInput.SimulateAction(GIActions.MoveForward, KeyType.KeyUp);
                 _ct.Cancel();
-                await timeoutTask; // 等待超时任务结束（忽略可能的异常）
             }
 
             // TODO : 是否考虑兼容地脉花 以及地脉花的获取策略
@@ -93,7 +90,7 @@ public class AutoOpenChestTask : ISoloTask
         }
     }
 
-    private async void flowerHandle()
+    private void flowerHandle()
     {
         Simulation.SendInput.SimulateAction(GIActions.OpenPaimonMenu);
     }

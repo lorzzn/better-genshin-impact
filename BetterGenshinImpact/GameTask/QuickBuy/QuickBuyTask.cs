@@ -5,13 +5,17 @@ using BetterGenshinImpact.GameTask.Common;
 using BetterGenshinImpact.GameTask.Model.Area;
 using BetterGenshinImpact.View.Drawable;
 using Microsoft.Extensions.Logging;
+#if BETTERGI_PORTABLE
+using Toast = BetterGenshinImpact.Runtime.RuntimeUi;
+#else
 using Wpf.Ui.Violeta.Controls;
+#endif
 
 namespace BetterGenshinImpact.GameTask.QuickBuy;
 
 public class QuickBuyTask
 {
-    private static readonly ILogger<QuickBuyTask> _logger = App.GetLogger<QuickBuyTask>();
+    private static readonly ILogger<QuickBuyTask> _logger = GameServices.GetLogger<QuickBuyTask>();
 
     
     public static void Done()

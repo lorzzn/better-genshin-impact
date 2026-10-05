@@ -10,6 +10,13 @@ namespace BetterGenshinImpact.GameTask;
 /// <summary>Services used by game execution, independent of the desktop application.</summary>
 public static class GameServices
 {
+    public static Model.IGamePixelSource CreatePixelSource(System.Threading.CancellationToken cancellationToken) =>
+#if BETTERGI_PORTABLE
+        new Runtime.TargetPixelSource(cancellationToken);
+#else
+        new Model.GamePixelSource(TaskContext.Instance().GameHandle);
+#endif
+
     public static BgiOnnxFactory OnnxFactory =>
 #if BETTERGI_PORTABLE
         Runtime.RuntimeEnvironment.OnnxFactory;

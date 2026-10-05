@@ -140,6 +140,36 @@ public partial class Dispatcher
         // 根据名称执行任务
         switch (soloTask.Name)
         {
+            case "AutoMusicGame":
+                await new GameTask.AutoMusicGame.AutoMusicGameTask(new()).Start(cancellationToken);
+                return null;
+            case "AutoAlbum":
+                await new GameTask.AutoMusicGame.AutoAlbumTask(new()).Start(cancellationToken);
+                return null;
+            case "AutoOpenChest":
+                await new GameTask.AutoOpenChest.AutoOpenChestTask().Start(cancellationToken);
+                return null;
+            case "QuickBuy":
+                GameTask.QuickBuy.QuickBuyTask.Done();
+                return null;
+            case "ReturnMainUi":
+                await new ReturnMainUiTask().Start(cancellationToken);
+                return null;
+            case "ClaimBattlePassRewards":
+                await new Genshin().ClaimBattlePassRewards();
+                return null;
+            case "ClaimEncounterPointsRewards":
+                await new Genshin().ClaimEncounterPointsRewards();
+                return null;
+            case "BlessingOfTheWelkinMoon":
+                await new Genshin().BlessingOfTheWelkinMoon();
+                return null;
+            case "GoToAdventurersGuild":
+            case "GoCraftResin":
+                var country = soloTask.Config == null ? "蒙德" : ScriptObjectConverter.GetValue((ScriptObject)soloTask.Config, "country", "蒙德");
+                if (soloTask.Name == "GoCraftResin") await new Genshin().GoCraftResin(country);
+                else await new Genshin().GoToAdventurersGuild(country);
+                return null;
             case "AutoGeniusInvokation":
                 string content;
                 // 检查是否有自定义策略内容  

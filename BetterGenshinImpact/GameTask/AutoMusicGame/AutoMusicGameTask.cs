@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using BetterGenshinImpact.Helpers;
+using BetterGenshinImpact.GameTask.Model;
 using Vanara.PInvoke;
 using static BetterGenshinImpact.GameTask.Common.TaskControl;
 
@@ -42,7 +43,7 @@ public class AutoMusicGameTask(AutoMusicGameParam taskParam) : ISoloTask
 
     private readonly int _keyY = 921;
 
-    private readonly IntPtr _hWnd = TaskContext.Instance().GameHandle;
+
 
     public async Task Start(CancellationToken ct)
     {
@@ -62,11 +63,17 @@ public class AutoMusicGameTask(AutoMusicGameParam taskParam) : ISoloTask
             // 计算按键位置
             using var gameCaptureRegion = CaptureToRectArea();
 
+            using var readers = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            using var pixels = GameServices.CreatePixelSource(readers.Token);
             foreach (var keyValuePair in _keyX)
             {
                 var (x, y) = gameCaptureRegion.ConvertPositionToGameCaptureRegion((int)(keyValuePair.Value * assetScale), (int)(_keyY * assetScale));
                 // 添加任务
-                taskList.Add(Task.Run(async () => await DoWhitePressWin32(ct, keyValuePair.Key, new Point(x, y)), ct));
+                taskList.Add(Task.Run(async () =>
+                {
+                    try { await DoWhitePressWin32(readers.Token, keyValuePair.Key, new Point(x, y), pixels); }
+                    catch { await readers.CancelAsync(); throw; }
+                }, readers.Token));
             }
 
             await Task.WhenAll(taskList);
@@ -78,27 +85,23 @@ public class AutoMusicGameTask(AutoMusicGameParam taskParam) : ISoloTask
         }
     }
 
-    private async Task DoWhitePressWin32(CancellationToken ct, User32.VK key, Point point)
+    private async Task DoWhitePressWin32(CancellationToken ct, User32.VK key, Point point, IGamePixelSource pixels)
     {
         while (!ct.IsCancellationRequested)
         {
             await Task.Delay(5, ct);
             // Stopwatch sw = new();
             // sw.Start();
-            var hdc = User32.GetDC(_hWnd);
-            var c = Gdi32.GetPixel(hdc, point.X, point.Y);
-            Gdi32.DeleteDC(hdc);
+            var c = pixels.GetPixel(point.X, point.Y);
 
-            if (c.B < 220)
+            if (c.Item0 < 220)
             {
                 KeyDown(key);
                 while (!ct.IsCancellationRequested)
                 {
                     await Task.Delay(5, ct);
-                    hdc = User32.GetDC(_hWnd);
-                    c = Gdi32.GetPixel(hdc, point.X, point.Y);
-                    Gdi32.DeleteDC(hdc);
-                    if (c.B >= 220)
+                    c = pixels.GetPixel(point.X, point.Y);
+                    if (c.Item0 >= 220)
                     {
                         break;
                     }
@@ -217,15 +220,6 @@ public class AutoMusicGameTask(AutoMusicGameParam taskParam) : ISoloTask
     //         }
     //     }
     // }
-
-    private COLORREF GetPixel(int x, int y)
-    {
-        var hdc = User32.GetDC(_hWnd);
-        var c = Gdi32.GetPixel(hdc, x, y);
-        Gdi32.DeleteDC(hdc);
-        return c;
-    }
-
 
     private void KeyUp(User32.VK key)
     {

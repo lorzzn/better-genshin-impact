@@ -12,8 +12,14 @@ public sealed class GameScriptHost(IScriptFileSystem? fileSystem = null, IScript
     {
         var config = GameSession.Current.Config;
         EngineExtend.InitCoreHost(engine, projectPath, searchPaths, fileSystem);
-        var dispatcher = new Dispatcher(config.PathingPartyConfig, new ConfiguredTaskDefaults(config), externalTasks);
+        var dispatcher = CreateDispatcher(externalTasks);
         EngineExtend.InitGameHost(engine, projectPath, dispatcher, config.PathingPartyConfig, fileSystem);
+    }
+
+    public static Dispatcher CreateDispatcher(IScriptTaskHost? externalTasks = null)
+    {
+        var config = GameSession.Current.Config;
+        return new Dispatcher(config.PathingPartyConfig, new ConfiguredTaskDefaults(config), externalTasks);
     }
 
     private sealed class ConfiguredTaskDefaults(GameConfiguration config) : IScriptTaskDefaults
