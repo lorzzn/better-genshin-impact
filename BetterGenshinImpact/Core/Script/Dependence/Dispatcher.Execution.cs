@@ -140,6 +140,15 @@ public partial class Dispatcher
         // 根据名称执行任务
         switch (soloTask.Name)
         {
+            case "OneKeyFight":
+                await new OneKeyFightTask().Start(cancellationToken);
+                return null;
+            case "AutoArtifactSalvage":
+                var salvage = TaskContext.Instance().Config.AutoArtifactSalvageConfig;
+                await new GameTask.AutoArtifactSalvage.AutoArtifactSalvageTask(new(
+                    int.Parse(salvage.MaxArtifactStar), salvage.JavaScript, salvage.ArtifactSetFilter,
+                    salvage.MaxNumToCheck, salvage.RecognitionFailurePolicy)).Start(cancellationToken);
+                return null;
             case "OneKeyClaimReward":
                 await new GameTask.QuickClaimReward.OneKeyClaimRewardTask().Start(cancellationToken);
                 return null;

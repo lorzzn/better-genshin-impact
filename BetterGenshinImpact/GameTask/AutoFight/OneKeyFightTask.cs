@@ -37,6 +37,39 @@ public partial class OneKeyFightTask : Singleton<OneKeyFightTask>
     private readonly HashSet<string> _pressedKeys = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _pressedMouseKeys = new(StringComparer.OrdinalIgnoreCase);
 
+    /// <summary>Runs the existing macro loop under an embedding task's lifetime.</summary>
+    public async Task Start(CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        if (!IsEnabled()) throw new InvalidOperationException("请在宏配置中启用一键战斗");
+        _isKeyDown = true;
+        try
+        {
+            RefreshAvatarMacros();
+            var task = FightTask(ct, IsHoldOnMode());
+            if (task.Status == TaskStatus.Created) task.Start(TaskScheduler.Default);
+            await task;
+            ct.ThrowIfCancellationRequested();
+        }
+        finally
+        {
+            _isKeyDown = false;
+            try { ReleasePressedMacroKeys(); }
+            finally { Core.Simulator.Simulation.ReleaseAllKey(); }
+        }
+    }
+
+    private void RefreshAvatarMacros()
+    {
+        if (_activeMacroPriority != TaskContext.Instance().Config.MacroConfig.CombatMacroPriority ||
+            IsAvatarMacrosEdited())
+        {
+            _activeMacroPriority = TaskContext.Instance().Config.MacroConfig.CombatMacroPriority;
+            _avatarMacros = LoadAvatarMacros();
+            Logger.LogInformation("加载一键宏配置完成");
+        }
+    }
+
     public void KeyDown()
     {
         if (_isKeyDown || !IsEnabled())
@@ -45,13 +78,7 @@ public partial class OneKeyFightTask : Singleton<OneKeyFightTask>
         }
 
         _isKeyDown = true;
-        if (_activeMacroPriority != TaskContext.Instance().Config.MacroConfig.CombatMacroPriority ||
-            IsAvatarMacrosEdited())
-        {
-            _activeMacroPriority = TaskContext.Instance().Config.MacroConfig.CombatMacroPriority;
-            _avatarMacros = LoadAvatarMacros();
-            Logger.LogInformation("加载一键宏配置完成");
-        }
+        RefreshAvatarMacros();
 
         if (IsHoldOnMode() || IsHoldFinishMode())
         {
@@ -138,7 +165,7 @@ public partial class OneKeyFightTask : Singleton<OneKeyFightTask>
     /// </summary>
     private Task FightTask(CancellationToken ct, bool releasePressedKeysOnStop)
     {
-        var imageRegion = CaptureToRectArea();
+        using var imageRegion = CaptureToRectArea();
         var combatScenes = new CombatScenes().InitializeTeam(imageRegion);
         if (!combatScenes.CheckTeamInitialized())
         {
@@ -266,7 +293,7 @@ public partial class OneKeyFightTask : Singleton<OneKeyFightTask>
         var jsonPath = GetAvatarMacroJsonPath();
         var json = File.ReadAllText(jsonPath);
         _lastUpdateTime = File.GetLastWriteTime(jsonPath);
-        var avatarMacros = JsonSerializer.Deserialize<List<AvatarMacro>>(json, ConfigService.JsonOptions);
+        var avatarMacros = JsonSerializer.Deserialize<List<AvatarMacro>>(json, ConfigJson.JsonOptions);
         if (avatarMacros == null)
         {
             return [];
@@ -295,12 +322,20 @@ public partial class OneKeyFightTask : Singleton<OneKeyFightTask>
     
     public static string GetAvatarMacroJsonPath()
     {
+#if BETTERGI_PORTABLE
+        // The host provides the subscribed/configured library. Do not mutate it
+        // or create desktop defaults inside the embedding application's state.
+        var root = Runtime.RuntimeEnvironment.LibraryRoot ?? Runtime.RuntimeEnvironment.AssetRoot;
+        var path = Path.Combine(root, "User", "avatar_macro.json");
+        return File.Exists(path) ? path : Path.Combine(root, "User", "avatar_macro_default.json");
+#else
         var path = Global.Absolute("User/avatar_macro.json");
         if (!File.Exists(path))
         {
             File.Copy(Global.Absolute("User/avatar_macro_default.json"), path);
         }
         return path;
+#endif
     }
 
     public static bool IsEnabled()

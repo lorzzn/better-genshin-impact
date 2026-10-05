@@ -167,7 +167,7 @@
     <Compile Include="../BetterGenshinImpact/GameTask/ISoloTask.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/GameTask/RunnerContext.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/GameTask/TaskProgress/TaskProgress.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="../BetterGenshinImpact/GameTask/AutoFight/**/*.cs" Exclude="../BetterGenshinImpact/GameTask/AutoFight/OneKeyFightTask.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoFight/**/*.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/**/*.cs" Exclude="../BetterGenshinImpact/GameTask/AutoPathing/PathRecorder.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/Core/Config/PathingConditionConfig.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/Core/Config/PathingPartyConfig.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />

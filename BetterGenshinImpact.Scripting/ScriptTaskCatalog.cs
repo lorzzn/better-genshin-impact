@@ -10,6 +10,8 @@ public static class ScriptTaskCatalog
         new("AutoGeniusInvokation", "自动七圣召唤", new { strategy = "" }),
         new("AutoWood", "自动伐木", new { }),
         new("AutoFight", "自动战斗", new { }),
+        new("OneKeyFight", "角色战斗宏", new { }),
+        new("AutoArtifactSalvage", "自动分解圣遗物", new { }),
         new("AutoDomain", "自动秘境", new { }),
         new("AutoBoss", "自动首领讨伐", new { }),
         new("AutoLeyLineOutcrop", "自动地脉花", new { }),
