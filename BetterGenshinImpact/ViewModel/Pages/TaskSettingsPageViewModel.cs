@@ -412,26 +412,9 @@ public partial class TaskSettingsPageViewModel : ViewModel
         SwitchAutoGeniusInvokationEnabled = false;
     }
 
-    public bool GetTcgStrategy(out string content)
-    {
-        content = string.Empty;
-        if (string.IsNullOrEmpty(Config.AutoGeniusInvokationConfig.StrategyName))
-        {
-            Toast.Warning("请先选择策略");
-            return true;
-        }
-
-        var path = Global.Absolute(@"User\AutoGeniusInvokation\" + Config.AutoGeniusInvokationConfig.StrategyName + ".txt");
-
-        if (!File.Exists(path))
-        {
-            Toast.Error("策略文件不存在");
-            return true;
-        }
-
-        content = File.ReadAllText(path);
-        return false;
-    }
+    public bool GetTcgStrategy(out string content) =>
+        Core.Script.Dependence.TaskStrategyResolver.GetTcgStrategy(Config.AutoGeniusInvokationConfig.StrategyName,
+            out content, message => Toast.Warning(message), message => Toast.Error(message));
 
     [RelayCommand]
     public async Task OnGoToAutoGeniusInvokationUrlAsync()
@@ -502,38 +485,10 @@ public partial class TaskSettingsPageViewModel : ViewModel
         return GetFightStrategy(Config.AutoFightConfig.StrategyName, out path);
     }
 
-    public bool GetFightStrategy(string strategyName, out string path)
-    {
-        if (string.IsNullOrEmpty(strategyName))
-        {
-            UIDispatcherHelper.Invoke(() => { Toast.Warning("请先在下拉列表配置中选择战斗策略！"); });
-            path = string.Empty;
-            return true;
-        }
-
-        if ("根据队伍自动选择".Equals(strategyName))
-        {
-            path = Global.Absolute(@"User\AutoFight\");
-        }
-        else if (AutoFightParam.ComboStrategyName.Equals(strategyName))
-        {
-            // 固定策略：不对应策略文件，跳过存在性检查，由 ComboCombatTaskFactory 路由
-            path = strategyName;
-            return false;
-        }
-        else
-        {
-            (path, _) = AutoFightParam.ResolveStrategyPath(strategyName);
-        }
-
-        if (!File.Exists(path) && !Directory.Exists(path))
-        {
-            UIDispatcherHelper.Invoke(() => { Toast.Error("当前选择的自动战斗策略文件不存在"); });
-            return true;
-        }
-
-        return false;
-    }
+    public bool GetFightStrategy(string strategyName, out string path) =>
+        Core.Script.Dependence.TaskStrategyResolver.GetFightStrategy(strategyName, out path,
+            message => UIDispatcherHelper.Invoke(() => Toast.Warning(message)),
+            message => UIDispatcherHelper.Invoke(() => Toast.Error(message)));
 
     [RelayCommand]
     private async Task OnSwitchAutoBoss()

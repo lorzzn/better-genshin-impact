@@ -39,52 +39,9 @@ public partial class EngineExtend
 
         // engine.AddHostObject("xHost", new ExtendedHostFunctions());  // 有越权的安全风险
 
-        // 添加我的自定义实例化对象
-        engine.AddHostObject("pathingScript", new AutoPathingScript(workDir, config));
-        engine.AddHostObject("characterDevelopmentTask", new CharacterDevelopmentTask());
-        engine.AddHostObject("http", new Http()); // 限制文件访问
-        engine.AddHostObject("notification", new Notification());
-        
-        // 任务调度器
-        engine.AddHostObject("dispatcher", new Dispatcher(config));
-        engine.AddHostType("RealtimeTimer", typeof(RealtimeTimer));
-        engine.AddHostType("SoloTask", typeof(SoloTask));
-        engine.AddHostType("AutoSkipConfig", typeof(AutoSkipConfig));
-        
-        // 添加取消令牌相关类型
-
-        // PostMessage 作为类型实例化
-        engine.AddHostType("PostMessage", typeof(Dependence.Simulator.PostMessage));
-
-        // 直接添加方法
-        engine.AddHostObject("getAvatars", GlobalMethod.GetAvatars);
-
-        // 识图模块相关
-        
-        engine.AddHostType("Pen", typeof(Pen));
-        
-        engine.AddHostType("CombatScenes", typeof(CombatScenes));
-        engine.AddHostType("Avatar", typeof(Avatar));
-        
-        
-
-        
-        engine.AddHostType("AutoDomainParam", typeof(AutoDomainParam));  
-        engine.AddHostType("AutoBossParam", typeof(AutoBossParam));
-        engine.AddHostType("CountInventoryItemParam", typeof(CountInventoryItemParam));
-        engine.AddHostType("GridScreenName", typeof(GridScreenName));
-        engine.AddHostType("ItemIconRecognitionMode", typeof(ItemIconRecognitionMode));
-        engine.AddHostType("AutoFightParam", typeof(AutoFightParam)); 
-        engine.AddHostType("AutoLeyLineOutcropParam", typeof(AutoLeyLineOutcropParam));
-        engine.AddHostType("AutoStygianOnslaughtParam", typeof(AutoStygianOnslaughtParam));
-        engine.AddHostObject("strategyFile", new StrategyFile());
-        //鼠标回调
-        engine.AddHostType("KeyMouseHook", typeof(KeyMouseHook)); 
-        // 添加C#的类型
-        engine.AddHostType(typeof(Task));
-        
-        // 新的BvPage类
-
+        InitGameHost(engine, workDir, new Dispatcher(config), config);
+        engine.AddHostObject("http", new Http());
+        engine.AddHostType("KeyMouseHook", typeof(KeyMouseHook));
 
         // HTML 遮罩
         engine.AddHostObject("htmlMask", new HtmlMask(workDir));
@@ -105,6 +62,6 @@ public partial class EngineExtend
         // }
 
         AddCoreGlobalMethods(engine);
-        engine.AddHostObject("getAvatars", GlobalMethod.GetAvatars); // Converting method group to non-delegate type
+        engine.AddHostObject("getAvatars", (Func<string[]>)GlobalMethod.GetAvatars);
     }
 }

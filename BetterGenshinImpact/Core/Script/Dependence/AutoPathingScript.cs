@@ -11,13 +11,13 @@ namespace BetterGenshinImpact.Core.Script.Dependence;
 public class AutoPathingScript
 {
     private object? _config = null;
-    private string _rootPath;
+    private readonly LimitedFile _projectFiles;
     private readonly LimitedFile _autoPathingFile;
 
-    public AutoPathingScript(string rootPath, object? config)
+    public AutoPathingScript(string rootPath, object? config, IScriptFileSystem? fileSystem = null)
     {
         _config = config;
-        _rootPath = rootPath;
+        _projectFiles = new LimitedFile(rootPath, fileSystem);
         _autoPathingFile = new LimitedFile(Global.Absolute(@"User\AutoPathing"));
     }
 
@@ -32,7 +32,7 @@ public class AutoPathingScript
                 pathExecutor.PartyConfig = patyConfig;
             }
 
-            await pathExecutor.Pathing(task);
+            await ScriptOperation.RunAsync("pathing.run", () => pathExecutor.Pathing(task));
         }
         catch (Exception e)
         {
@@ -45,7 +45,7 @@ public class AutoPathingScript
     {
         try
         {
-            var json = await new LimitedFile(_rootPath).ReadText(path);
+            var json = await _projectFiles.ReadText(path);
             await Run(json);
         }
         catch (Exception e)

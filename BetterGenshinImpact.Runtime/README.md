@@ -39,3 +39,15 @@ dotnet test Test/BetterGenshinImpact.RuntimeTest/BetterGenshinImpact.RuntimeTest
 
 这次扩展只进行代码检查和编译；尚未完成全部 JS 注册与平台配置接入，不能视为每日委托
 实机通过，也未运行 Windows/Linux/macOS 游戏验收。
+
+## 2026-10-05 官方 JS 游戏宿主
+
+`GameScriptHost` 使用同一份 `Dispatcher.Execution`、`AutoPathingScript`、队伍与战斗
+对象注册。内置 SoloTask 先走官方实现，只有未知任务名才委托宿主的 MAA 映射。
+Windows 的视图模型设置通过 `IScriptTaskDefaults` 提供，嵌入宿主传入原版配置类型；
+战斗/七圣策略选择共用 `TaskStrategyResolver`，不复写策略规则。
+
+路径与直接任务入口报告可嵌套阶段，用户取消与自定义取消源共同生效。
+脚本文件仍经宿主文件接口读写，官方路径重试与异常处理语义保留。
+本次 Release 编译通过（增量构建 2 条警告、0 错误）；没有执行测试或游戏。
+运行配置的后台编辑与持久化、资源目录隔离、HTML 遮罩及输入钩子仍需继续接入。

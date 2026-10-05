@@ -1,4 +1,7 @@
-﻿using System;
+#if BETTERGI_PORTABLE
+using AllConfig = BetterGenshinImpact.Runtime.GameConfiguration;
+#endif
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BetterGenshinImpact.Core.Config;
@@ -12,7 +15,7 @@ namespace BetterGenshinImpact.Core.Script.Dependence;
 public class Notification
 {
   private readonly AllConfig _config = TaskContext.Instance().Config; 
-    private readonly ILogger<Notification> _logger = App.GetLogger<Notification>();
+    private readonly ILogger<Notification> _logger = GameServices.GetLogger<Notification>();
     private readonly TimeSpan _timeWindow = TimeSpan.FromMinutes(1);
     private readonly int _maxNotifications = 5;
     private readonly Queue<DateTime> _callRecords = new();
@@ -26,9 +29,13 @@ public class Notification
     {
         try
         {
+#if BETTERGI_PORTABLE
+            return _config.NotificationConfig.JsNotificationEnabled;
+#else
             var currentProject = TaskContext.Instance().CurrentScriptProject;
             return _config.NotificationConfig.JsNotificationEnabled &&
                    (currentProject?.AllowJsNotification ?? true);
+#endif
         }
         catch
         {

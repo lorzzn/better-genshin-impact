@@ -524,10 +524,10 @@ namespace BetterGenshinImpact.GameTask
                 if (TaskContext.Instance().Config.CommonConfig.ScreenshotUidCoverEnabled)
                 {
                     var assetScale = TaskContext.Instance().SystemInfo.ScaleTo1080PRatio;
-                    var rect = new Rect((int)(mat.Width - MaskWindowConfig.UidCoverRightBottomRect.X * assetScale),
-                        (int)(mat.Height - MaskWindowConfig.UidCoverRightBottomRect.Y * assetScale),
-                        (int)(MaskWindowConfig.UidCoverRightBottomRect.Width * assetScale),
-                        (int)(MaskWindowConfig.UidCoverRightBottomRect.Height * assetScale));
+                    var rect = new Rect((int)(mat.Width - ScreenshotConfig.UidCoverRightBottomRect.X * assetScale),
+                        (int)(mat.Height - ScreenshotConfig.UidCoverRightBottomRect.Y * assetScale),
+                        (int)(ScreenshotConfig.UidCoverRightBottomRect.Width * assetScale),
+                        (int)(ScreenshotConfig.UidCoverRightBottomRect.Height * assetScale));
                     mat.Rectangle(rect, Scalar.White, -1);
                     Cv2.ImWrite(savePath, mat);
                 }

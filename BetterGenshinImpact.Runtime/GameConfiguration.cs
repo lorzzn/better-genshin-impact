@@ -34,6 +34,9 @@ public sealed class GameConfiguration
     public GameTask.AutoStygianOnslaught.AutoStygianOnslaughtConfig AutoStygianOnslaughtConfig { get; set; } = new();
     public GameTask.AutoGeniusInvokation.AutoGeniusInvokationConfig AutoGeniusInvokationConfig { get; set; } = new();
     public int TriggerInterval { get; set; } = 50;
+    public PathingPartyConfig? PathingPartyConfig { get; set; }
+    public int AutoWoodRoundNum { get; set; }
+    public int AutoWoodDailyMaxCount { get; set; } = 2000;
     public bool DetailedErrorLogs { get; set; }
     public GameTask.AutoCook.AutoCookConfig AutoCookConfig { get; set; } = new();
     public GameTask.AutoCombo.ComboBuild.AutoComboBuildConfig AutoComboBuildConfig { get; set; } = new();
