@@ -7,7 +7,6 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BetterGenshinImpact.Core.Script.Utils;
 using BetterGenshinImpact.GameTask.Common;
-using BetterGenshinImpact.View;
 using Microsoft.Extensions.Logging;
 
 namespace BetterGenshinImpact.Core.Script.Dependence;
@@ -16,7 +15,7 @@ namespace BetterGenshinImpact.Core.Script.Dependence;
 /// HTML遮罩层 - JS脚本依赖类
 /// 提供窗口管理与消息通信功能
 /// </summary>
-public class HtmlMask : IDisposable
+public partial class HtmlMask : IDisposable
 {
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
@@ -62,9 +61,22 @@ public class HtmlMask : IDisposable
     private readonly object _openedWindowsLock = new();
     private bool _disposed;
 
-    public HtmlMask(string workDir)
+    private readonly IHtmlWindowHost windowHost;
+    public HtmlMask(string workDir, IHtmlWindowHost windows)
     {
         _workDir = workDir;
+        windowHost = windows ?? throw new ArgumentNullException(nameof(windows));
+    }
+
+    public static string BridgeScript
+    {
+        get
+        {
+            using var stream = typeof(HtmlMask).Assembly.GetManifestResourceStream("BetterGI.HtmlMaskBridge.js")
+                ?? throw new InvalidOperationException("HTML bridge resource missing");
+            using var reader = new System.IO.StreamReader(stream);
+            return reader.ReadToEnd();
+        }
     }
 
     #region 窗口管理
@@ -92,11 +104,16 @@ public class HtmlMask : IDisposable
                 finalUrl = new Uri(absPath).AbsoluteUri;
             }
 
-            string windowId = HtmlMaskWindow.Show(finalUrl, id, _workDir);
-
-            _toHtmlQueues[windowId] = new ConcurrentQueue<Message>();
-            _fromHtmlQueues[windowId] = new ConcurrentQueue<Message>();
-            lock (_openedWindowsLock) { _openedWindows.Add(windowId); }
+            string windowId = windowHost.Show(finalUrl, id, _workDir, initializedId =>
+            {
+                CleanupQueues(initializedId);
+                _toHtmlQueues[initializedId] = new ConcurrentQueue<Message>();
+                _fromHtmlQueues[initializedId] = new ConcurrentQueue<Message>();
+                lock (_openedWindowsLock)
+                {
+                    if (!_openedWindows.Contains(initializedId)) _openedWindows.Add(initializedId);
+                }
+            });
 
             return windowId;
         }
@@ -114,7 +131,7 @@ public class HtmlMask : IDisposable
     {
         lock (_openedWindowsLock) { _openedWindows.Remove(id); }
         CleanupQueues(id);
-        return HtmlMaskWindow.Close(id);
+        return windowHost.Close(id);
     }
 
     /// <summary>
@@ -131,19 +148,19 @@ public class HtmlMask : IDisposable
         foreach (var windowId in windows)
         {
             CleanupQueues(windowId);
-            HtmlMaskWindow.Close(windowId);
+            windowHost.Close(windowId);
         }
     }
 
     /// <summary>
     /// 获取所有窗口ID
     /// </summary>
-    public string[] GetWindowIds() => HtmlMaskWindow.GetWindowIds();
+    public string[] GetWindowIds() => windowHost.GetWindowIds();
 
     /// <summary>
     /// 窗口是否存在
     /// </summary>
-    public bool Exists(string id) => HtmlMaskWindow.Exists(id);
+    public bool Exists(string id) => windowHost.Exists(id);
 
     /// <summary>
     /// 设置窗口的点击穿透模式
@@ -152,7 +169,7 @@ public class HtmlMask : IDisposable
     /// <param name="enabled">true=点击穿透，false=可交互</param>
     public void SetClickThrough(string windowId, bool enabled)
     {
-        HtmlMaskWindow.SetClickThrough(windowId, enabled);
+        windowHost.SetClickThrough(windowId, enabled);
     }
 
     /// <summary>
@@ -162,7 +179,7 @@ public class HtmlMask : IDisposable
     /// <returns>true=点击穿透，false=可交互</returns>
     public bool GetClickThrough(string windowId)
     {
-        return HtmlMaskWindow.GetClickThrough(windowId);
+        return windowHost.GetClickThrough(windowId);
     }
 
     /// <summary>
@@ -171,7 +188,7 @@ public class HtmlMask : IDisposable
     /// <param name="windowId">窗口ID</param>
     public void ToggleClickThrough(string windowId)
     {
-        HtmlMaskWindow.ToggleClickThrough(windowId);
+        windowHost.ToggleClickThrough(windowId);
     }
 
     #endregion
@@ -183,7 +200,7 @@ public class HtmlMask : IDisposable
     /// </summary>
     public void Send(string windowId, string url, string jsonData)
     {
-        if (!HtmlMaskWindow.Exists(windowId) || !_toHtmlQueues.TryGetValue(windowId, out var queue))
+        if (!windowHost.Exists(windowId) || !_toHtmlQueues.TryGetValue(windowId, out var queue))
             throw new InvalidOperationException($"HTML遮罩窗口不存在或已关闭: {windowId}");
 
         queue.Enqueue(new Message
@@ -192,7 +209,7 @@ public class HtmlMask : IDisposable
             Data = ParseData(jsonData)
         });
 
-        HtmlMaskWindow.NotifyFlush(windowId);
+        windowHost.NotifyFlush(windowId);
     }
 
     /// <summary>
@@ -206,7 +223,7 @@ public class HtmlMask : IDisposable
         if (string.IsNullOrWhiteSpace(requestId))
             throw new ArgumentException("requestId cannot be empty", nameof(requestId));
 
-        if (!HtmlMaskWindow.Exists(windowId) || !_toHtmlQueues.TryGetValue(windowId, out var queue))
+        if (!windowHost.Exists(windowId) || !_toHtmlQueues.TryGetValue(windowId, out var queue))
             throw new InvalidOperationException($"HTML遮罩窗口不存在或已关闭: {windowId}");
 
         queue.Enqueue(new Message
@@ -216,7 +233,7 @@ public class HtmlMask : IDisposable
             RequestId = requestId
         });
 
-        HtmlMaskWindow.NotifyFlush(windowId);
+        windowHost.NotifyFlush(windowId);
     }
     
     /// <summary>
@@ -233,9 +250,10 @@ public class HtmlMask : IDisposable
         _jsPendingRequests[requestId] = tcs;
         _requestWindowMap[requestId] = windowId;
 
+        using var cancellation = CancellationContext.Instance.Token.Register(() => tcs.TrySetCanceled());
         try
         {
-            if (!HtmlMaskWindow.Exists(windowId) || !_toHtmlQueues.TryGetValue(windowId, out var queue))
+            if (!windowHost.Exists(windowId) || !_toHtmlQueues.TryGetValue(windowId, out var queue))
                 throw new InvalidOperationException($"HTML遮罩窗口不存在或已关闭: {windowId}");
 
             queue.Enqueue(new Message
@@ -245,7 +263,7 @@ public class HtmlMask : IDisposable
                 RequestId = requestId
             });
 
-            HtmlMaskWindow.NotifyFlush(windowId);
+            windowHost.NotifyFlush(windowId);
 
             if (timeoutMs > 0)
             {
@@ -260,7 +278,7 @@ public class HtmlMask : IDisposable
 
             return await tcs.Task;
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) when (!CancellationContext.Instance.Token.IsCancellationRequested)
         {
             return null;
         }
@@ -287,13 +305,13 @@ public class HtmlMask : IDisposable
             if (queue.TryDequeue(out var message))
                 return JsonSerializer.Serialize(message, _jsonOptions);
 
-            if (_disposed || !_fromHtmlQueues.ContainsKey(windowId) || !HtmlMaskWindow.Exists(windowId))
+            if (_disposed || !_fromHtmlQueues.ContainsKey(windowId) || !windowHost.Exists(windowId))
                 return null;
 
             if (timeoutMs > 0 && sw.ElapsedMilliseconds > timeoutMs)
                 return null;
 
-            await Task.Delay(50);
+            await Task.Delay(50, CancellationContext.Instance.Token);
         }
     }
 
@@ -333,7 +351,7 @@ public class HtmlMask : IDisposable
     /// <summary>
     /// 将待推送队列中的消息通过回调逐一发出
     /// </summary>
-    internal static void FlushPendingMessages(string windowId, Action<string> postAction)
+    public static void FlushPendingMessages(string windowId, Action<string> postAction)
     {
         if (_toHtmlQueues.TryGetValue(windowId, out var queue))
         {
@@ -347,10 +365,12 @@ public class HtmlMask : IDisposable
     /// <summary>
     /// HTML端发来的消息入队，如果是JS请求的响应则直接resolve
     /// </summary>
-    internal static void SendFromHtml(string windowId, string url, string data, string? requestId = null)
+    public static void SendFromHtml(string windowId, string url, string data, string? requestId = null)
     {
         // 匹配JS端pending的request
-        if (requestId != null && _jsPendingRequests.TryRemove(requestId, out var tcs))
+        if (url == "/__response__" && requestId != null &&
+            _requestWindowMap.TryGetValue(requestId, out var owner) && owner == windowId &&
+            _jsPendingRequests.TryRemove(requestId, out var tcs))
         {
             var parsed = ParseData(data);
             tcs.TrySetResult(parsed != null ? parsed.Value.GetRawText() : "null");
@@ -384,7 +404,7 @@ public class HtmlMask : IDisposable
         }
     }
 
-    private static void CleanupQueues(string windowId)
+    public static void CleanupQueues(string windowId)
     {
         _toHtmlQueues.TryRemove(windowId, out _);
         _fromHtmlQueues.TryRemove(windowId, out _);

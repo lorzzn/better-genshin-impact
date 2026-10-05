@@ -64,7 +64,12 @@ public class BaseMapLayer(SceneBaseMap baseMap)
             return layers;
         }
 
-        var files = Directory.GetFiles(layerDir);
+        var files =
+#if BETTERGI_PORTABLE
+            Runtime.MapFeatureCache.LayerFiles(layerDir);
+#else
+            Directory.GetFiles(layerDir);
+#endif
         var validFiles = files.Where(f => (f.EndsWith(".kp.bin") || f.EndsWith(".mat.png"))
                                           && !f.EndsWith("Teyvat_0_256_SIFT.kp.bin")
                                           && !f.EndsWith("Teyvat_0_256_SIFT.mat.png"));

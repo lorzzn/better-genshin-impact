@@ -15,6 +15,7 @@ public static class ScriptApiCatalog
             ["dispatcher"] = typeof(Dispatcher), ["pathingScript"] = typeof(AutoPathingScript),
             ["keyMouseScript"] = typeof(KeyMouseScript), ["strategyFile"] = typeof(StrategyFile),
             ["notification"] = typeof(Notification), ["log"] = typeof(Log),
+            ["htmlMask"] = typeof(HtmlMask),
             ["characterDevelopmentTask"] = typeof(BetterGenshinImpact.GameTask.CharacterDevelopment.CharacterDevelopmentTask),
             ["BvPage"] = typeof(BvPage), ["BvLocator"] = typeof(BvLocator), ["BvImage"] = typeof(BvImage),
         };

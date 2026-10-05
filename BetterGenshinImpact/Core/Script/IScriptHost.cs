@@ -10,3 +10,8 @@ public interface IScriptHost
 {
     void Configure(IScriptEngine engine, string projectPath, string[] searchPaths);
 }
+
+public interface IScriptHostLifetime
+{
+    void OnScriptEnding();
+}

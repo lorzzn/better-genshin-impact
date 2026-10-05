@@ -137,14 +137,14 @@ public partial class ScriptProject
         }
         finally
         {
-            // 终止代码执行
-            try
+            // Close host callbacks while V8 is still alive. Window transports
+            // must not outlive the script that owns their pending promises.
+            try { (host as IScriptHostLifetime)?.OnScriptEnding(); }
+            finally
             {
-                engine.Interrupt();
-            }
-            catch (Exception e)
-            {
-                TaskControl.Logger.LogError(e, "中断脚本执行异常：" + e.Message);
+                // 终止代码执行
+                try { engine.Interrupt(); }
+                catch (Exception e) { TaskControl.Logger.LogError(e, "中断脚本执行异常：" + e.Message); }
             }
 
         }

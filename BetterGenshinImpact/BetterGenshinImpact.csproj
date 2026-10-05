@@ -268,4 +268,7 @@
 	  <_DeploymentManifestIconFile Remove="Resources\Images\logo.ico" />
 	</ItemGroup>
 	
+  <ItemGroup>
+    <EmbeddedResource Include="Core/Script/Dependence/HtmlMaskBridge.js" LogicalName="BetterGI.HtmlMaskBridge.js" />
+  </ItemGroup>
 </Project>

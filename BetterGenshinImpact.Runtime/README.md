@@ -57,6 +57,17 @@ Windows 的视图模型设置通过 `IScriptTaskDefaults` 提供，嵌入宿主�
 `RuntimeEnvironment.StateRoot` 由宿主指定，接收官方 `User` 运行数据、`log` 与
 `Cache`。只读策略、路径及键鼠资源从 `LibraryRoot/User/{AutoFight,AutoGeniusInvokation,
 AutoPathing,KeyMouseScript}` 读取，未指定时沿用 `AssetRoot`；游戏识别资源来自发布包。
-地图原始图片和预计算特征仍按官方地图资源布局读取，缺少特征时的生成目录继续整理。
+地图原始图片和预计算特征仍按官方地图资源布局读取；缺少特征时调用官方 SIFT，
+生成物写入 StateRoot/Cache/MapFeatures，按来源与时间戳区分并以完整标记发布。
 官方模型工厂读取本次会话硬件配置，OCR 实例的首次创建按模型串行处理。
 `ScriptApiCatalog` 报告已编译接口；该清单不能代替依赖完整性或游戏验收结论。
+
+### 官方 HTML 页面宿主
+
+`HtmlMask` 的消息队列、请求/响应、点击穿透及脚本退出清理直接共享。`IHtmlWindowHost`
+只提供窗口及消息传输：Windows 仍调用原版 WebView2，嵌入宿主可承接为网页中的脚本面板。
+上游注入的 JavaScript 桥接资源保持同一份。窗口展示前初始化消息队列；执行取消会停止
+无限等待，人工操作本身不增加超时。`IScriptHostLifetime` 在 V8 释放前关闭宿主回调。
+
+本轮 C# Release 构建通过（270 条分析器/平台/上游告警，0 错误），未运行测试或游戏。
+输入钩子的操作系统依赖仍需接入；完整 WPF 应用尚未完成本轮构建。

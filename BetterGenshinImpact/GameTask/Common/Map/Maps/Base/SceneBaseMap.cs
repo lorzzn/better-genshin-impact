@@ -94,6 +94,9 @@ public abstract class SceneBaseMap : ISceneMap
 
     protected void ExtractAndSaveFeature(string basePath)
     {
+#if BETTERGI_PORTABLE
+        Runtime.MapFeatureCache.Ensure(basePath, SiftMatcher.SaveFeatures);
+#else
         var fileName = Path.GetFileNameWithoutExtension(basePath);
         var folder = Path.GetDirectoryName(basePath)!;
 
@@ -106,6 +109,7 @@ public abstract class SceneBaseMap : ISceneMap
         }
 
         SiftMatcher.SaveFeatures(basePath, trainKeyPointsPath, trainDescriptorsPath);
+#endif
     }
 
     public virtual void WarmUp()
