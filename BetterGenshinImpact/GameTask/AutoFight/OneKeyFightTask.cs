@@ -1,4 +1,4 @@
-﻿using BetterGenshinImpact.Core.Config;
+using BetterGenshinImpact.Core.Config;
 using BetterGenshinImpact.GameTask.AutoFight.Model;
 using BetterGenshinImpact.GameTask.AutoFight.Script;
 using BetterGenshinImpact.Model;
@@ -17,11 +17,11 @@ namespace BetterGenshinImpact.GameTask.AutoFight;
 /// <summary>
 /// 一键战斗宏
 /// </summary>
-public class OneKeyFightTask : Singleton<OneKeyFightTask>
+public partial class OneKeyFightTask : Singleton<OneKeyFightTask>
 {
-    public static readonly string HoldOnMode = "按住时重复(新)";
-    public static readonly string HoldFinishMode = "按住时重复(旧)";
-    public static readonly string TickMode = "触发";
+
+
+
 
     private Dictionary<string, List<CombatCommand>>? _avatarMacros;
     private CancellationTokenSource? _cts = null;

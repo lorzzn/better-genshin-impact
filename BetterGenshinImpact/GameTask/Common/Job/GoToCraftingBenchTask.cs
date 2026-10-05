@@ -40,7 +40,7 @@ public class GoToCraftingBenchTask
 
     public GoToCraftingBenchTask()
     {
-        IStringLocalizer<GoToCraftingBenchTask> stringLocalizer = App.GetService<IStringLocalizer<GoToCraftingBenchTask>>() ?? throw new NullReferenceException();
+        IStringLocalizer<GoToCraftingBenchTask> stringLocalizer = GameServices.Localizer<GoToCraftingBenchTask>() ?? throw new NullReferenceException();
         CultureInfo cultureInfo = new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
         this.craftLocalizedString = stringLocalizer.WithCultureGet(cultureInfo, "合成");
     }

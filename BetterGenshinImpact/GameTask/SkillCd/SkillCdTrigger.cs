@@ -351,7 +351,7 @@ public class SkillCdTrigger : ITaskTrigger
         var elementalSkillKey = (int)TaskContext.Instance()
             .Config.KeyBindingsConfig.ElementalSkill.ToVK();
 
-        short eKeyState = User32.GetAsyncKeyState(elementalSkillKey);
+        short eKeyState = ReadKeyState(elementalSkillKey);
         bool isEDown = (eKeyState & 0x8000) != 0;
         if (isEDown && !_prevEKey) _lastEKeyPress = now;
         _prevEKey = isEDown;
@@ -360,7 +360,7 @@ public class SkillCdTrigger : ITaskTrigger
         int pressedIndex = -1;
         for (int i = 0; i < 4; i++)
         {
-            short keyState = User32.GetAsyncKeyState((int)(User32.VK.VK_1 + (byte)i));
+            short keyState = ReadKeyState((int)(User32.VK.VK_1 + (byte)i));
             bool isDown = (keyState & 0x8000) != 0;
             if (isDown && !_prevKeys[i]) pressedIndex = i;
             _prevKeys[i] = isDown;
@@ -663,5 +663,13 @@ public class SkillCdTrigger : ITaskTrigger
         }
 
         SkillCdOverlayRenderer.Update("SkillCdText", slotCds);
+    }
+    private static short ReadKeyState(int key)
+    {
+#if BETTERGI_PORTABLE
+        return BetterGenshinImpact.Runtime.GameSession.Current.IsKeyDown(key) ? unchecked((short)0x8000) : (short)0;
+#else
+        return User32.GetAsyncKeyState(key);
+#endif
     }
 }

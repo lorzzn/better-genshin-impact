@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -28,7 +28,7 @@ namespace BetterGenshinImpact.GameTask.Common.Job;
 /// </summary>
 public class CheckRewardsTask
 {
-    private readonly ILogger<CheckRewardsTask> _logger = App.GetLogger<CheckRewardsTask>();
+    private readonly ILogger<CheckRewardsTask> _logger = GameServices.GetLogger<CheckRewardsTask>();
 
     private readonly string _dailyRewardsClaimedLocalizedString;
     private readonly string _dailyCommissionRewardsString;
@@ -36,7 +36,7 @@ public class CheckRewardsTask
 
     public CheckRewardsTask()
     {
-        IStringLocalizer<CheckRewardsTask> stringLocalizer = App.GetService<IStringLocalizer<CheckRewardsTask>>() ?? throw new NullReferenceException();
+        IStringLocalizer<CheckRewardsTask> stringLocalizer = GameServices.Localizer<CheckRewardsTask>() ?? throw new NullReferenceException();
         CultureInfo cultureInfo = new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
         this._dailyRewardsClaimedLocalizedString = stringLocalizer.WithCultureGet(cultureInfo, "今日奖励已领取");
         this._dailyCommissionRewardsString = stringLocalizer.WithCultureGet(cultureInfo, "每日委托奖励");

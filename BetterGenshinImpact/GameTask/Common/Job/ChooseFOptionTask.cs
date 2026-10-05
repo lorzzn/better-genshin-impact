@@ -25,7 +25,7 @@ public class ChooseFOptionTask
     private const int RecognitionRetryCount = 5;
     private const int RetryMouseMoveDistance = 400;
     private static readonly SemaphoreSlim SelectionLock = new(1, 1);
-    private readonly ILogger<ChooseFOptionTask> _logger = App.GetLogger<ChooseFOptionTask>();
+    private readonly ILogger<ChooseFOptionTask> _logger = GameServices.GetLogger<ChooseFOptionTask>();
 
     public string Name => "选择指定 F 交互选项";
 

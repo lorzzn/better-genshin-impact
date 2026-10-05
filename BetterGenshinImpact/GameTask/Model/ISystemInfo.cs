@@ -6,7 +6,7 @@ using Size = System.Drawing.Size;
 
 namespace BetterGenshinImpact.GameTask.Model
 {
-    public interface ISystemInfo
+    public interface ISystemInfo : IRecognitionSurface
     {
         /// <summary>
         /// 显示器分辨率 无缩放
@@ -22,18 +22,18 @@ namespace BetterGenshinImpact.GameTask.Model
         /// 以1080P为标准的素材缩放比例,不会大于1
         /// 与 ZoomOutMax1080PRatio 相等
         /// </summary>
-        public double AssetScale { get; }
+        public new double AssetScale { get; }
 
         /// <summary>
         /// 游戏区域比1080P缩小的比例
         /// 最大值为1
         /// </summary>
-        public double ZoomOutMax1080PRatio { get; }
+        public new double ZoomOutMax1080PRatio { get; }
 
         /// <summary>
         /// 捕获游戏区域缩放至1080P的比例
         /// </summary>
-        public double ScaleTo1080PRatio { get; }
+        public new double ScaleTo1080PRatio { get; }
 
         /// <summary>
         /// 捕获窗口区域 和实际游戏画面一致
@@ -44,7 +44,7 @@ namespace BetterGenshinImpact.GameTask.Model
         /// <summary>
         /// 捕获窗口区域 大于1080P则为1920x1080
         /// </summary>
-        public Rect ScaleMax1080PCaptureRect { get; set; }
+        public new Rect ScaleMax1080PCaptureRect { get; set; }
 
         public Process GameProcess { get; }
 

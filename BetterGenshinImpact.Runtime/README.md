@@ -11,7 +11,7 @@
 模型和地图缓存按进程隔离：一个进程服务一个脚本/Target，调用顺序执行，不在进程中混用多个 Target。
 
 配置使用原版传送、快捷传送与键位类型；原版识别 JSON、本地化、模型和地图资源继续由任务读取。
-神像传送后的可选步行依赖官方路径执行器；尚未绑定时在输入前明确失败。
+神像传送后的可选步行直接调用官方 PathExecutor，不再保留可选的外部路径实现。
 
 本阶段 Windows x64 通过 16 项运行库测试，以及 Go 桥接的地图、缩放、宏回放、
 取消、模型和 OCR 回归。真实游戏通过主界面与视角识别；首次传送实测出现截图耗时波动，
@@ -21,3 +21,21 @@
 dotnet restore Test/BetterGenshinImpact.RuntimeTest/BetterGenshinImpact.RuntimeTest.csproj --source https://api.nuget.org/v3/index.json
 dotnet test Test/BetterGenshinImpact.RuntimeTest/BetterGenshinImpact.RuntimeTest.csproj -c Release --no-restore
 ```
+
+## 2026-10-05 执行库扩展（开发中）
+
+直接编入官方路径/队伍/战斗、背包与合成、对话与拾取、钓鱼/伐木、秘境/首领/
+地脉花/幽境/七圣召唤/料理/角色养成任务，以及官方行为树构建和执行代码。
+游戏策略、重试与识别条件仍来自相同源码文件，没有增加另一套游戏执行器。
+
+- 抽出 `IRecognitionSurface`、`GameServices` 和截图配置等平台边界，桌面入口继续可用。
+- 官方 `ScriptTriggerCollection`、`TriggerProcessor` 复用命名注册、优先级、独占及 UI 判断。
+  嵌入式计时器只服务当前 `GameSession`，退出时取消并等待回收，失败传播给本次调用。
+- 官方等待/暂停/恢复逻辑共享到 `TaskControl.Wait.cs`；按键状态、窗口焦点由 Target 提供。
+- `RunnerContext` 和取消源绑定当前会话；键鼠按下集合串行访问，退出时释放。
+- 本地窗口枚举和电源管理不会误作用于嵌入宿主。Target 无音频时沿用官方对话固定等待；
+  渠道登录需要宿主提供元数据与驱动，缺失明确失败。
+- 识别资源及本地化随运行库发布。截图后台写入先复制图片，避免调用结束后访问已释放 Mat。
+
+这次扩展只进行代码检查和编译；尚未完成全部 JS 注册与平台配置接入，不能视为每日委托
+实机通过，也未运行 Windows/Linux/macOS 游戏验收。

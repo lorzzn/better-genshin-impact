@@ -21,7 +21,7 @@ namespace BetterGenshinImpact.GameTask.Common.Job;
 
 public partial class ChooseTalkOptionTask
 {
-    private readonly ILogger<ChooseTalkOptionTask> _logger = App.GetLogger<ChooseTalkOptionTask>();
+    private readonly ILogger<ChooseTalkOptionTask> _logger = GameServices.GetLogger<ChooseTalkOptionTask>();
 
     private static RecognitionObject GetOptionIconRecognitionObject(ImageRegion region)
     {

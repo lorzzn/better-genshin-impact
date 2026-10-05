@@ -1,3 +1,11 @@
+#if BETTERGI_PORTABLE
+using AllConfig = BetterGenshinImpact.Runtime.GameConfiguration;
+#endif
+#if BETTERGI_PORTABLE
+using OverlayPen = BetterGenshinImpact.Runtime.OverlayPen;
+#else
+using OverlayPen = System.Drawing.Pen;
+#endif
 using BetterGenshinImpact.Core.Recognition;
 using BetterGenshinImpact.Core.Recognition.OpenCv;
 using BetterGenshinImpact.Core.Recognition.OCR;
@@ -46,13 +54,13 @@ namespace BetterGenshinImpact.GameTask.AutoLeyLineOutcrop;
 
 public class AutoLeyLineOutcropTask : ISoloTask
 {
-    private readonly ILogger<AutoLeyLineOutcropTask> _logger = App.GetLogger<AutoLeyLineOutcropTask>();
+    private readonly ILogger<AutoLeyLineOutcropTask> _logger = GameServices.GetLogger<AutoLeyLineOutcropTask>();
     private readonly AutoLeyLineOutcropParam _taskParam; 
     private readonly bool _oneDragonMode;
     private TpTask _tpTask = null!;
     private readonly ReturnMainUiTask _returnMainUiTask = new();
     private SwitchPartyTask? _switchPartyTask;
-    private ISystemInfo _systemInfo = null!;
+    private IRecognitionSurface _systemInfo = null!;
 
     private CancellationToken _ct;
     private AutoLeyLineConfigData? _configData;
@@ -90,7 +98,7 @@ public class AutoLeyLineOutcropTask : ISoloTask
     private const int KazuhaPickupPostSkillWaitMs = 3000;
     private static readonly TimeSpan LeyLineFightSeekInitialDelay = TimeSpan.FromSeconds(2);
     private static readonly Rect HandbookTrackActionButtonRoi = new(ScaleTo1080(1120), ScaleTo1080(680), ScaleTo1080(700), ScaleTo1080(320));
-    private static readonly System.Drawing.Pen OcrOverlayPen = new(System.Drawing.Color.Lime, 2);
+    private static readonly OverlayPen OcrOverlayPen = new(System.Drawing.Color.Lime, 2);
     private static readonly object PickLock = new();
     private bool _overlayDisplayTemporarilyEnabled;
     private bool _overlayDisplayOriginalValue;
@@ -1693,6 +1701,7 @@ public class AutoLeyLineOutcropTask : ISoloTask
 
     private void EnsureMaskOverlayVisible()
     {
+#if !BETTERGI_PORTABLE
         var config = TaskContext.Instance().Config.MaskWindowConfig;
         _overlayDisplayOriginalValue = config.DisplayRecognitionResultsOnMask;
         if (!config.DisplayRecognitionResultsOnMask)
@@ -1715,10 +1724,12 @@ public class AutoLeyLineOutcropTask : ISoloTask
                 maskWindow.BringToTop();
             });
         }
+#endif
     }
 
     private void RestoreMaskOverlayVisible()
     {
+#if !BETTERGI_PORTABLE
         if (!_overlayDisplayTemporarilyEnabled)
         {
             return;
@@ -1726,10 +1737,12 @@ public class AutoLeyLineOutcropTask : ISoloTask
 
         TaskContext.Instance().Config.MaskWindowConfig.DisplayRecognitionResultsOnMask = _overlayDisplayOriginalValue;
         _overlayDisplayTemporarilyEnabled = false;
+#endif
     }
 
     private void RefreshMaskWindowForOverlay()
     {
+#if !BETTERGI_PORTABLE
         var maskWindow = MaskWindow.InstanceNullable();
         if (maskWindow == null)
         {
@@ -1758,6 +1771,7 @@ public class AutoLeyLineOutcropTask : ISoloTask
 
             maskWindow.Refresh();
         });
+#endif
     }
 
     private async Task<bool> TryUseRewardResin()

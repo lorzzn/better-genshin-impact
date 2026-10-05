@@ -1,4 +1,5 @@
-﻿#if BETTERGI_PORTABLE
+using BetterGenshinImpact.GameTask;
+#if BETTERGI_PORTABLE
 using CmpType = OpenCvSharp.CmpTypes;
 #endif
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ public class MatchTemplateHelper
     private static ILogger? Logger => Runtime.RuntimeEnvironment.Logger;
 #else
     private static ILogger<MatchTemplateHelper>? Logger => System.Windows.Application.Current is App
-        ? App.GetLogger<MatchTemplateHelper>()
+        ? GameServices.GetLogger<MatchTemplateHelper>()
         : null;
 #endif
 

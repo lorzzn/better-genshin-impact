@@ -1,4 +1,4 @@
-﻿using BetterGenshinImpact.Core.Config;
+using BetterGenshinImpact.Core.Config;
 using BetterGenshinImpact.Model;
 using BetterGenshinImpact.Service;
 using System;
@@ -18,7 +18,7 @@ public class HangoutConfig : Singleton<HangoutConfig>
         // 邀约分支选项
         string hangoutJson = File.ReadAllText(Global.Absolute(@"GameTask\AutoSkip\Assets\hangout.json"));
         HangoutOptions = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(hangoutJson,
-            ConfigService.JsonOptions) ?? throw new Exception("hangout.json deserialize failed");
+            ConfigJson.JsonOptions) ?? throw new Exception("hangout.json deserialize failed");
         HangoutOptionsTitleList = new List<string>(HangoutOptions.Keys);
     }
 }

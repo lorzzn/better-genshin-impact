@@ -88,7 +88,7 @@ public class AutoFightJsonTask : ISoloTask
 
         if (_taskParam.FightFinishDetectEnabled)
         {
-            _predictor = App.ServiceProvider.GetRequiredService<BgiOnnxFactory>().CreateYoloPredictor(BgiOnnxModel.BgiWorld);
+            _predictor = GameServices.OnnxFactory.CreateYoloPredictor(BgiOnnxModel.BgiWorld);
         }
 
         _finishDetectConfig = new AutoFightTask.TaskFightFinishDetectConfig(_taskParam);

@@ -25,26 +25,8 @@ public enum ThemeType
 ///     遮罩窗口配置
 /// </summary>
 [Serializable]
-public partial class CommonConfig : ObservableObject
+public partial class CommonConfig : ScreenshotConfig
 {
-    /// <summary>
-    ///     是否启用遮罩窗口
-    /// </summary>
-    [ObservableProperty]
-    private bool _screenshotEnabled;
-
-    /// <summary>
-    ///     UID遮盖是否启用
-    /// </summary>
-    [ObservableProperty]
-    private bool _screenshotUidCoverEnabled = true;
-
-    /// <summary>
-    ///     是否保存奖励识别调试截图
-    /// </summary>
-    [ObservableProperty]
-    private bool _rewardRecognitionScreenshotEnabled;
-
     /// <summary>
     ///     退出时最小化至托盘
     /// </summary>

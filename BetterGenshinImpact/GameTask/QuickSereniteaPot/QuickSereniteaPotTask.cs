@@ -8,7 +8,11 @@ using BetterGenshinImpact.GameTask.Model.Area;
 using BetterGenshinImpact.View.Drawable;
 using Microsoft.Extensions.Logging;
 using System;
+#if BETTERGI_PORTABLE
+using Toast = BetterGenshinImpact.Runtime.RuntimeUi;
+#else
 using Wpf.Ui.Violeta.Controls;
+#endif
 using static Vanara.PInvoke.User32;
 
 namespace BetterGenshinImpact.GameTask.QuickSereniteaPot;

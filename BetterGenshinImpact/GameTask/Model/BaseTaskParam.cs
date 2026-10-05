@@ -25,7 +25,7 @@ public abstract class BaseTaskParam<T> where T : class
         #if BETTERGI_PORTABLE
         StringLocalizer = stringLocalizer ?? Runtime.RuntimeEnvironment.Localizer<T>();
 #else
-        StringLocalizer = stringLocalizer ?? App.GetService<IStringLocalizer<T>>() ?? throw new Exception();
+        StringLocalizer = stringLocalizer ?? GameServices.Localizer<T>() ?? throw new Exception();
 #endif
     }
 }

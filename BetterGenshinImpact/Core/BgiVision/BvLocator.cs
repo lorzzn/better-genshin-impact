@@ -22,7 +22,7 @@ public class BvLocator
 #if BETTERGI_PORTABLE
     private static ILogger Logger => Runtime.RuntimeEnvironment.Logger;
 #else
-    private static readonly ILogger Logger = App.GetLogger<BvLocator>();
+    private static readonly ILogger Logger = GameServices.GetLogger<BvLocator>();
 #endif
     private readonly CancellationToken _cancellationToken;
     private readonly IReadOnlyList<string> _anyTexts;

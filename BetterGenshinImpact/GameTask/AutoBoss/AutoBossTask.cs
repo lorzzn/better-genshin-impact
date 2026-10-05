@@ -42,7 +42,7 @@ public class AutoBossTask : ISoloTask<Dictionary<string, int>>
 {
     public string Name => "自动首领讨伐";
 
-    private readonly ILogger<AutoBossTask> _logger = App.GetLogger<AutoBossTask>();
+    private readonly ILogger<AutoBossTask> _logger = GameServices.GetLogger<AutoBossTask>();
     private readonly AutoBossParam _taskParam;
     private readonly CombatScriptBag? _combatScriptBag;
     private readonly string? _jsonCombatStrategyPath;
@@ -1000,7 +1000,7 @@ public class AutoBossTask : ISoloTask<Dictionary<string, int>>
     /// <exception cref="Exception">游戏窗口不是 16:9 时抛出。</exception>
     private void LogScreenResolution()
     {
-        var gameScreenSize = SystemControl.GetGameScreenRect(TaskContext.Instance().GameHandle);
+        var gameScreenSize = TaskContext.Instance().SystemInfo.CaptureAreaRect;
         if (gameScreenSize.Width * 9 != gameScreenSize.Height * 16)
         {
             _logger.LogError("游戏窗口分辨率不是 16:9 ！当前分辨率为 {Width}x{Height}", gameScreenSize.Width, gameScreenSize.Height);

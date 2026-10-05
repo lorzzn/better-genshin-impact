@@ -1,3 +1,4 @@
+using BetterGenshinImpact.GameTask;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ public class BvPage
 #if BETTERGI_PORTABLE
     private static ILogger Logger => Runtime.RuntimeEnvironment.Logger;
 #else
-    private static readonly ILogger Logger = App.GetLogger<BvPage>();
+    private static readonly ILogger Logger = GameServices.GetLogger<BvPage>();
 #endif
     private readonly CancellationToken _cancellationToken;
 

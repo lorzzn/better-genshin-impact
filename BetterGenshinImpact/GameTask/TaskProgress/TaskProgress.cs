@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -66,6 +66,6 @@ public partial class TaskProgress : ObservableObject
     }
     public string ToJson()
     {
-        return JsonSerializer.Serialize(this, ConfigService.JsonOptions);
+        return JsonSerializer.Serialize(this, ConfigJson.JsonOptions);
     }
 }

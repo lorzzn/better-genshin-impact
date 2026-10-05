@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using BetterGenshinImpact.GameTask.Common.Job;
 using Vanara.PInvoke;
 using BetterGenshinImpact.GameTask.AutoFishing;
+#if !BETTERGI_PORTABLE
 using BetterGenshinImpact.ViewModel.Pages;
+#endif
 using System;
 using BetterGenshinImpact.GameTask.AutoPathing;
 using BetterGenshinImpact.GameTask.Common.BgiVision;
@@ -22,7 +24,7 @@ namespace BetterGenshinImpact.Core.Script.Dependence;
 
 public partial class Genshin
 {
-    private readonly ILogger<Genshin> _logger = App.GetLogger<Genshin>();
+    private readonly ILogger<Genshin> _logger = GameServices.GetLogger<Genshin>();
 
 
 
@@ -180,6 +182,10 @@ public partial class Genshin
     /// <returns></returns>
     public async Task AutoFishing(int fishingTimePolicy = 0)
     {
+#if BETTERGI_PORTABLE
+        var param = AutoFishingTaskParam.BuildFromConfig(TaskContext.Instance().Config.AutoFishingConfig,
+            TaskContext.Instance().Config.CommonConfig.ScreenshotEnabled && TaskContext.Instance().Config.SaveScreenshotOnKeyTick);
+#else
         var taskSettingsPageViewModel = App.GetService<TaskSettingsPageViewModel>();
         if (taskSettingsPageViewModel == null)
         {
@@ -187,6 +193,7 @@ public partial class Genshin
         }
 
         var param = AutoFishingTaskParam.BuildFromConfig(TaskContext.Instance().Config.AutoFishingConfig, taskSettingsPageViewModel.SaveScreenshotOnKeyTick);
+#endif
         param.FishingTimePolicy = (FishingTimePolicy)fishingTimePolicy;
         await new AutoFishingTask(param).Start(CancellationContext.Instance.Cts.Token);
     }

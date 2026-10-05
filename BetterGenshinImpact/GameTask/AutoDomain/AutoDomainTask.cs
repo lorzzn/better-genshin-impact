@@ -97,7 +97,7 @@ public partial class AutoDomainTask : ISoloTask<Dictionary<string, int>>
     public AutoDomainTask(AutoDomainParam taskParam)
     {
         _taskParam = taskParam;
-        _predictor = App.ServiceProvider.GetRequiredService<BgiOnnxFactory>().CreateYoloPredictor(BgiOnnxModel.BgiTree);
+        _predictor = GameServices.OnnxFactory.CreateYoloPredictor(BgiOnnxModel.BgiTree);
 
         _config = TaskContext.Instance().Config.AutoDomainConfig;
 
@@ -119,7 +119,7 @@ public partial class AutoDomainTask : ISoloTask<Dictionary<string, int>>
         _resinPriorityListWhenSpecifyUse = ResinUseRecord.BuildFromDomainParam(taskParam);
 
         IStringLocalizer<AutoDomainTask> stringLocalizer =
-            App.GetService<IStringLocalizer<AutoDomainTask>>() ?? throw new NullReferenceException();
+            GameServices.Localizer<AutoDomainTask>();
         CultureInfo cultureInfo = new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
         this.challengeCompletedLocalizedString = stringLocalizer.WithCultureGet(cultureInfo, "挑战达成");
         this.autoLeavingLocalizedString = stringLocalizer.WithCultureGet(cultureInfo, "自动退出");
@@ -146,7 +146,7 @@ public partial class AutoDomainTask : ISoloTask<Dictionary<string, int>>
     private static string ResolveUseButtonPattern()
     {
         IStringLocalizer<AutoDomainTask> stringLocalizer =
-            App.GetService<IStringLocalizer<AutoDomainTask>>() ?? throw new NullReferenceException();
+            GameServices.Localizer<AutoDomainTask>();
         CultureInfo cultureInfo = new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
         return stringLocalizer.WithCultureGet(cultureInfo, "使用");
     }
@@ -160,7 +160,7 @@ public partial class AutoDomainTask : ISoloTask<Dictionary<string, int>>
     private static string ResolveResinNamePattern(string resinName)
     {
         IStringLocalizer<AutoDomainTask> stringLocalizer =
-            App.GetService<IStringLocalizer<AutoDomainTask>>() ?? throw new NullReferenceException();
+            GameServices.Localizer<AutoDomainTask>();
         CultureInfo cultureInfo = new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
         return stringLocalizer.WithCultureGet(cultureInfo, resinName);
     }
@@ -361,7 +361,7 @@ public partial class AutoDomainTask : ISoloTask<Dictionary<string, int>>
 
     private void LogScreenResolution()
     {
-        var gameScreenSize = SystemControl.GetGameScreenRect(TaskContext.Instance().GameHandle);
+        var gameScreenSize = TaskContext.Instance().SystemInfo.CaptureAreaRect;
         if (gameScreenSize.Width * 9 != gameScreenSize.Height * 16)
         {
             Logger.LogError("游戏窗口分辨率不是 16:9 ！当前分辨率为 {Width}x{Height} , 非 16:9 分辨率的游戏无法正常使用自动秘境功能 !",

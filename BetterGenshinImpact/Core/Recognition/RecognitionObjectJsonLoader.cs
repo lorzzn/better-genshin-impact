@@ -1,4 +1,5 @@
-﻿#if BETTERGI_PORTABLE
+using BetterGenshinImpact.GameTask;
+#if BETTERGI_PORTABLE
 using Pen = BetterGenshinImpact.Runtime.OverlayPen;
 #endif
 using BetterGenshinImpact.Helpers.Extensions;
@@ -35,7 +36,7 @@ public static class RecognitionObjectJsonLoader
 #if BETTERGI_PORTABLE
     private static ILogger Logger => Runtime.RuntimeEnvironment.Logger;
 #else
-    private static readonly ILogger Logger = App.GetLogger<LoggerTag>();
+    private static readonly ILogger Logger = GameServices.GetLogger<LoggerTag>();
 #endif
 
     public static RecognitionObject LoadFromFile(string filePath, string objectName, RecognitionObjectJsonLoadContext context)

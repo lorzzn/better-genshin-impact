@@ -91,7 +91,7 @@ public class CraftMaterialTask
     private static readonly Regex FractionRegex = new(@"(\d+)\s*/\s*(\d+)", RegexOptions.Compiled);
     private static readonly Lazy<Dictionary<string, string>> MaterialTypes = new(LoadMaterialTypes);
 
-    private readonly ILogger<CraftMaterialTask> _logger = App.GetLogger<CraftMaterialTask>();
+    private readonly ILogger<CraftMaterialTask> _logger = GameServices.GetLogger<CraftMaterialTask>();
     private readonly InputSimulator _input = Simulation.SendInput;
     private readonly string _materialName;
     private readonly int _targetQuantity;

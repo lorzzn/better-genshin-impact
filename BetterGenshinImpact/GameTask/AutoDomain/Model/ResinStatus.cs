@@ -32,7 +32,7 @@ public class ResinStatus
     /// </summary>
     public int TransientResinCount { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public static ResinStatus RecogniseFromRegion(ImageRegion region, ISystemInfo systemInfo, IOcrService ocrService)
+    public static ResinStatus RecogniseFromRegion(ImageRegion region, IRecognitionSurface systemInfo, IOcrService ocrService)
     {
         var status = new ResinStatus();
 

@@ -62,13 +62,13 @@ public class CombatScenes : IDisposable
 
     private readonly ILogger _logger;
 
-    private readonly ISystemInfo _systemInfo;
+    private readonly IRecognitionSurface _systemInfo;
 
-    public CombatScenes(BgiYoloPredictor? predictor = null, AutoFightAssets? autoFightAssets = null, ILogger? logger = null, ISystemInfo? systemInfo = null)
+    public CombatScenes(BgiYoloPredictor? predictor = null, AutoFightAssets? autoFightAssets = null, ILogger? logger = null, IRecognitionSurface? systemInfo = null)
     {
         if (predictor == null)
         {
-            _predictor = App.ServiceProvider.GetRequiredService<BgiOnnxFactory>().CreateYoloPredictor(BgiOnnxModel.BgiAvatarSide);
+            _predictor = GameServices.OnnxFactory.CreateYoloPredictor(BgiOnnxModel.BgiAvatarSide);
             _ownsPredictor = true;
         }
         else

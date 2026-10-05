@@ -10,38 +10,46 @@ public sealed class GameSession : IDisposable
     private static readonly AsyncLocal<GameSession?> current = new();
     private readonly GameSession? previous;
     private Mat? initialFrame;
+    private readonly object inputSync = new();
+    internal CancellationTokenSource Lifetime { get; }
+    public GameTask.RunnerContext Runner { get; } = new();
+    public GameTask.TaskTriggerDispatcher Triggers { get; }
     private readonly HashSet<int> pressedKeys = [];
     private readonly HashSet<int> pressedButtons = [];
     private bool disposed;
+    public static bool IsBound => current.Value != null;
     public static GameSession Current => current.Value ?? throw new InvalidOperationException("No game host is bound to this invocation");
     public IGameHost Host { get; }
     public CancellationToken CancellationToken { get; }
     public GameSystemInfo SystemInfo { get; private set; }
     public DrawContent Overlay { get; } = new();
     public GameConfiguration Config { get; }
-    /// <summary>Optional binding to the official path executor when that component is installed.</summary>
-    public Func<GameTask.AutoPathing.Model.Waypoint, string, string, CancellationToken, Task>? Pathing { get; init; }
     public Point PointerPosition { get; private set; }
 
     public GameSession(IGameHost host, CancellationToken cancellationToken = default, GameConfiguration? configuration = null)
     {
         ArgumentNullException.ThrowIfNull(host);
         Host = host;
-        CancellationToken = cancellationToken;
+        Lifetime = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        CancellationToken = Lifetime.Token;
         Config = configuration ?? new();
-        initialFrame = host.Capture(cancellationToken);
-        if (initialFrame.Empty()) { initialFrame.Dispose(); throw new InvalidDataException("Game host returned an empty frame"); }
+        try
+        {
+            initialFrame = host.Capture(CancellationToken);
+            if (initialFrame.Empty()) throw new InvalidDataException("Game host returned an empty frame");
+        }
+        catch { initialFrame?.Dispose(); Lifetime.Dispose(); throw; }
         SystemInfo = new(initialFrame.Width, initialFrame.Height);
         previous = current.Value;
         current.Value = this;
+        Triggers = new();
     }
 
     public ImageRegion Capture()
     {
         ObjectDisposedException.ThrowIf(disposed, this);
         CancellationToken.ThrowIfCancellationRequested();
-        var frame = initialFrame ?? Host.Capture(CancellationToken);
-        initialFrame = null;
+        var frame = Interlocked.Exchange(ref initialFrame, null) ?? Host.Capture(CancellationToken);
         if (frame.Empty()) { frame.Dispose(); throw new InvalidDataException("Game host returned an empty frame"); }
         if (frame.Width != SystemInfo.Width || frame.Height != SystemInfo.Height)
         {
@@ -53,18 +61,24 @@ public sealed class GameSession : IDisposable
 
     public void Move(double x, double y)
     {
-        ObjectDisposedException.ThrowIf(disposed, this);
-        CancellationToken.ThrowIfCancellationRequested();
-        Host.MovePointer(x, y);
-        PointerPosition = new Point((int)Math.Round(x), (int)Math.Round(y));
+        lock (inputSync)
+        {
+            ObjectDisposedException.ThrowIf(disposed, this);
+            CancellationToken.ThrowIfCancellationRequested();
+            Host.MovePointer(x, y);
+            PointerPosition = new Point((int)Math.Round(x), (int)Math.Round(y));
+        }
     }
 
     public void MoveBy(int dx, int dy)
     {
-        ObjectDisposedException.ThrowIf(disposed, this);
-        CancellationToken.ThrowIfCancellationRequested();
-        Host.MovePointerBy(dx, dy);
-        PointerPosition += new Point(dx, dy);
+        lock (inputSync)
+        {
+            ObjectDisposedException.ThrowIf(disposed, this);
+            CancellationToken.ThrowIfCancellationRequested();
+            Host.MovePointerBy(dx, dy);
+            PointerPosition += new Point(dx, dy);
+        }
     }
 
     public void InputText(string text)
@@ -76,32 +90,43 @@ public sealed class GameSession : IDisposable
 
     public void Key(int key, bool down)
     {
-        ObjectDisposedException.ThrowIf(disposed, this);
-        if (down) CancellationToken.ThrowIfCancellationRequested();
-        // The host may apply the input and then lose its acknowledgement.
-        // Keep it pending until a successful release has been acknowledged.
-        if (down) pressedKeys.Add(key);
-        Host.SetKey(key, down);
-        if (!down) pressedKeys.Remove(key);
+        lock (inputSync)
+        {
+            ObjectDisposedException.ThrowIf(disposed, this);
+            if (down) CancellationToken.ThrowIfCancellationRequested();
+            // The host may apply the input and then lose its acknowledgement.
+            // Keep it pending until a successful release has been acknowledged.
+            if (down) pressedKeys.Add(key);
+            Host.SetKey(key, down);
+            if (!down) pressedKeys.Remove(key);
+        }
     }
 
     public void Button(int button, bool down)
     {
-        ObjectDisposedException.ThrowIf(disposed, this);
-        if (down) CancellationToken.ThrowIfCancellationRequested();
-        if (down) pressedButtons.Add(button);
-        Host.SetPointerButton(button, down);
-        if (!down) pressedButtons.Remove(button);
+        lock (inputSync)
+        {
+            ObjectDisposedException.ThrowIf(disposed, this);
+            if (down) CancellationToken.ThrowIfCancellationRequested();
+            if (down) pressedButtons.Add(button);
+            Host.SetPointerButton(button, down);
+            if (!down) pressedButtons.Remove(button);
+        }
     }
+
+    public bool IsKeyDown(int key) { lock (inputSync) return pressedKeys.Contains(key); }
 
     public void ReleaseInput()
     {
-        List<Exception> errors = [];
-        foreach (var key in pressedKeys.ToArray())
-            try { Key(key, false); } catch (Exception e) { errors.Add(e); }
-        foreach (var button in pressedButtons.ToArray())
-            try { Button(button, false); } catch (Exception e) { errors.Add(e); }
-        if (errors.Count > 0) throw new AggregateException("Game host could not release input", errors);
+        lock (inputSync)
+        {
+            List<Exception> errors = [];
+            foreach (var key in pressedKeys.ToArray())
+                try { Key(key, false); } catch (Exception e) { errors.Add(e); }
+            foreach (var button in pressedButtons.ToArray())
+                try { Button(button, false); } catch (Exception e) { errors.Add(e); }
+            if (errors.Count > 0) throw new AggregateException("Game host could not release input", errors);
+        }
     }
 
     public void Scroll(int notches)
@@ -111,27 +136,25 @@ public sealed class GameSession : IDisposable
         Host.Scroll(notches);
     }
 
-    public void RequirePathing()
-    {
-        if (Pathing is null) throw new NotSupportedException("The official path executor is not bound to this game session");
-    }
-
-    public Task MoveToWaypoint(GameTask.AutoPathing.Model.Waypoint waypoint, string map, string method, CancellationToken token)
-    {
-        RequirePathing();
-        return Pathing!(waypoint, map, method, token);
-    }
-
     public void Dispose()
     {
         if (disposed) return;
-        try { initialFrame?.Dispose(); ReleaseInput(); }
-        finally { disposed = true; current.Value = previous; }
+        try
+        {
+            Lifetime.Cancel();
+            Triggers.Dispose();
+        }
+        finally
+        {
+            try { Interlocked.Exchange(ref initialFrame, null)?.Dispose(); ReleaseInput(); }
+            finally { Runner.Reset(); disposed = true; current.Value = previous; Lifetime.Dispose(); }
+        }
     }
 }
 
-public sealed record GameSystemInfo(int Width, int Height)
+public sealed record GameSystemInfo(int Width, int Height) : GameTask.Model.IRecognitionSurface
 {
+    public DesktopRegion DesktopRectArea => new(Width, Height);
     public Rect CaptureAreaRect => new(0, 0, Width, Height);
     public Rect ScaleMax1080PCaptureRect => Width <= 1920 ? CaptureAreaRect : new(0, 0, 1920, (int)Math.Round(Height * 1920d / Width));
     public double ScaleTo1080PRatio => Width / 1920d;

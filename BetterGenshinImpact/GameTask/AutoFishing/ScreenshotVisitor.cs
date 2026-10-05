@@ -55,27 +55,30 @@ public class ScreenshotVisitor : VisitorBase
         }
         var savePath = Global.Absolute($@"log\screenshot\{name}");
 
-        var mat = imageRegion.SrcMat;
-        if (TaskContext.Instance().Config.CommonConfig.ScreenshotUidCoverEnabled)
+        var snapshot = imageRegion.SrcMat.Clone();
+        var coverUid = TaskContext.Instance().Config.CommonConfig.ScreenshotUidCoverEnabled;
+        var assetScale = TaskContext.Instance().SystemInfo.ScaleTo1080PRatio;
+        _ = Task.Run(() =>
         {
-            new Task(() =>
+            using (snapshot)
             {
-                using var mat2 = mat.Clone();
-                var assetScale = TaskContext.Instance().SystemInfo.ScaleTo1080PRatio;
-                var rect = new Rect((int)(mat2.Width - MaskWindowConfig.UidCoverRightBottomRect.X * assetScale),
-                    (int)(mat2.Height - MaskWindowConfig.UidCoverRightBottomRect.Y * assetScale),
-                    (int)(MaskWindowConfig.UidCoverRightBottomRect.Width * assetScale),
-                    (int)(MaskWindowConfig.UidCoverRightBottomRect.Height * assetScale));
-                mat2.Rectangle(rect, Scalar.White, -1);
-                Cv2.ImWrite(savePath, mat2);
-            }).Start();
-        }
-        else
-        {
-            new Task(() =>
-            {
-                Cv2.ImWrite(savePath, mat);
-            }).Start();
-        }
+                try
+                {
+                    if (coverUid)
+                    {
+                        var rect = new Rect((int)(snapshot.Width - ScreenshotConfig.UidCoverRightBottomRect.X * assetScale),
+                            (int)(snapshot.Height - ScreenshotConfig.UidCoverRightBottomRect.Y * assetScale),
+                            (int)(ScreenshotConfig.UidCoverRightBottomRect.Width * assetScale),
+                            (int)(ScreenshotConfig.UidCoverRightBottomRect.Height * assetScale));
+                        snapshot.Rectangle(rect, Scalar.White, -1);
+                    }
+                    Cv2.ImWrite(savePath, snapshot);
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Trace.TraceError("保存截图失败: {0}", e.Message);
+                }
+            }
+        });
     }
 }

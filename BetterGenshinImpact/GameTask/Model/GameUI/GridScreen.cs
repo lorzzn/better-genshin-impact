@@ -1,3 +1,8 @@
+#if BETTERGI_PORTABLE
+using RecognitionPens = BetterGenshinImpact.Runtime.OverlayPens;
+#else
+using RecognitionPens = System.Drawing.Pens;
+#endif
 using BetterGenshinImpact.Core.Recognition.OpenCv;
 using BetterGenshinImpact.Core.Simulator;
 using BetterGenshinImpact.GameTask.Common;
@@ -33,7 +38,7 @@ namespace BetterGenshinImpact.GameTask.Model.GameUI
             foreach ((Rect rect, bool isPhantom) in items)
             {
                 using ImageRegion item = page.DeriveCrop(rect);
-                item.DrawSelf($"GridItem{item.GetHashCode()}", isPhantom ? System.Drawing.Pens.Yellow : System.Drawing.Pens.Lime);
+                item.DrawSelf($"GridItem{item.GetHashCode()}", isPhantom ? RecognitionPens.Yellow : RecognitionPens.Lime);
             }
         };
 

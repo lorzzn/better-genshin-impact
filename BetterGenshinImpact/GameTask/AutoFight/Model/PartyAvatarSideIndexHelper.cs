@@ -117,7 +117,7 @@ public class PartyAvatarSideIndexHelper
         return new Rect(currRect.X + (int)(126 * s), currRect.Y - (int)(194 * s), (int)(16 * s), (int)(17 * s));
     }
 
-    public static (List<Rect>, List<Rect>) GetAllIndexRects(ImageRegion imageRegion, MultiGameStatus multiGameStatus, ILogger logger, ISystemInfo systemInfo)
+    public static (List<Rect>, List<Rect>) GetAllIndexRects(ImageRegion imageRegion, MultiGameStatus multiGameStatus, ILogger logger, IRecognitionSurface systemInfo)
     {
         try
         {
@@ -171,7 +171,7 @@ public class PartyAvatarSideIndexHelper
         return imageRegion.Find(ElementRecognition.Get("CurrentAvatarThreshold", imageRegion)).IsExist();
     }
 
-    public static (List<Rect>, List<Rect>) GetAllIndexRectsNew(ImageRegion imageRegion, MultiGameStatus multiGameStatus, ILogger logger, ISystemInfo systemInfo)
+    public static (List<Rect>, List<Rect>) GetAllIndexRectsNew(ImageRegion imageRegion, MultiGameStatus multiGameStatus, ILogger logger, IRecognitionSurface systemInfo)
     {
         // 找到编号块
         var i1 = imageRegion.Find(ElementRecognition.Get("Index1", imageRegion));
@@ -252,13 +252,13 @@ public class PartyAvatarSideIndexHelper
         return (-1, default);
     }
 
-    public static Rect GetAvatarSideIconRectFromIndexRect(Rect indexRect, ISystemInfo systemInfo)
+    public static Rect GetAvatarSideIconRectFromIndexRect(Rect indexRect, IRecognitionSurface systemInfo)
     {
         var s = systemInfo.AssetScale;
         return new Rect(indexRect.X - (int)(91 * s), indexRect.Y - (int)(47 * s), (int)(82 * s), (int)(82 * s));
     }
 
-    public static List<Rect> GetAvatarSideIconRectFromIndexRect(List<Rect> indexRect, ISystemInfo systemInfo)
+    public static List<Rect> GetAvatarSideIconRectFromIndexRect(List<Rect> indexRect, IRecognitionSurface systemInfo)
     {
         return indexRect.Select(r => GetAvatarSideIconRectFromIndexRect(r, systemInfo)).ToList();
     }

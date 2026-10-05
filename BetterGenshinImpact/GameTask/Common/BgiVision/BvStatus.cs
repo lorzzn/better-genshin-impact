@@ -257,7 +257,7 @@ public static partial class Bv
             #if BETTERGI_PORTABLE
             IStringLocalizer stringLocalizer = Runtime.RuntimeEnvironment.Localizer<BvResxHelper>();
 #else
-            IStringLocalizer stringLocalizer = App.GetService<IStringLocalizer<BvResxHelper>>() ?? throw new Exception();
+            IStringLocalizer stringLocalizer = GameServices.Localizer<BvResxHelper>() ?? throw new Exception();
 #endif
             string revival = stringLocalizer.WithCultureGet(cultureInfo, "复苏");
             if (list.Any(r => r.Text.Contains(revival)))

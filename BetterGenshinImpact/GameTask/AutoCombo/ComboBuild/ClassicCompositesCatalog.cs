@@ -1,3 +1,4 @@
+using Parallel = CsTrees.Composites.Parallel;
 using CsTrees;
 using CsTrees.Composites;
 using CsTrees.FluentBuilder;

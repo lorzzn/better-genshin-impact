@@ -1,19 +1,23 @@
-﻿using BetterGenshinImpact.GameTask.AutoFight.Config;
+using BetterGenshinImpact.GameTask.AutoFight.Config;
 using BetterGenshinImpact.GameTask.AutoGeniusInvokation.Config;
 using BetterGenshinImpact.GameTask.AutoGeniusInvokation.Model;
 using BetterGenshinImpact.Helpers;
+#if BETTERGI_PORTABLE
+using ThemedMessageBox = BetterGenshinImpact.Runtime.RuntimeUi;
+#else
 using BetterGenshinImpact.View.Windows;
+#endif
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
+
 
 namespace BetterGenshinImpact.GameTask.AutoGeniusInvokation;
 
 public class ScriptParser
 {
-    private static readonly ILogger<ScriptParser> MyLogger = App.GetLogger<ScriptParser>();
+    private static readonly ILogger<ScriptParser> MyLogger = GameServices.GetLogger<ScriptParser>();
 
     public static Duel Parse(string script)
     {

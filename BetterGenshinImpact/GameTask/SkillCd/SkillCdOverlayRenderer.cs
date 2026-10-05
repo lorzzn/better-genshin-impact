@@ -2,7 +2,11 @@ using BetterGenshinImpact.GameTask.AutoFight.Assets;
 using BetterGenshinImpact.View.Drawable;
 using System;
 using System.Collections.Generic;
+#if BETTERGI_PORTABLE
+using Point = OpenCvSharp.Point2d;
+#else
 using Point = System.Windows.Point;
+#endif
 
 namespace BetterGenshinImpact.GameTask.SkillCd;
 
@@ -31,7 +35,7 @@ public static class SkillCdOverlayRenderer
             return;
         }
 
-        double factor = (double)systemInfo.GameScreenSize.Width / systemInfo.ScaleMax1080PCaptureRect.Width;
+        double factor = (double)systemInfo.CaptureAreaRect.Width / systemInfo.ScaleMax1080PCaptureRect.Width;
 
         // 使用配置中的坐标（保留一位小数）
         double userPX = Math.Round(config.PX, 1);

@@ -6,7 +6,6 @@ using BetterGenshinImpact.GameTask.AutoWood.Utils;
 using BetterGenshinImpact.GameTask.Common;
 using BetterGenshinImpact.GameTask.Common.Job;
 using BetterGenshinImpact.GameTask.Model.Area;
-using BetterGenshinImpact.Genshin.Settings;
 using BetterGenshinImpact.View.Drawable;
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
@@ -68,7 +67,9 @@ public partial class AutoWoodTask : ISoloTask
 
         try
         {
+#if !BETTERGI_PORTABLE
             Kernel32.SetThreadExecutionState(Kernel32.EXECUTION_STATE.ES_CONTINUOUS | Kernel32.EXECUTION_STATE.ES_SYSTEM_REQUIRED | Kernel32.EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+#endif
             Logger.LogInformation("→ {Text} 设置伐木总次数：{Cnt}，设置木材数量上限：{MaxCnt}", "自动伐木，启动！", _taskParam.WoodRoundNum, _taskParam.WoodDailyMaxCount);
 
             _login3rdParty.RefreshAvailabled();
@@ -129,7 +130,9 @@ public partial class AutoWoodTask : ISoloTask
         {
             // 伐木结束计时
             runTimeWatch.Stop();
+#if !BETTERGI_PORTABLE
             Kernel32.SetThreadExecutionState(Kernel32.EXECUTION_STATE.ES_CONTINUOUS);
+#endif
             var elapsedTime = runTimeWatch.Elapsed;
             Logger.LogInformation(@"本次伐木总耗时：{Time:hh\:mm\:ss}", elapsedTime);
         }
@@ -433,7 +436,7 @@ public partial class AutoWoodTask : ISoloTask
     private void PressZ(WoodTaskParam taskParam)
     {
         // IMPORTANT: MUST try focus before press Z
-        SystemControl.FocusWindow(TaskContext.Instance().GameHandle);
+        SystemControl.ActivateWindow();
 
         if (_first)
         {
@@ -485,7 +488,7 @@ public partial class AutoWoodTask : ISoloTask
 
     private void PressEsc(WoodTaskParam taskParam)
     {
-        SystemControl.FocusWindow(TaskContext.Instance().GameHandle);
+        SystemControl.ActivateWindow();
         Simulation.SendInput.Keyboard.KeyPress(VK.VK_ESCAPE);
         // if (TaskContext.Instance().Config.AutoWoodConfig.PressTwoEscEnabled)
         // {

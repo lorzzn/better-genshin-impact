@@ -21,7 +21,7 @@ namespace BetterGenshinImpact.GameTask.Common.Job
     {
         public string Name => "背包数物品";
 
-        private readonly ILogger logger = App.GetLogger<CountInventoryItem>();
+        private readonly ILogger logger = GameServices.GetLogger<CountInventoryItem>();
         private readonly InputSimulator input = Simulation.SendInput;
         private CancellationToken ct;
         private readonly GridScreenName? gridScreenName;

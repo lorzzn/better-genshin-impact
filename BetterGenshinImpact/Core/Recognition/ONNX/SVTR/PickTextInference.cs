@@ -1,3 +1,4 @@
+using BetterGenshinImpact.GameTask;
 using BetterGenshinImpact.Core.Config;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
@@ -25,7 +26,7 @@ public class PickTextInference : ITextInference
 
     public PickTextInference()
     {
-        _session = App.ServiceProvider.GetRequiredService<BgiOnnxFactory>().CreateInferenceSession(BgiOnnxModel.YapModelTraining,true);
+        _session = GameServices.OnnxFactory.CreateInferenceSession(BgiOnnxModel.YapModelTraining,true);
 
         var wordJsonPath = Global.Absolute(@"Assets\Model\Yap\index_2_word.json");
         if (!File.Exists(wordJsonPath)) throw new FileNotFoundException("Yap字典文件不存在", wordJsonPath);

@@ -7,7 +7,11 @@ using BetterGenshinImpact.Core.Simulator;
 using BetterGenshinImpact.GameTask.AutoPick.Assets;
 using BetterGenshinImpact.Helpers;
 using BetterGenshinImpact.Service;
+#if BETTERGI_PORTABLE
+using ThemedMessageBox = BetterGenshinImpact.Runtime.RuntimeUi;
+#else
 using BetterGenshinImpact.View.Windows;
+#endif
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
 using System;
@@ -24,7 +28,7 @@ namespace BetterGenshinImpact.GameTask.AutoPick;
 
 public partial class AutoPickTrigger : ITaskTrigger
 {
-    private readonly ILogger<AutoPickTrigger> _logger = App.GetLogger<AutoPickTrigger>();
+    private readonly ILogger<AutoPickTrigger> _logger = GameServices.GetLogger<AutoPickTrigger>();
 
     public string Name => "自动拾取";
     public bool IsEnabled { get; set; }
@@ -112,7 +116,7 @@ public partial class AutoPickTrigger : ITaskTrigger
             var json = Global.ReadAllTextIfExist(jsonFilePath);
             if (!string.IsNullOrEmpty(json))
             {
-                return JsonSerializer.Deserialize<HashSet<string>>(json, ConfigService.JsonOptions) ?? [];
+                return JsonSerializer.Deserialize<HashSet<string>>(json, ConfigJson.JsonOptions) ?? [];
             }
         }
         catch (Exception e)

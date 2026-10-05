@@ -73,7 +73,7 @@ namespace BetterGenshinImpact.GameTask.AutoFishing
         public ChooseBait ChooseBait(
             string name,
             ILogger logger,
-            ISystemInfo systemInfo,
+            IRecognitionSurface systemInfo,
             IInputSimulator input,
             IItemIconRecognizer itemRecognizer,
             Blackboard blackboard,

@@ -18,7 +18,7 @@ namespace BetterGenshinImpact.GameTask.AutoFishing
 {
     public class AutoFishingTask : ISoloTask
     {
-        private readonly ILogger _logger = App.GetLogger<AutoFishingTask>();
+        private readonly ILogger _logger = GameServices.GetLogger<AutoFishingTask>();
         private readonly InputSimulator input = Simulation.SendInput;
         public string Name => "钓鱼独立任务";
 
@@ -27,7 +27,7 @@ namespace BetterGenshinImpact.GameTask.AutoFishing
         private readonly AutoFishingTaskParam param;
 
         private readonly BgiYoloPredictor _predictor =
-            App.ServiceProvider.GetRequiredService<BgiOnnxFactory>().CreateYoloPredictor(BgiOnnxModel.BgiFish);
+            GameServices.OnnxFactory.CreateYoloPredictor(BgiOnnxModel.BgiFish);
 
         public AutoFishingTask(AutoFishingTaskParam param)
         {

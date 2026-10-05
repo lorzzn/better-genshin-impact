@@ -1,4 +1,4 @@
-﻿using BetterGenshinImpact.Core.Recognition.OpenCv;
+using BetterGenshinImpact.Core.Recognition.OpenCv;
 using BetterGenshinImpact.Helpers.Extensions;
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
@@ -9,7 +9,7 @@ namespace BetterGenshinImpact.GameTask.AutoGeniusInvokation.Model
 {
     public class Character
     {
-        private readonly ILogger _logger = App.GetLogger<Character>();
+        private readonly ILogger _logger = GameServices.GetLogger<Character>();
 
         /// <summary>
         /// 1-3 所在数组下标一致

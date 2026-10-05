@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +16,9 @@ namespace BetterGenshinImpact.GameTask;
 /// </summary>
 public class RunnerContext : Singleton<RunnerContext>
 {
+#if BETTERGI_PORTABLE
+    public new static RunnerContext Instance => Runtime.GameSession.Current.Runner;
+#endif
     /// <summary>
     /// 是否是连续执行配置组的场景
     /// </summary>

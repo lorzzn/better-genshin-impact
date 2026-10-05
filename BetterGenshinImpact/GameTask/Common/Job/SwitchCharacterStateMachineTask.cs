@@ -63,7 +63,7 @@ public sealed class SwitchCharacterStateMachineTask : StateMachineBase<SwitchCha
     private static readonly Rect SortTypeRoi1080 = new(116, 29, 245, 38);
     private static readonly Rect SortOptionsRoi1080 = new(111, 80, 241, 372);
 
-    private readonly ILogger<SwitchCharacterStateMachineTask> _logger = App.GetLogger<SwitchCharacterStateMachineTask>();
+    private readonly ILogger<SwitchCharacterStateMachineTask> _logger = GameServices.GetLogger<SwitchCharacterStateMachineTask>();
     private readonly ReturnMainUiTask _returnMainUiTask = new();
     private readonly double _assetScale = TaskContext.Instance().SystemInfo.AssetScale;
 

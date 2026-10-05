@@ -32,7 +32,7 @@ public class GoToAdventurersGuildTask
 
     public GoToAdventurersGuildTask()
     {
-        IStringLocalizer<GoToAdventurersGuildTask> stringLocalizer = App.GetService<IStringLocalizer<GoToAdventurersGuildTask>>() ?? throw new NullReferenceException();
+        IStringLocalizer<GoToAdventurersGuildTask> stringLocalizer = GameServices.Localizer<GoToAdventurersGuildTask>() ?? throw new NullReferenceException();
         CultureInfo cultureInfo = new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
         this.dailyLocalizedString = stringLocalizer.WithCultureGet(cultureInfo, "每日");
         this.catherineLocalizedString = stringLocalizer.WithCultureGet(cultureInfo, "凯瑟琳");

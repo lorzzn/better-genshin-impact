@@ -1,3 +1,8 @@
+#if BETTERGI_PORTABLE
+using RecognitionPen = BetterGenshinImpact.Runtime.OverlayPen;
+#else
+using RecognitionPen = System.Drawing.Pen;
+#endif
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -75,7 +80,7 @@ public class LinneaMiningTask
         _scanRounds = scanRounds;
         _mineCount = mineCount;
         _preferRight = scanRounds > 1;
-        _predictor = App.ServiceProvider.GetRequiredService<BgiOnnxFactory>()
+        _predictor = GameServices.OnnxFactory
             .CreateYoloPredictor(BgiOnnxModel.BgiMine);
         ClusterDistanceThreshold = BaseClusterDistance * _widthScale;
         EdgeIgnore = BaseEdgeIgnore * _widthScale;
@@ -261,7 +266,11 @@ public class LinneaMiningTask
     private (MineralCluster? cluster, double centerX, double centerY) FindNearestMineralCluster()
     {
         var systemInfo = TaskContext.Instance().SystemInfo;
+#if BETTERGI_PORTABLE
+        var image = Runtime.GameSession.Current.Host.Capture(Runtime.GameSession.Current.CancellationToken);
+#else
         var image = CaptureGameImage(TaskTriggerDispatcher.GlobalGameCapture);
+#endif
         var ra = systemInfo.DesktopRectArea.Derive(image, systemInfo.CaptureAreaRect.X, systemInfo.CaptureAreaRect.Y);
 
         // SaveDebugImage(ra.SrcMat);
@@ -300,7 +309,7 @@ public class LinneaMiningTask
                 (int)c.TargetWidth + expansion * 2, (int)c.TargetHeight + expansion * 2);
             return ra.ToRectDrawable(mark,
                 $"({(int)c.TargetX},{(int)c.TargetY})",
-                new Pen(Color.DodgerBlue, 2)
+                new RecognitionPen(Color.DodgerBlue, 2)
             );
         }).ToList();
         VisionContext.Instance().DrawContent.PutOrRemoveRectList("MiningCluster", clusterDrawList);

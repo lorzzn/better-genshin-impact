@@ -1,7 +1,9 @@
 using BetterGenshinImpact.GameTask.AutoCombo.ComboRun;
 using BetterGenshinImpact.Helpers;
 using System;
+#if !BETTERGI_PORTABLE
 using Wpf.Ui.Violeta.Controls;
+#endif
 
 namespace BetterGenshinImpact.GameTask.AutoFight.Factory;
 
@@ -18,10 +20,12 @@ public class ComboCombatTaskFactory : ICombatTaskFactory
         if (session == null)
         {
             // 与 TaskRunner.Init 的用户指导型错误处理一致：弹 Toast 提示 + 抛异常中断任务
+#if !BETTERGI_PORTABLE
             UIDispatcherHelper.Invoke(() =>
             {
                 Toast.Warning("尚未构建行为树，请先运行一次自动连招任务完成建树");
             });
+#endif
             throw new Exception("尚未构建行为树，请先运行一次自动连招任务完成建树");
         }
         return new AutoComboRunTask(param, session);

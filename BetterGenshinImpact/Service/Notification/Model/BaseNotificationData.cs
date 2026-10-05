@@ -49,7 +49,11 @@ public class BaseNotificationData
     {
         try
         {
+#if BETTERGI_PORTABLE
+            Runtime.RuntimeEnvironment.ReportNotification(this);
+#else
             NotificationService.Instance().NotifyAllNotifiers(this);
+#endif
         }
         catch (Exception e)
         {

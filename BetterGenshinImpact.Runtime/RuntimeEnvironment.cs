@@ -17,6 +17,14 @@ public static class RuntimeEnvironment
     static RuntimeEnvironment() => ServerTimeHelper.Initialize(new ServerTimeProvider(TimeProvider.System));
     public static string AssetRoot { get; set; } = AppContext.BaseDirectory;
     public static ILogger Logger { get; set; } = NullLogger.Instance;
+    public static BgiOnnxFactory OnnxFactory { get; } = new(NullLogger.Instance,
+        new Core.Config.HardwareAccelerationConfig { EnableTensorRtCache = false, OptimizedModel = false });
+    public static Action<Service.Notification.Model.BaseNotificationData>? Notification { get; set; }
+    public static void ReportNotification(Service.Notification.Model.BaseNotificationData data)
+    {
+        if (Notification is { } notify) notify(data);
+        else Logger.LogInformation("{Event}: {Result}: {Message}", data.Event, data.Result, data.Message);
+    }
     public static Action<Point2f>? PositionChanged { get; set; }
     public static void ReportPosition(Point2f position) => PositionChanged?.Invoke(position);
     public static IStringLocalizer<T> Localizer<T>() => new StringLocalizer<T>(localizers);
@@ -35,7 +43,7 @@ public static class RuntimeEnvironment
     public static PaddleOcrService GetOcrService(PaddleOcrService.PaddleOcrModelType model)
     {
         if (!ocrServices.TryGetValue(model, out var service))
-            ocrServices.Add(model, service = new PaddleOcrService(new BgiOnnxFactory(), model));
+            ocrServices.Add(model, service = new PaddleOcrService(OnnxFactory, model));
         return service;
     }
 

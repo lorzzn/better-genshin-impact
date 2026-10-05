@@ -4,11 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using BetterGenshinImpact.Core.Simulator;
 using System.Threading;
-#if BETTERGI_PORTABLE
-using InputSimulator = BetterGenshinImpact.Runtime.HostInputSimulator;
-#else
 using Fischless.WindowsInput;
-#endif
 
 namespace BetterGenshinImpact.Core.Simulator.Extensions;
 
@@ -23,7 +19,7 @@ public static class InputSimulatorExtension
     /// </summary>
     /// <param name="action">动作</param>
     /// <param name="type">按键类型</param>
-    public static void SimulateAction(this InputSimulator self, GIActions action, KeyType type = KeyType.KeyPress)
+    public static void SimulateAction(this IInputSimulator self, GIActions action, KeyType type = KeyType.KeyPress)
     {
         var key = action.ToActionKey();
         switch (type)
@@ -45,14 +41,14 @@ public static class InputSimulatorExtension
         }
     }
 
-    private static void HoldKeyPress(InputSimulator self, KeyId key)
+    private static void HoldKeyPress(IInputSimulator self, KeyId key)
     {
         KeyDown(self, key);
         Thread.Sleep(1000);
         KeyUp(self, key);
     }
 
-    private static void KeyPress(InputSimulator self, KeyId key)
+    private static void KeyPress(IInputSimulator self, KeyId key)
     {
         switch (key)
         {
@@ -76,7 +72,7 @@ public static class InputSimulatorExtension
                 break;
             default:
 #if BETTERGI_PORTABLE
-                self.Keyboard.KeyPress((int)key);
+                self.Keyboard.KeyPress((Vanara.PInvoke.User32.VK)(int)key);
 #else
                 var k = (key).ToVK();
                 // 解决 shift 之类的键位没法正常使用的问题
@@ -93,7 +89,7 @@ public static class InputSimulatorExtension
         }
     }
 
-    private static void KeyDown(InputSimulator self, KeyId key)
+    private static void KeyDown(IInputSimulator self, KeyId key)
     {
         switch (key)
         {
@@ -117,7 +113,7 @@ public static class InputSimulatorExtension
                 break;
             default:
 #if BETTERGI_PORTABLE
-                self.Keyboard.KeyDown((int)key);
+                self.Keyboard.KeyDown((Vanara.PInvoke.User32.VK)(int)key);
 #else
                 var k = (key).ToVK();
                 // 解决 shift 之类的键位没法正常使用的问题
@@ -134,7 +130,7 @@ public static class InputSimulatorExtension
         }
     }
 
-    private static void KeyUp(InputSimulator self, KeyId key)
+    private static void KeyUp(IInputSimulator self, KeyId key)
     {
         switch (key)
         {
@@ -158,7 +154,7 @@ public static class InputSimulatorExtension
                 break;
             default:
 #if BETTERGI_PORTABLE
-                self.Keyboard.KeyUp((int)key);
+                self.Keyboard.KeyUp((Vanara.PInvoke.User32.VK)(int)key);
 #else
                 var k = (key).ToVK();
                 // 解决 shift 之类的键位没法正常使用的问题

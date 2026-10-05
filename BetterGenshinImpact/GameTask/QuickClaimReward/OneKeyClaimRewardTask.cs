@@ -14,10 +14,10 @@ using Wpf.Ui.Violeta.Controls;
 
 namespace BetterGenshinImpact.GameTask.QuickClaimReward;
 
-public class OneKeyClaimRewardTask : Singleton<OneKeyClaimRewardTask>
+public partial class OneKeyClaimRewardTask : Singleton<OneKeyClaimRewardTask>
 {
-    public const string ClickOnceMode = "点按一次";
-    public const string HoldMode = "按住持续";
+
+
 
     private const int MaxClickCountPerRun = 30;
     private const int ScrollChunkSize = 10;

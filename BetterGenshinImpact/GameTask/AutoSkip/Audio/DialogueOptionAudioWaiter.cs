@@ -241,8 +241,12 @@ internal sealed class DialogueOptionAudioWaiter
 
     private static int? GetGameProcessId()
     {
+#if BETTERGI_PORTABLE
+        return Runtime.GameSession.Current.Host.AudioSourceId;
+#else
         using var process = SystemControl.GetProcessByHandle(TaskContext.Instance().GameHandle);
         return process?.Id;
+#endif
     }
 
     private bool StartFallbackWait(int milliseconds)

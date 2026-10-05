@@ -12,7 +12,6 @@ using BetterGenshinImpact.View.Drawable;
 using Fischless.WindowsInput;
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
-using OpenCvSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +27,7 @@ namespace BetterGenshinImpact.GameTask.GetGridIcons;
 /// </summary>
 public class GetGridIconsTask : ISoloTask
 {
-    private readonly ILogger logger = App.GetLogger<GetGridIconsTask>();
+    private readonly ILogger logger = GameServices.GetLogger<GetGridIconsTask>();
     private readonly InputSimulator input = Simulation.SendInput;
 
     private CancellationToken ct;
@@ -219,10 +218,10 @@ public class GetGridIconsTask : ISoloTask
             try
             {
                 using (privateMat)
-                using (var bitmap = privateMat.ToBitmap())
                 using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
-                    bitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                    Cv2.ImEncode(".png", privateMat, out var png);
+                    fs.Write(png, 0, png.Length);
                 }
                 logger.LogInformation("图片保存成功：{Text}", fileName);
             }
@@ -235,7 +234,7 @@ public class GetGridIconsTask : ISoloTask
         saveThread.Start();
     }
 
-    internal static Mat CropResizeArtifactSetFilterGridIcon(ImageRegion itemRegion, ISystemInfo? systemInfo = null)
+    internal static Mat CropResizeArtifactSetFilterGridIcon(ImageRegion itemRegion, IRecognitionSurface? systemInfo = null)
     {
         double scale = (systemInfo ?? TaskContext.Instance().SystemInfo).AssetScale;
         double width = 60;

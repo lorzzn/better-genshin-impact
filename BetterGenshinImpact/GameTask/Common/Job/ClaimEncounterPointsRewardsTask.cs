@@ -28,7 +28,7 @@ public class ClaimEncounterPointsRewardsTask
 
     public ClaimEncounterPointsRewardsTask()
     {
-        IStringLocalizer<ClaimEncounterPointsRewardsTask> stringLocalizer = App.GetService<IStringLocalizer<ClaimEncounterPointsRewardsTask>>() ?? throw new NullReferenceException();
+        IStringLocalizer<ClaimEncounterPointsRewardsTask> stringLocalizer = GameServices.Localizer<ClaimEncounterPointsRewardsTask>() ?? throw new NullReferenceException();
         CultureInfo cultureInfo = new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
         this.commissionsLocalizedString = stringLocalizer.WithCultureGet(cultureInfo, "委托");
     }

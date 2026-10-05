@@ -26,6 +26,10 @@ internal sealed class Login3rdParty
 
     public void RefreshAvailabled()
     {
+#if BETTERGI_PORTABLE
+        Type = BetterGenshinImpact.Runtime.GameSession.Current.Host.GameChannel == "bilibili"
+            ? The3rdPartyType.Bilibili : The3rdPartyType.None;
+#else
         Type = The3rdPartyType.None;
 
         try
@@ -75,6 +79,7 @@ internal sealed class Login3rdParty
         {
             ///
         }
+#endif
     }
 
     public void Login(CancellationToken ct)
@@ -102,6 +107,9 @@ internal sealed class Login3rdParty
     {
         if (Type == The3rdPartyType.Bilibili)
         {
+#if BETTERGI_PORTABLE
+            return BetterGenshinImpact.Runtime.GameSession.Current.Host.ContinueChannelLogin(ct);
+#else
             if (Process.GetProcessesByName("YuanShen").FirstOrDefault() is Process process)
             {
                 // B服登录
@@ -145,6 +153,7 @@ internal sealed class Login3rdParty
             }
 
             return false;
+#endif
         }
         else
         {
@@ -153,6 +162,7 @@ internal sealed class Login3rdParty
         }
     }
 
+#if !BETTERGI_PORTABLE
     static (IntPtr windowHandle, string windowType) GetBiliLoginWindow(Process process)
     {
         IntPtr bHWnd = IntPtr.Zero;
@@ -221,4 +231,5 @@ internal sealed class Login3rdParty
 
         return (bHWnd, windowType);
     }
+#endif
 }

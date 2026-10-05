@@ -13,7 +13,11 @@ using BetterGenshinImpact.GameTask.Model.Area;
 using BetterGenshinImpact.Helpers;
 using BetterGenshinImpact.Service;
 using BetterGenshinImpact.View.Drawable;
+#if BETTERGI_PORTABLE
+using ThemedMessageBox = BetterGenshinImpact.Runtime.RuntimeUi;
+#else
 using BetterGenshinImpact.View.Windows;
+#endif
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
 using System;
@@ -35,7 +39,7 @@ namespace BetterGenshinImpact.GameTask.AutoSkip;
 /// </summary>
 public partial class AutoSkipTrigger : ITaskTrigger
 {
-    private readonly ILogger<AutoSkipTrigger> _logger = App.GetLogger<AutoSkipTrigger>();
+    private readonly ILogger<AutoSkipTrigger> _logger = GameServices.GetLogger<AutoSkipTrigger>();
 
     public string Name => "自动剧情";
     private bool _isEnabled;
@@ -136,7 +140,7 @@ public partial class AutoSkipTrigger : ITaskTrigger
             var defaultPauseListJson = Global.ReadAllTextIfExist(@"Assets\Config\Skip\default_pause_options.json");
             if (!string.IsNullOrEmpty(defaultPauseListJson))
             {
-                _defaultPauseList = JsonSerializer.Deserialize<List<string>>(defaultPauseListJson, ConfigService.JsonOptions) ?? [];
+                _defaultPauseList = JsonSerializer.Deserialize<List<string>>(defaultPauseListJson, ConfigJson.JsonOptions) ?? [];
             }
         }
         catch (Exception e)
@@ -150,7 +154,7 @@ public partial class AutoSkipTrigger : ITaskTrigger
             var pauseListJson = Global.ReadAllTextIfExist(@"Assets\Config\Skip\pause_options.json");
             if (!string.IsNullOrEmpty(pauseListJson))
             {
-                _pauseList = JsonSerializer.Deserialize<List<string>>(pauseListJson, ConfigService.JsonOptions) ?? [];
+                _pauseList = JsonSerializer.Deserialize<List<string>>(pauseListJson, ConfigJson.JsonOptions) ?? [];
             }
         }
         catch (Exception e)
@@ -164,7 +168,7 @@ public partial class AutoSkipTrigger : ITaskTrigger
             var selectListJson = Global.ReadAllTextIfExist(@"Assets\Config\Skip\select_options.json");
             if (!string.IsNullOrEmpty(selectListJson))
             {
-                _selectList = JsonSerializer.Deserialize<List<string>>(selectListJson, ConfigService.JsonOptions) ?? [];
+                _selectList = JsonSerializer.Deserialize<List<string>>(selectListJson, ConfigJson.JsonOptions) ?? [];
             }
         }
         catch (Exception e)

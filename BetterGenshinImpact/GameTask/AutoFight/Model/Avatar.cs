@@ -1,3 +1,8 @@
+#if BETTERGI_PORTABLE
+using OverlayPoint = OpenCvSharp.Point2d;
+#else
+using OverlayPoint = System.Windows.Point;
+#endif
 using BetterGenshinImpact.Core.Recognition.OCR;
 using BetterGenshinImpact.Core.Recognition.OpenCv;
 using BetterGenshinImpact.Core.Script.Dependence;
@@ -20,7 +25,6 @@ using Vanara.PInvoke;
 using static BetterGenshinImpact.GameTask.Common.TaskControl;
 using BetterGenshinImpact.Core.Config;
 using BetterGenshinImpact.GameTask.AutoFight.Assets;
-using BetterGenshinImpact.ViewModel.Pages;
 using BetterGenshinImpact.GameTask.AutoPathing;
 using BetterGenshinImpact.GameTask.AutoPathing.Model.Enum;
 using BetterGenshinImpact.Core.Recognition.ONNX;
@@ -105,10 +109,10 @@ public class Avatar
     private static readonly Random UnstuckRandom = new();
 
     private static readonly Lazy<BgiYoloPredictor> QBurstClassifierLazy = new(() =>
-        App.ServiceProvider.GetRequiredService<BgiOnnxFactory>().CreateYoloPredictor(BgiOnnxModel.BgiQClassify));
+        GameServices.OnnxFactory.CreateYoloPredictor(BgiOnnxModel.BgiQClassify));
 
     private static readonly Lazy<BgiYoloPredictor> ESkillClassifierLazy = new(() =>
-        App.ServiceProvider.GetRequiredService<BgiOnnxFactory>().CreateYoloPredictor(BgiOnnxModel.BgiEClassify));
+        GameServices.OnnxFactory.CreateYoloPredictor(BgiOnnxModel.BgiEClassify));
 
     public Avatar(CombatScenes combatScenes, string name, int index, Rect nameRect, double manualSkillCd = -1)
     {
@@ -820,10 +824,12 @@ public class Avatar
     /// </summary>
     private void DrawESkillClassifyResult(ImageRegion imageRegion, SkillCdState state, string? code)
     {
+#if !BETTERGI_PORTABLE
         if (View.MaskWindow.InstanceNullable() == null)
         {
             return;
         }
+#endif
 
         var eRect = AutoFightAssets.Get(imageRegion).ERectForClassify;
         var stateText = state switch
@@ -839,7 +845,7 @@ public class Avatar
         }
 
         View.Drawable.VisionContext.Instance().DrawContent.PutOrRemoveTextList("ESkillClassify",
-            [new View.Drawable.TextDrawable(stateText, new System.Windows.Point(eRect.X, eRect.Y - 24))]);
+            [new View.Drawable.TextDrawable(stateText, new OverlayPoint(eRect.X, eRect.Y - 24))]);
     }
 
     // /// <summary>
@@ -1214,7 +1220,7 @@ public class Avatar
 
     public void KeyDown(string key)
     {
-        var vk = KeyBindingsSettingsPageViewModel.MappingKey(User32Helper.ToVk(key));
+        var vk = SimulateKeyHelper.MappingKey(User32Helper.ToVk(key));
         switch (key)
         {
             case "VK_LBUTTON":
@@ -1240,7 +1246,7 @@ public class Avatar
 
     public void KeyUp(string key)
     {
-        var vk = KeyBindingsSettingsPageViewModel.MappingKey(User32Helper.ToVk(key));
+        var vk = SimulateKeyHelper.MappingKey(User32Helper.ToVk(key));
         switch (key)
         {
             case "VK_LBUTTON":
@@ -1266,7 +1272,7 @@ public class Avatar
 
     public void KeyPress(string key)
     {
-        var vk = KeyBindingsSettingsPageViewModel.MappingKey(User32Helper.ToVk(key));
+        var vk = SimulateKeyHelper.MappingKey(User32Helper.ToVk(key));
         switch (key)
         {
             case "VK_LBUTTON":

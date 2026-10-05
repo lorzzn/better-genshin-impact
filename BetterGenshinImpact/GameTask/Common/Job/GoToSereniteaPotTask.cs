@@ -49,7 +49,7 @@ internal class GoToSereniteaPotTask
 
     public GoToSereniteaPotTask()
     {
-        IStringLocalizer<GoToSereniteaPotTask> stringLocalizer = App.GetService<IStringLocalizer<GoToSereniteaPotTask>>() ?? throw new NullReferenceException();
+        IStringLocalizer<GoToSereniteaPotTask> stringLocalizer = GameServices.Localizer<GoToSereniteaPotTask>() ?? throw new NullReferenceException();
         CultureInfo cultureInfo = new CultureInfo(TaskContext.Instance().Config.OtherConfig.GameCultureInfoName);
         this.ayuanHeyString = stringLocalizer.WithCultureGet(cultureInfo, "阿圆");
         this.ayuanHuolingString = stringLocalizer.WithCultureGet(cultureInfo, "壶灵");

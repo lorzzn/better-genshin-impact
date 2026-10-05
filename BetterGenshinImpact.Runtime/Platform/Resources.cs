@@ -2,18 +2,6 @@ using BetterGenshinImpact.Runtime;
 using Microsoft.ML.OnnxRuntime;
 using OpenCvSharp;
 
-namespace BetterGenshinImpact.Core.Recognition.ONNX
-{
-    public sealed class BgiOnnxFactory
-    {
-        public InferenceSession CreateInferenceSession(BgiOnnxModel model, bool ocr = false)
-        {
-            using var options = new SessionOptions();
-            return new InferenceSession(model.ModalPath, options);
-        }
-    }
-}
-
 namespace BetterGenshinImpact.Core.Recognition.OCR
 {
     public static class OcrFactory
@@ -27,6 +15,7 @@ namespace BetterGenshinImpact.GameTask
     public static class GameTaskManager
     {
         public static Mat LoadAssetImage(string task, string name, ImreadModes flags = ImreadModes.Color) => LoadAssetImage(task, name, GameSession.Current.SystemInfo, flags);
+        public static Mat LoadAssetImage(string task, string name, Model.IRecognitionSurface info, ImreadModes flags = ImreadModes.Color) => LoadAssetImage(task, name, info.ScaleMax1080PCaptureRect.Width, info.ScaleMax1080PCaptureRect.Height, flags);
         public static Mat LoadAssetImage(string task, string name, GameSystemInfo info, ImreadModes flags = ImreadModes.Color) => LoadAssetImage(task, name, info.Width, info.Height, flags);
         public static Mat LoadAssetImage(string task, string name, int width, int height, ImreadModes flags = ImreadModes.Color)
         {

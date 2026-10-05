@@ -13,7 +13,7 @@ namespace BetterGenshinImpact.GameTask.AutoPathing.Handler;
 
 internal class AutoFightHandler : IActionHandler
 {
-    private readonly ILogger<AutoFightHandler> _logger = App.GetLogger<AutoFightHandler>();
+    private readonly ILogger<AutoFightHandler> _logger = GameServices.GetLogger<AutoFightHandler>();
     public async Task RunAsyncByScript(CancellationToken ct, WaypointForTrack? waypointForTrack = null, object? config = null)
     {
         await StartFight(ct, config,waypointForTrack);

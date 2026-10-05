@@ -1,3 +1,8 @@
+#if BETTERGI_PORTABLE
+using RecognitionPen = BetterGenshinImpact.Runtime.OverlayPen;
+#else
+using RecognitionPen = System.Drawing.Pen;
+#endif
 ﻿using BetterGenshinImpact.Core.Recognition.OCR;
 using BetterGenshinImpact.GameTask.AutoSkip.Model;
 using BetterGenshinImpact.GameTask.Common;
@@ -212,7 +217,7 @@ public class ExpeditionTask
         return cards;
     }
 
-    private readonly Pen _pen = new(Color.Red, 1);
+    private readonly RecognitionPen _pen = new(Color.Red, 1);
 
     private OcrResult CaptureAndOcr(CaptureContent content)
     {

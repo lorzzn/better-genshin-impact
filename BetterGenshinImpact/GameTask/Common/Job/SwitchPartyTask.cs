@@ -1,3 +1,8 @@
+#if BETTERGI_PORTABLE
+using RecognitionPens = BetterGenshinImpact.Runtime.OverlayPens;
+#else
+using RecognitionPens = System.Drawing.Pens;
+#endif
 using BetterGenshinImpact.Core.Recognition;
 using BetterGenshinImpact.Core.Simulator;
 using BetterGenshinImpact.Core.Simulator.Extensions;
@@ -167,7 +172,7 @@ public class SwitchPartyTask
             RegionOfInterest = regionOfInterest,
             DrawOnWindow = true,
             Name = "队伍名称",
-            DrawOnWindowPen= System.Drawing.Pens.White
+            DrawOnWindowPen= RecognitionPens.White
         };
         // 逐页查找
         try

@@ -10,5 +10,7 @@ public sealed class TaskContext
     private static readonly TaskContext instance = new();
     public static TaskContext Instance() => instance;
     public GameSystemInfo SystemInfo => GameSession.Current.SystemInfo;
-    public double DpiScale => 1;
+    public bool IsInitialized => GameSession.IsBound;
+    public float DpiScale => 1;
+    public Core.Simulator.PostMessageSimulator PostMessageSimulator { get; } = new();
 }

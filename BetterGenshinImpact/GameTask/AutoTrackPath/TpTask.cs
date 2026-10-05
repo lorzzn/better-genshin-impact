@@ -277,10 +277,6 @@ public class TpTask
     /// </summary>
     public async Task TpToStatueOfTheSeven()
     {
-#if BETTERGI_PORTABLE
-        if (_tpConfig.ShouldMove || _tpConfig.IsReviveInNearestStatueOfTheSeven)
-            Runtime.GameSession.Current.RequirePathing();
-#endif
         await CheckInBigMapUi();
 
         string? country = _tpConfig.ReviveStatueOfTheSevenCountry;
@@ -311,12 +307,8 @@ public class TpTask
                 Type = WaypointType.Path.Code,
                 MoveMode = MoveModeEnum.Walk.Code
             };
-#if BETTERGI_PORTABLE
-            await Runtime.GameSession.Current.MoveToWaypoint(waypoint, nameof(MapTypes.Teyvat), _mapMatchingMethod, ct);
-#else
             var waypointForTrack = new WaypointForTrack(waypoint, nameof(MapTypes.Teyvat), _mapMatchingMethod);
             await new PathExecutor(ct).MoveTo(waypointForTrack);
-#endif
             Simulation.SendInput.SimulateAction(GIActions.Drop);
         }
 

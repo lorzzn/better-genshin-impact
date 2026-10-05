@@ -30,14 +30,17 @@ public class BgiOnnxFactory
     /// 请勿直接实例化此类
     /// </summary>
     /// <param name="logger"></param>
-    public BgiOnnxFactory(ILogger<BgiOnnxFactory> logger)
+    public BgiOnnxFactory(ILogger<BgiOnnxFactory> logger) : this(logger, null) { }
+
+    /// <summary>Allows an embedding runtime to supply configuration without a desktop context.</summary>
+    public BgiOnnxFactory(ILogger logger, HardwareAccelerationConfig? configuration)
     {
         _logger = logger;
 
-        var config = GetConfig();
+        var config = configuration ?? GetConfig();
         if (config.AutoAppendCudaPath) AppendCudaPath();
 
-        if (string.IsNullOrWhiteSpace(config.AdditionalPath))
+        if (!string.IsNullOrWhiteSpace(config.AdditionalPath))
             AppendPath(config.AdditionalPath.Split(Path.PathSeparator));
 
 
@@ -207,9 +210,9 @@ public class BgiOnnxFactory
     /// </summary>
     private void AppendCudaPath()
     {
-        var cudaVersion =
+        var cudaVersion = OperatingSystem.IsWindows() ?
             Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\NVIDIA Corporation\GPU Computing Toolkit\CUDA",
-                "FirstVersionInstalled", null)?.ToString() ?? "v12.8";
+                "FirstVersionInstalled", null)?.ToString() ?? "v12.8" : "v12.8";
         string[] filePrefix = ["cudnn", "nvrtc", "cudart", "nvinfer", "cublas", "onnx"];
         string[] environmentVariableNames = ["PATH", "CUDA_PATH", "CUDNN_PATH", "LD_LIBRARY_PATH"];
 

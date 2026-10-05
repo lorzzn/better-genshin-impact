@@ -23,9 +23,9 @@ namespace BetterGenshinImpact.GameTask.Common.Job;
 /// </summary>
 public class ScanPickTask
 {
-    private readonly BgiYoloPredictor _predictor = App.ServiceProvider.GetRequiredService<BgiOnnxFactory>().CreateYoloPredictor(BgiOnnxModel.BgiWorld);
+    private readonly BgiYoloPredictor _predictor = GameServices.OnnxFactory.CreateYoloPredictor(BgiOnnxModel.BgiWorld);
     private readonly double _dpi = TaskContext.Instance().DpiScale;
-    private readonly RECT _realCaptureRect = TaskContext.Instance().SystemInfo.CaptureAreaRect;
+    private readonly (int Width, int Height) _realCaptureRect = (TaskContext.Instance().SystemInfo.CaptureAreaRect.Width, TaskContext.Instance().SystemInfo.CaptureAreaRect.Height);
 
 
     public async Task Start(CancellationToken ct, int? seconds = null)

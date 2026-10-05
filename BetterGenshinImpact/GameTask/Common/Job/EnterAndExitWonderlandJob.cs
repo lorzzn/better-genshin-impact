@@ -15,7 +15,7 @@ public class EnterAndExitWonderlandJob
     public async Task Start(CancellationToken ct)
     {
         Logger.LogInformation("进入千星奇域");
-        SystemControl.FocusWindow(TaskContext.Instance().GameHandle);
+        SystemControl.ActivateWindow();
 
         // 等待千星奇域界面出现
         await NewRetry.WaitForElementAppear(

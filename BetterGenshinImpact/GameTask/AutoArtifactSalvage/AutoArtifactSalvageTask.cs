@@ -1,3 +1,14 @@
+#if BETTERGI_PORTABLE
+using RecognitionPens = BetterGenshinImpact.Runtime.OverlayPens;
+#else
+using RecognitionPens = System.Drawing.Pens;
+#endif
+using Microsoft.ClearScript.V8;
+#if BETTERGI_PORTABLE
+using OverlayPoint = OpenCvSharp.Point2d;
+#else
+using OverlayPoint = System.Windows.Point;
+#endif
 using BetterGenshinImpact.Core.Recognition;
 using BetterGenshinImpact.Core.Recognition.OCR;
 using BetterGenshinImpact.Core.Recognition.OpenCv;
@@ -15,7 +26,6 @@ using BetterGenshinImpact.Helpers.Extensions;
 using BetterGenshinImpact.View.Drawable;
 using Fischless.WindowsInput;
 using Microsoft.ClearScript;
-using Microsoft.ClearScript.V8;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.ML.OnnxRuntime;
@@ -73,7 +83,7 @@ public class AutoArtifactSalvageTask : ISoloTask
         this.artifactSetFilter = param.ArtifactSetFilter;
         this.maxNumToCheck = param.MaxNumToCheck;
         this.recognitionFailurePolicy = param.RecognitionFailurePolicy;
-        this.logger = logger ?? App.GetLogger<AutoArtifactSalvageTask>();
+        this.logger = logger ?? GameServices.GetLogger<AutoArtifactSalvageTask>();
         var stringLocalizer = param.StringLocalizer;
         this.cultureInfo = param.GameCultureInfo;
         quickSelectLocalizedString = stringLocalizer.WithCultureGet(cultureInfo, "快速选择");
@@ -357,15 +367,15 @@ public class AutoArtifactSalvageTask : ISoloTask
                             var rectDrawable = itemRegion.SelfToRectDrawable(drawKey);
                             drawRectList.Add(rectDrawable);
                             VisionContext.Instance().DrawContent.PutOrRemoveRectList(drawKey, drawRectList);
-                            drawTextList.Add(new TextDrawable("识别失败", new System.Windows.Point(rectDrawable.Rect.X + rectDrawable.Rect.Width / 3, rectDrawable.Rect.Y)));
+                            drawTextList.Add(new TextDrawable("识别失败", new OverlayPoint(rectDrawable.Rect.X + rectDrawable.Rect.Width / 3, rectDrawable.Rect.Y)));
                             VisionContext.Instance().DrawContent.TextList.GetOrAdd(drawKey, drawTextList);
                         }
                         else
                         {
-                            var rectDrawable = itemRegion.SelfToRectDrawable(drawKey, System.Drawing.Pens.Lime);
+                            var rectDrawable = itemRegion.SelfToRectDrawable(drawKey, RecognitionPens.Lime);
                             drawRectList.Add(rectDrawable);
                             VisionContext.Instance().DrawContent.PutOrRemoveRectList(drawKey, drawRectList);
-                            drawTextList.Add(new TextDrawable(predName, new System.Windows.Point(rectDrawable.Rect.X + rectDrawable.Rect.Width / 3, rectDrawable.Rect.Y)));
+                            drawTextList.Add(new TextDrawable(predName, new OverlayPoint(rectDrawable.Rect.X + rectDrawable.Rect.Width / 3, rectDrawable.Rect.Y)));
                             VisionContext.Instance().DrawContent.TextList.GetOrAdd(drawKey, drawTextList);
                             if (this.artifactSetFilter.Contains(predName))
                             {
@@ -489,7 +499,7 @@ public class AutoArtifactSalvageTask : ISoloTask
     /// <exception cref="Exception"></exception>
     public async static Task<bool> IsMatchJavaScript(ArtifactStat artifact, string javaScript, ILogger? logger = null, TimeProvider? timeProvider = null)
     {
-        logger = logger ?? App.GetLogger<AutoArtifactSalvageTask>();
+        logger = logger ?? GameServices.GetLogger<AutoArtifactSalvageTask>();
         using V8ScriptEngine engine = new V8ScriptEngine(V8ScriptEngineFlags.UseCaseInsensitiveMemberBinding | V8ScriptEngineFlags.DisableGlobalMembers);
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3), timeProvider ?? TimeProvider.System);    // 这里只是用JS写一个自定义判断方法，由于每个圣遗物都会执行一次，这个方法不应执行太久
         cts.Token.Register(() =>

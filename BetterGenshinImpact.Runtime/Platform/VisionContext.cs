@@ -1,7 +1,7 @@
 using BetterGenshinImpact.Runtime;
 using BetterGenshinImpact.View.Drawable;
 
-namespace BetterGenshinImpact.GameTask;
+namespace BetterGenshinImpact.View.Drawable;
 
 public sealed class VisionContext
 {

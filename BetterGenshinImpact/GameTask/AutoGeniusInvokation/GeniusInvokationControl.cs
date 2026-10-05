@@ -27,7 +27,7 @@ namespace BetterGenshinImpact.GameTask.AutoGeniusInvokation;
 /// </summary>
 public class GeniusInvokationControl
 {
-    private readonly ILogger<GeniusInvokationControl> _logger = App.GetLogger<GeniusInvokationControl>();
+    private readonly ILogger<GeniusInvokationControl> _logger = GameServices.GetLogger<GeniusInvokationControl>();
 
     // 定义一个静态变量来保存类的实例
     private static GeniusInvokationControl? _uniqueInstance;
@@ -601,7 +601,7 @@ public class GeniusInvokationControl
     public void ActionPhaseElementalTuning(int currentCardCount)
     {
         var rect = TaskContext.Instance().SystemInfo.CaptureAreaRect;
-        var m = Simulation.SendInput.Mouse;
+        Fischless.WindowsInput.IMouseSimulator m = Simulation.SendInput.Mouse;
         ClickExtension.Click(rect.X + rect.Width / 2d, rect.Y + rect.Height - 50);
         Sleep(1500);
         if (currentCardCount == 1)
@@ -624,7 +624,7 @@ public class GeniusInvokationControl
     {
         var rect = TaskContext.Instance().SystemInfo.CaptureAreaRect;
         var info = TaskContext.Instance().SystemInfo;
-        var m = Simulation.SendInput.Mouse;
+        Fischless.WindowsInput.IMouseSimulator m = Simulation.SendInput.Mouse;
 
         var startY = rect.Y + rect.Height - 50;
         var endX = rect.X + rect.Width - 50;

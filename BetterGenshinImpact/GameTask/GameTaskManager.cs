@@ -25,7 +25,12 @@ namespace BetterGenshinImpact.GameTask;
 
 internal class GameTaskManager
 {
-    public static ConcurrentDictionary<string, ITaskTrigger>? TriggerDictionary { get; set; }
+    private static readonly ScriptTriggerCollection ScriptTriggers = new();
+    public static ConcurrentDictionary<string, ITaskTrigger>? TriggerDictionary
+    {
+        get => ScriptTriggers.TriggerDictionary;
+        set => ScriptTriggers.TriggerDictionary = value;
+    }
 
     /// <summary>
     /// 一定要在任务上下文初始化完毕后使用
@@ -49,64 +54,9 @@ internal class GameTaskManager
         return ConvertToTriggerList();
     }
 
-    public static List<ITaskTrigger> ConvertToTriggerList(bool allEnabled = false)
-    {
-        if (TriggerDictionary is null)
-        {
-            return [];
-        }
-
-        var loadedTriggers = TriggerDictionary.Values.ToList();
-
-        loadedTriggers.ForEach(i => i.Init());
-        if (allEnabled)
-        {
-            loadedTriggers.ForEach(i => i.IsEnabled = true);
-        }
-
-        loadedTriggers = [.. loadedTriggers.OrderByDescending(i => i.Priority)];
-        return loadedTriggers;
-    }
-
-    public static void ClearTriggers()
-    {
-        TriggerDictionary?.Clear();
-    }
-
-    /// <summary>
-    /// 通过名称添加触发器
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="externalConfig"></param>
-    public static bool AddTrigger(string name, object? externalConfig)
-    {
-        TriggerDictionary ??= new ConcurrentDictionary<string, ITaskTrigger>();
-
-        ITaskTrigger? trigger = null;
-        string? triggerName = null;
-        switch (name)
-        {
-            case "AutoPick":
-                triggerName = "AutoPick";
-                trigger = new AutoPick.AutoPickTrigger(externalConfig as AutoPickExternalConfig);
-                break;
-            case "AutoSkip":
-                triggerName = "AutoSkip";
-                trigger = externalConfig is null ? new AutoSkip.AutoSkipTrigger() : new AutoSkip.AutoSkipTrigger(externalConfig as AutoSkipConfig);
-                break;
-            case "AutoEat":
-                triggerName = "AutoEat";
-                trigger = new AutoEat.AutoEatTrigger();
-                break;
-        }
-
-        if (triggerName == null || trigger == null)
-        {
-            return false;
-        }
-        TriggerDictionary[triggerName] = trigger;
-        return true;
-    }
+    public static List<ITaskTrigger> ConvertToTriggerList(bool allEnabled = false) => ScriptTriggers.ConvertToTriggerList(allEnabled);
+    public static void ClearTriggers() => ScriptTriggers.ClearTriggers();
+    public static bool AddTrigger(string name, object? externalConfig) => ScriptTriggers.AddTrigger(name, externalConfig);
 
     public static void RefreshTriggerConfigs()
     {
@@ -151,6 +101,9 @@ internal class GameTaskManager
     /// </summary>
     /// <returns></returns>
     /// <exception cref="FileNotFoundException"></exception>
+    public static Mat LoadAssetImage(string featName, string assertName, IRecognitionSurface systemInfo, ImreadModes flags = ImreadModes.Color) =>
+        LoadAssetImage(featName, assertName, systemInfo.ScaleMax1080PCaptureRect.Width, systemInfo.ScaleMax1080PCaptureRect.Height, flags);
+
     public static Mat LoadAssetImage(string featName, string assertName, ISystemInfo systemInfo, ImreadModes flags = ImreadModes.Color)
     {
         var assetsFolder = Global.Absolute($@"GameTask\{featName}\Assets\{systemInfo.GameScreenSize.Width}x{systemInfo.GameScreenSize.Height}");
