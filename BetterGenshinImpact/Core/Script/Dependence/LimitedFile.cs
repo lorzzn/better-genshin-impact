@@ -11,8 +11,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BetterGenshinImpact.Core.Script.Dependence;
 
-public class LimitedFile(string rootPath)
+public class LimitedFile(string rootPath, IScriptFileSystem? fileSystem = null)
 {
+    private readonly IScriptFileSystem files = fileSystem ?? PhysicalScriptFileSystem.Instance;
     /// <summary>
     /// 读取指定文件夹内所有文件和文件夹的路径（非递归方式）。
     /// 目录不存在时返回空数组
@@ -26,20 +27,20 @@ public class LimitedFile(string rootPath)
             // 对传入的文件夹路径进行标准化
             string fullPath = NormalizePath(folderPath);
 
-            if (!Directory.Exists(fullPath))
+            if (!files.DirectoryExists(fullPath))
             {
                 TaskControl.Logger.LogError("ReadPathSync 目录不存在: {Path}", fullPath);
                 return Array.Empty<string>();
             }
 
             // 获取指定文件夹下的所有文件（非递归）
-            string[] files = Directory.GetFiles(fullPath, "*", SearchOption.TopDirectoryOnly);
+            string[] filePaths = files.GetFiles(fullPath);
 
             // 获取指定文件夹下的所有子文件夹（非递归）
-            string[] directories = Directory.GetDirectories(fullPath, "*", SearchOption.TopDirectoryOnly);
+            string[] directories = files.GetDirectories(fullPath);
 
             // 合并文件和文件夹路径
-            string[] combined = files.Concat(directories).ToArray();
+            string[] combined = filePaths.Concat(directories).ToArray();
 
             // 将绝对路径转换为相对于 rootPath 的相对路径
             return combined.Select(path => Path.GetRelativePath(rootPath, path)).ToArray();
@@ -63,7 +64,7 @@ public class LimitedFile(string rootPath)
             // 对传入的文件夹路径进行标准化
             string fullPath = NormalizePath(folderPath);
             // 如果目录不存在，自动创建
-            if (!Directory.Exists(fullPath)){Directory.CreateDirectory(fullPath);}
+            if (!files.DirectoryExists(fullPath)){files.CreateDirectory(fullPath);}
             return true;
         }
         catch (Exception ex)
@@ -86,7 +87,7 @@ public class LimitedFile(string rootPath)
             string normalizedPath = NormalizePath(path);
 
             // 使用 Directory.Exists 判断标准化路径是否为文件夹
-            return Directory.Exists(normalizedPath);
+            return files.DirectoryExists(normalizedPath);
         }
         catch (Exception ex)
         {
@@ -106,7 +107,7 @@ public class LimitedFile(string rootPath)
         try
         {
             string normalizedPath = NormalizePath(path);
-            return File.Exists(normalizedPath);
+            return files.FileExists(normalizedPath);
         }
         catch (Exception ex)
         {
@@ -125,7 +126,7 @@ public class LimitedFile(string rootPath)
         try
         {
             string normalizedPath = NormalizePath(path);
-            return File.Exists(normalizedPath) || Directory.Exists(normalizedPath);
+            return files.FileExists(normalizedPath) || files.DirectoryExists(normalizedPath);
         }
         catch (Exception ex)
         {
@@ -152,7 +153,7 @@ public class LimitedFile(string rootPath)
         try
         {
             path = NormalizePath(path);
-            return File.ReadAllText(path);
+            return files.ReadAllText(path);
         }
         catch (Exception ex)
         {
@@ -172,7 +173,7 @@ public class LimitedFile(string rootPath)
         try
         {
             path = NormalizePath(path);
-            var ret = await File.ReadAllTextAsync(path);
+            var ret = await files.ReadAllTextAsync(path);
             return ret;
         }
         catch (Exception ex)
@@ -194,7 +195,7 @@ public class LimitedFile(string rootPath)
         try
         {
             path = NormalizePath(path);
-            var ret = await File.ReadAllTextAsync(path);
+            var ret = await files.ReadAllTextAsync(path);
             callbackFunc(null, ret);
             return ret;
         }
@@ -215,7 +216,7 @@ public class LimitedFile(string rootPath)
         try
         {
             path = NormalizePath(path);
-            using var stream = File.OpenRead(path);
+            using var stream = files.OpenRead(path);
             var mat = Mat.FromStream(stream, ImreadModes.Color);
             return mat;
         }
@@ -261,7 +262,7 @@ public class LimitedFile(string rootPath)
             }
 
             path = NormalizePath(path);
-            using var stream = File.OpenRead(path);
+            using var stream = files.OpenRead(path);
             using var mat = Mat.FromStream(stream, ImreadModes.Color);
             var rsz = new Mat();
             Cv2.Resize(mat, rsz, new Size(width, height), 0, 0, (InterpolationFlags)interpolation);
@@ -306,9 +307,9 @@ public class LimitedFile(string rootPath)
             // 确保目录存在
             var normalizedPath = NormalizePath(path);
             string? directoryPath = Path.GetDirectoryName(normalizedPath);
-            if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+            if (!string.IsNullOrEmpty(directoryPath) && !files.DirectoryExists(directoryPath))
             {
-                Directory.CreateDirectory(directoryPath);
+                files.CreateDirectory(directoryPath);
             }
             
             // 如果提供了内容，验证内容是否合法
@@ -348,13 +349,13 @@ public class LimitedFile(string rootPath)
                 return false;
             }
 
-            if (append && File.Exists(path))
+            if (append && files.FileExists(path))
             {
-                File.AppendAllText(path, content);
+                files.WriteAllText(path, content, true);
             }
             else
             {
-                File.WriteAllText(path, content);
+                files.WriteAllText(path, content, false);
             }
             return true;
         }
@@ -381,13 +382,13 @@ public class LimitedFile(string rootPath)
                 return false;
             }
             
-            if (append && File.Exists(path))
+            if (append && files.FileExists(path))
             {
-                await File.AppendAllTextAsync(path, content);
+                await files.WriteAllTextAsync(path, content, true);
             }
             else
             {
-                await File.WriteAllTextAsync(path, content);
+                await files.WriteAllTextAsync(path, content, false);
             }
             return true;
         }
@@ -416,13 +417,13 @@ public class LimitedFile(string rootPath)
                 return false;
             }
             
-            if (append && File.Exists(path))
+            if (append && files.FileExists(path))
             {
-                await File.AppendAllTextAsync(path, content);
+                await files.WriteAllTextAsync(path, content, true);
             }
             else
             {
-                await File.WriteAllTextAsync(path, content);
+                await files.WriteAllTextAsync(path, content, false);
             }
             callbackFunc(null, true);
             return true;
@@ -454,13 +455,13 @@ public class LimitedFile(string rootPath)
 
             // 确保目录存在
             string? directoryPath = Path.GetDirectoryName(path);
-            if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+            if (!string.IsNullOrEmpty(directoryPath) && !files.DirectoryExists(directoryPath))
             {
-                Directory.CreateDirectory(directoryPath);
+                files.CreateDirectory(directoryPath);
             }
 
             // 使用OpenCV保存图片（默认PNG格式）
-            Cv2.ImWrite(path, mat);
+            files.WriteAllBytes(path, mat.ImEncode(Path.GetExtension(path)));
             return true;
         }
         catch (Exception ex)
@@ -525,14 +526,14 @@ public class LimitedFile(string rootPath)
             newPath = NormalizePath(newPath);
 
             // 检查原路径是否存在
-            if (!File.Exists(oldPath) && !Directory.Exists(oldPath))
+            if (!files.FileExists(oldPath) && !files.DirectoryExists(oldPath))
             {
                 TaskControl.Logger.LogError("RenamePathSync 异常: 原路径不存在 {Path}", oldPath);
                 return false;
             }
 
             //验证扩展名合法性
-            if (File.Exists(oldPath) && !IsValid(newPath))
+            if (files.FileExists(oldPath) && !IsValid(newPath))
             {
                 TaskControl.Logger.LogError("RenamePathSync 异常: 新文件路径不合法 {Path}", newPath);
                 return false;
@@ -540,13 +541,13 @@ public class LimitedFile(string rootPath)
 
             // 确保目标目录存在
             string? directoryPath = Path.GetDirectoryName(newPath);
-            if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+            if (!string.IsNullOrEmpty(directoryPath) && !files.DirectoryExists(directoryPath))
             {
-                Directory.CreateDirectory(directoryPath);
+                files.CreateDirectory(directoryPath);
             }
 
             // 执行重命名
-            Directory.Move(oldPath, newPath);
+            files.Move(oldPath, newPath);
 
             return true;
         }

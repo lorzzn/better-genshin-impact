@@ -16,13 +16,13 @@ namespace BetterGenshinImpact.Core.Script;
 
 public partial class EngineExtend
 {
-    public static void InitCoreHost(IScriptEngine engine, string workDir, string[]? searchPaths = null)
+    public static void InitCoreHost(IScriptEngine engine, string workDir, string[]? searchPaths = null, IScriptFileSystem? fileSystem = null)
     {
         GlobalMethod.SetGameMetrics(1920, 1080);
-        engine.AddHostObject("keyMouseScript", new KeyMouseScript(workDir));
+        engine.AddHostObject("keyMouseScript", new KeyMouseScript(workDir, fileSystem));
         engine.AddHostObject("genshin", new Dependence.Genshin());
         engine.AddHostObject("log", new Log());
-        engine.AddHostObject("file", new LimitedFile(workDir)); // 限制文件访问
+        engine.AddHostObject("file", new LimitedFile(workDir, fileSystem)); // 限制文件访问
         engine.AddHostType("CancellationTokenSource", typeof(CancellationTokenSource));
         engine.AddHostType("CancellationToken", typeof(CancellationToken));
         engine.AddHostType("Mat", typeof(Mat));

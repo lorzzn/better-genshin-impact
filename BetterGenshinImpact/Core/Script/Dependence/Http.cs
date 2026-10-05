@@ -8,39 +8,23 @@ using System.Text.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
-using BetterGenshinImpact.GameTask;
 using Microsoft.Extensions.Logging;
 
 namespace BetterGenshinImpact.Core.Script.Dependence;
 
-public class Http
+public partial class Http
 {
-    private readonly ILogger<Http> _logger = App.GetLogger<Http>();
+    private readonly ILogger _logger;
+    private readonly Action<string> checkPermission;
+    private readonly Func<string, string, string?, Dictionary<string, string>, Task<HttpReponse>>? send;
 
-    private void CheckHttpPermission(string url)
+    public Http(Action<string> checkPermission,
+        Func<string, string, string?, Dictionary<string, string>, Task<HttpReponse>>? send = null,
+        ILogger? logger = null)
     {
-        var currentProject = TaskContext.Instance().CurrentScriptProject;
-        if (!currentProject?.AllowJsHTTP ?? false)
-        {
-            throw new UnauthorizedAccessException("当前JS脚本不允许使用HTTP请求，请在调度器通用设置中启用“JS HTTP权限”");
-        }
-        var allowedUrls = currentProject?.Project?.Manifest.HttpAllowedUrls ?? [];
-        if (allowedUrls.Length == 0)
-        {
-            throw new UnauthorizedAccessException("当前JS脚本没有配置允许请求的URL，请在脚本的manifest.json中配置http_allowed_urls");
-        }
-        if (allowedUrls.Any(allowedUrl =>
-        {
-            // fuzzy match
-            var pattern = "^" + System.Text.RegularExpressions.Regex.Escape(allowedUrl).Replace("\\*", ".*") + "$";
-            _logger.LogDebug($"[HTTP] 检查URL {url} 是否符合: {pattern}");
-            var regex = new System.Text.RegularExpressions.Regex(pattern);
-            return regex.IsMatch(url);
-        }))
-        {
-            return;
-        }
-        throw new UnauthorizedAccessException($"当前JS脚本不允许请求此URL: {url}，请在脚本的manifest.json中配置http_allowed_urls，当前允许的URL列表: [{string.Join(", ", allowedUrls)}]");
+        this.checkPermission = checkPermission ?? throw new ArgumentNullException(nameof(checkPermission));
+        this.send = send;
+        _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance;
     }
 
     public class HttpReponse
@@ -62,7 +46,7 @@ public class Http
     public async Task<HttpReponse> Request(string method, string url, string? body = null, string? headersJson = null)
     {
         _logger.LogDebug($"[HTTP] 发送HTTP请求: {method} {url} Body: {(body != null ? body : "null")} Headers: {(headersJson != null ? headersJson : "null")}");
-        CheckHttpPermission(url);
+        checkPermission(url);
 
         var dictHeaders = new Dictionary<string, string>();
         if (!string.IsNullOrWhiteSpace(headersJson))
@@ -83,6 +67,9 @@ public class Http
 
         // header全部小写
         dictHeaders = dictHeaders.ToDictionary(kvp => kvp.Key.ToLowerInvariant(), kvp => kvp.Value);
+
+        // The embedding host may enforce its network policy and cancellation.
+        if (send != null) return await send(method, url, body, dictHeaders);
 
         // 提前取出来Content-Type，防止被覆盖
         string contentType = "application/json";

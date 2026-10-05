@@ -72,7 +72,8 @@ public partial class ScriptProject
         }
     }
 
-    public async Task ExecuteWithHostAsync(IScriptHost host, object? context = null, CancellationToken cancellationToken = default)
+    public async Task<string?> ExecuteWithHostAsync(IScriptHost host, object? context = null,
+        CancellationToken cancellationToken = default, bool serializeResult = true)
     {
         ArgumentNullException.ThrowIfNull(host);
         cancellationToken.ThrowIfCancellationRequested();
@@ -96,6 +97,7 @@ public partial class ScriptProject
                              code.Contains("import ", StringComparison.Ordinal) ||
                              code.Contains("export ", StringComparison.Ordinal);
 
+            object? evaluation;
             if (useModule)
             {
                 // 清除Document缓存
@@ -105,14 +107,24 @@ public partial class ScriptProject
                 string runtimeCode = loader.RewriteScriptCode(code, mainScriptPath);
                 
                 var documentInfo = new DocumentInfo(new Uri(mainScriptPath)) { Category = ModuleCategory.Standard };
-                var evaluation = engine.Evaluate(documentInfo, runtimeCode);
-                if (evaluation is Task task) await task.WaitAsync(cancellationToken);
+                evaluation = engine.Evaluate(documentInfo, runtimeCode);
             }
             else
             {
-                var evaluation = engine.Evaluate(code);
-                if (evaluation is Task task) await task.WaitAsync(cancellationToken);
+                evaluation = engine.Evaluate(code);
             }
+            if (evaluation is Task task)
+            {
+                await task.WaitAsync(cancellationToken);
+                evaluation = task is Task<object> result ? result.Result : null;
+            }
+            // The desktop caller does not consume script return values. Preserve
+            // that behavior for values which cannot be represented as JSON.
+            if (!serializeResult) return null;
+            // Materialize the result while V8 is alive. Returning a ScriptObject
+            // would leave the caller holding an object from a disposed engine.
+            var json = engine.Script.JSON.stringify(evaluation);
+            return json is string text ? text : null;
         }
         catch (Exception) when (cancellationToken.IsCancellationRequested)
         {

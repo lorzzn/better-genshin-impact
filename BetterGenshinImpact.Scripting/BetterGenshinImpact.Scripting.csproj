@@ -11,6 +11,8 @@
     <ProjectReference Include="../BetterGenshinImpact.Runtime/BetterGenshinImpact.Runtime.csproj" />
     <PackageReference Include="Microsoft.ClearScript.V8" Version="7.4.5" />
     <Compile Include="../BetterGenshinImpact/Core/Script/IScriptHost.cs" Link="IScriptHost.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/ScriptOperation.cs" Link="ScriptOperation.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/IScriptFileSystem.cs" Link="IScriptFileSystem.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/PackageDocumentLoader.cs" Link="PackageDocumentLoader.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Utils/ScriptUtils.cs" Link="Utils/ScriptUtils.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Project/ScriptProject.cs" Link="Project/ScriptProject.cs" />
@@ -22,6 +24,9 @@
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/GlobalMethod.cs" Link="Dependence/GlobalMethod.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Genshin.Navigation.cs" Link="Dependence/Genshin.Navigation.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/LimitedFile.cs" Link="Dependence/LimitedFile.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Dispatcher.cs" Link="Dependence/Dispatcher.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Http.cs" Link="Dependence/Http.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Model/SoloTask.cs" Link="Dependence/Model/SoloTask.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Log.cs" Link="Dependence/Log.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/KeyMouseScript.cs" Link="Dependence/KeyMouseScript.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/ServerTime.cs" Link="Dependence/ServerTime.cs" />

@@ -47,7 +47,7 @@ public partial class ScriptProject
     }
 
     public Task ExecuteAsync(dynamic? context = null, PathingPartyConfig? partyConfig = null)
-        => ExecuteWithHostAsync(new DesktopScriptHost(partyConfig), (object?)context);
+        => ExecuteWithHostAsync(new DesktopScriptHost(partyConfig), (object?)context, serializeResult: false);
 
     private sealed class DesktopScriptHost(PathingPartyConfig? partyConfig) : IScriptHost
     {

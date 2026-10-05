@@ -66,17 +66,17 @@ public partial class Genshin
     /// <returns></returns>
     public async Task Tp(double x, double y)
     {
-        await new TpTask(CancellationContext.Instance.Token).Tp(x, y);
+        await ScriptOperation.RunAsync("game.tp", () => new TpTask(CancellationContext.Instance.Token).Tp(x, y));
     }
 
     public async Task Tp(double x, double y, string mapName, bool force)
     {
-        await new TpTask(CancellationContext.Instance.Token).Tp(x, y, mapName, force);
+        await ScriptOperation.RunAsync("game.tp", () => new TpTask(CancellationContext.Instance.Token).Tp(x, y, mapName, force));
     }
 
     public async Task Tp(double x, double y, bool force)
     {
-        await new TpTask(CancellationContext.Instance.Token).Tp(x, y, MapTypes.Teyvat.ToString(), force);
+        await ScriptOperation.RunAsync("game.tp", () => new TpTask(CancellationContext.Instance.Token).Tp(x, y, MapTypes.Teyvat.ToString(), force));
     }
 
     /// <summary>
@@ -200,7 +200,7 @@ public partial class Genshin
     public async Task TpToStatueOfTheSeven()
     {
         TpTask tpTask = new TpTask(CancellationContext.Instance.Token);
-        await tpTask.TpToStatueOfTheSeven();
+        await ScriptOperation.RunAsync("game.tpToStatueOfTheSeven", tpTask.TpToStatueOfTheSeven);
     }
 
     /// <summary>
@@ -297,6 +297,6 @@ public partial class Genshin
     /// <returns></returns>
     public async Task ReturnMainUi()
     {
-        await new ReturnMainUiTask().Start(CancellationContext.Instance.Token);
+        await ScriptOperation.RunAsync("game.returnMainUi", () => new ReturnMainUiTask().Start(CancellationContext.Instance.Token));
     }
 }

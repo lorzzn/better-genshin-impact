@@ -10,6 +10,17 @@ namespace BetterGenshinImpact.ScriptingTest;
 
 public sealed class ScriptProjectTests
 {
+    [Theory]
+    [InlineData("({answer:42})")]
+    [InlineData("(async()=>{ await probe.pause(); return {answer:42}; })()")]
+    public async Task ResultsAreMaterializedBeforeEngineDisposal(string code)
+    {
+        using var files = new ScriptFiles(code);
+        var result = await files.Project().ExecuteWithHostAsync(new ProbeHost());
+        using var json = JsonDocument.Parse(result!);
+        Assert.Equal(42, json.RootElement.GetProperty("answer").GetInt32());
+    }
+
     [Fact]
     public async Task OfficialEngineAwaitsPlainAsyncScriptAndUsesCaseInsensitiveHostBinding()
     {
