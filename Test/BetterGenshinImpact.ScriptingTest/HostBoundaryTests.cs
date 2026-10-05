@@ -1,6 +1,8 @@
 using BetterGenshinImpact.Core.Script.Dependence;
 using BetterGenshinImpact.Core.Script;
 using BetterGenshinImpact.Core.Script.Dependence.Model;
+using BetterGenshinImpact.Runtime;
+using OpenCvSharp;
 using Xunit;
 
 namespace BetterGenshinImpact.ScriptingTest;
@@ -53,11 +55,25 @@ public sealed class HostBoundaryTests
     [Fact]
     public async Task DispatcherHonorsCancellationBeforeCallingItsTaskHost()
     {
+        using var lifetime = new CancellationTokenSource();
+        using var session = new GameSession(new TestGameHost(), lifetime.Token);
         var tasks = new TestTasks();
         var dispatcher = new Dispatcher(tasks);
         Assert.Equal("mapped", await dispatcher.RunTask(new SoloTask("mapped"), CancellationToken.None));
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => dispatcher.RunTask(new SoloTask("blocked"), new CancellationToken(true)));
+        lifetime.Cancel();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => dispatcher.RunTask(new SoloTask("session-cancelled"), CancellationToken.None));
         Assert.Equal(1, tasks.Calls);
+    }
+
+    private sealed class TestGameHost : IGameHost
+    {
+        public Mat Capture(CancellationToken cancellationToken) => new(1080, 1920, MatType.CV_8UC3, Scalar.Black);
+        public void MovePointer(double x, double y) => throw new InvalidOperationException("Unexpected input");
+        public void MovePointerBy(int dx, int dy) => throw new InvalidOperationException("Unexpected input");
+        public void SetPointerButton(int button, bool down) => throw new InvalidOperationException("Unexpected input");
+        public void SetKey(int virtualKey, bool down) => throw new InvalidOperationException("Unexpected input");
+        public void Scroll(int notches) => throw new InvalidOperationException("Unexpected input");
     }
 
     private sealed class TestTasks : IScriptTaskHost
