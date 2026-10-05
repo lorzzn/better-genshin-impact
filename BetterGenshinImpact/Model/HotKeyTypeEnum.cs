@@ -1,6 +1,8 @@
 ﻿using System;
 
+#if !BETTERGI_PORTABLE
 using BetterGenshinImpact.Service.I18n;
+#endif
 
 namespace BetterGenshinImpact.Model;
 
@@ -10,6 +12,7 @@ public enum HotKeyTypeEnum
     KeyboardMonitor, // 键盘监听
 }
 
+#if !BETTERGI_PORTABLE
 public static class HotKeyTypeEnumExtension
 {
     public static string ToChineseName(this HotKeyTypeEnum type)
@@ -32,3 +35,4 @@ public static class HotKeyTypeEnumExtension
         };
     }
 }
+#endif

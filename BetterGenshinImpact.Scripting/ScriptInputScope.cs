@@ -11,12 +11,14 @@ public sealed class ScriptInputScope : IDisposable
     private readonly object sync = new();
     private readonly List<KeyMouseHook> hooks = [];
     private bool stopping;
+    private readonly bool leaveOpen;
     internal static ScriptInputScope Current => current.Value ?? throw new InvalidOperationException("脚本 Target 输入未绑定");
     internal IScriptInputSource Source { get; }
 
-    public ScriptInputScope(IScriptInputSource source)
+    public ScriptInputScope(IScriptInputSource source, bool leaveOpen = false)
     {
         Source = source;
+        this.leaveOpen = leaveOpen;
         current.Value = this;
     }
 
@@ -37,7 +39,7 @@ public sealed class ScriptInputScope : IDisposable
             stopping = true;
             foreach (var hook in hooks) hook.Dispose();
         }
-        Source.Dispose();
+        if (!leaveOpen) Source.Dispose();
         current.Value = previous;
     }
 

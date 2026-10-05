@@ -47,6 +47,10 @@ public sealed class ScriptTriggerCollection
         string? triggerName = null;
         switch (name)
         {
+            case "QuickTeleport":
+                triggerName = "QuickTeleport";
+                trigger = new QuickTeleport.QuickTeleportTrigger();
+                break;
             case "AutoPick":
                 triggerName = "AutoPick";
                 trigger = new AutoPick.AutoPickTrigger(externalConfig as AutoPickExternalConfig);

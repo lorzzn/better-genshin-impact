@@ -28,6 +28,8 @@ public interface IGameHost
     void Scroll(int notches);
     void ScrollHorizontal(int notches) => throw new NotSupportedException("Target does not support horizontal scrolling");
     bool IsHardwareKeyDown(int key) => throw new NotSupportedException("Target does not expose physical keyboard state");
+    /// <summary>Observed input on this Target, not global input on the embedding computer.</summary>
+    bool IsHotkeyPressed(string name) => throw new NotSupportedException("Target does not expose hotkey state");
     bool IsTogglingKeyInEffect(int key) => throw new NotSupportedException("Target does not expose toggle-key state");
     void InputText(string text) => throw new NotSupportedException("The bound game host does not support text input");
     /// <summary>Writes only the Target clipboard. Null clears it; never reads the host clipboard.</summary>

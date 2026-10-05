@@ -5,12 +5,14 @@ using BetterGenshinImpact.GameTask.Common;
 using BetterGenshinImpact.GameTask.Model.Area;
 using BetterGenshinImpact.GameTask.QuickTeleport.Assets;
 using BetterGenshinImpact.Model;
+#if !BETTERGI_PORTABLE
 using Fischless.GameCapture;
+using System.Windows.Forms;
+#endif
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
 using System;
 using System.Linq;
-using System.Windows.Forms;
 using BetterGenshinImpact.GameTask.Common.BgiVision;
 
 namespace BetterGenshinImpact.GameTask.QuickTeleport;
@@ -82,14 +84,14 @@ internal class QuickTeleportTrigger : ITaskTrigger
             if (!hasTeleportButton)
             {
                 // 存在地图关闭按钮，说明未选中传送点，直接返回
-                var mapCloseRa = content.CaptureRectArea.Find(GetRecognitionObject("MapCloseButton", content.CaptureRectArea));
+                using var mapCloseRa = content.CaptureRectArea.Find(GetRecognitionObject("MapCloseButton", content.CaptureRectArea));
                 if (!mapCloseRa.IsEmpty())
                 {
                     return;
                 }
 
                 // 存在地图选择按钮，说明未选中传送点，直接返回
-                var mapChooseRa = content.CaptureRectArea.Find(GetRecognitionObject("MapChoose", content.CaptureRectArea));
+                using var mapChooseRa = content.CaptureRectArea.Find(GetRecognitionObject("MapChoose", content.CaptureRectArea));
                 if (!mapChooseRa.IsEmpty())
                 {
                     return;
@@ -100,7 +102,8 @@ internal class QuickTeleportTrigger : ITaskTrigger
                 if (hasMapChooseIcon)
                 {
                     TaskControl.Sleep(_config.WaitTeleportPanelDelay);
-                    CheckTeleportButton(TaskControl.CaptureToRectArea(forceNew: true));
+                    using var capture = TaskControl.CaptureToRectArea(forceNew: true);
+                    CheckTeleportButton(capture);
                 }
             }
         }
@@ -131,7 +134,12 @@ internal class QuickTeleportTrigger : ITaskTrigger
     private bool CheckMapChooseIcon(CaptureContent content)
     {
         var hasMapChooseIcon = false;
-        var isHdrCapture = TaskContext.Instance().Config.CaptureMode == nameof(CaptureModes.WindowsGraphicsCaptureHdr);
+        var isHdrCapture =
+#if BETTERGI_PORTABLE
+            TaskContext.Instance().Config.IsHdrCapture;
+#else
+            TaskContext.Instance().Config.CaptureMode == nameof(CaptureModes.WindowsGraphicsCaptureHdr);
+#endif
 
         // 全匹配一遍
         var assets = _assets ?? QuickTeleportAssets.Get(content.CaptureRectArea);
@@ -237,6 +245,9 @@ internal class QuickTeleportTrigger : ITaskTrigger
 
     private bool IsHotkeyPressed()
     {
+#if BETTERGI_PORTABLE
+        return Runtime.GameSession.Current.Host.IsHotkeyPressed(_hotkeyConfig.QuickTeleportTickHotkey);
+#else
         if (HotKey.IsMouseButton(_hotkeyConfig.QuickTeleportTickHotkey))
         {
             if (MouseHook.AllMouseHooks.TryGetValue((MouseButtons)Enum.Parse(typeof(MouseButtons), _hotkeyConfig.QuickTeleportTickHotkey), out var mouseHook))
@@ -259,5 +270,6 @@ internal class QuickTeleportTrigger : ITaskTrigger
         }
 
         return false;
+#endif
     }
 }

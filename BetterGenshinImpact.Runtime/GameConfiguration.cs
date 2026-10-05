@@ -10,6 +10,7 @@ public sealed class GameConfiguration
     public TpConfig TpConfig { get; set; } = new();
     public QuickTeleportConfig QuickTeleportConfig { get; set; } = new();
     public KeyBindingsConfig KeyBindingsConfig { get; set; } = new();
+    public HotKeyConfig HotKeyConfig { get; set; } = new();
     public HardwareAccelerationConfig HardwareAccelerationConfig { get; set; } = new();
     public PathingConditionConfig PathingConditionConfig { get; set; } = PathingConditionConfig.Default;
     public OtherConfig OtherConfig { get; set; } = new();
