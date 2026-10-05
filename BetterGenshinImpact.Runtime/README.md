@@ -51,3 +51,12 @@ Windows 的视图模型设置通过 `IScriptTaskDefaults` 提供，嵌入宿主�
 脚本文件仍经宿主文件接口读写，官方路径重试与异常处理语义保留。
 本次 Release 编译通过（增量构建 2 条警告、0 错误）；没有执行测试或游戏。
 运行配置的后台编辑与持久化、资源目录隔离、HTML 遮罩及输入钩子仍需继续接入。
+
+### 宿主配置和目录边界
+
+`RuntimeEnvironment.StateRoot` 由宿主指定，接收官方 `User` 运行数据、`log` 与
+`Cache`。只读策略、路径及键鼠资源从 `LibraryRoot/User/{AutoFight,AutoGeniusInvokation,
+AutoPathing,KeyMouseScript}` 读取，未指定时沿用 `AssetRoot`；游戏识别资源来自发布包。
+地图原始图片和预计算特征仍按官方地图资源布局读取，缺少特征时的生成目录继续整理。
+官方模型工厂读取本次会话硬件配置，OCR 实例的首次创建按模型串行处理。
+`ScriptApiCatalog` 报告已编译接口；该清单不能代替依赖完整性或游戏验收结论。

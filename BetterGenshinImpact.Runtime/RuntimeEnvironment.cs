@@ -16,9 +16,14 @@ public static class RuntimeEnvironment
     private static readonly ResourceManagerStringLocalizerFactory localizers = new(Options.Create(new LocalizationOptions()), NullLoggerFactory.Instance);
     static RuntimeEnvironment() => ServerTimeHelper.Initialize(new ServerTimeProvider(TimeProvider.System));
     public static string AssetRoot { get; set; } = AppContext.BaseDirectory;
+    // The embedding host owns task state. Shared libraries contain only inputs
+    // (subscribed routes, strategies and macros), never per-Target progress.
+    public static string StateRoot { get; set; } = Path.Combine(Path.GetTempPath(), "bettergi-runtime", Environment.ProcessId.ToString());
+    public static string? LibraryRoot { get; set; }
     public static ILogger Logger { get; set; } = NullLogger.Instance;
-    public static BgiOnnxFactory OnnxFactory { get; } = new(NullLogger.Instance,
-        new Core.Config.HardwareAccelerationConfig { EnableTensorRtCache = false, OptimizedModel = false });
+    private static readonly Lazy<BgiOnnxFactory> onnxFactory = new(() => new BgiOnnxFactory(Logger,
+        GameSession.IsBound ? GameSession.Current.Config.HardwareAccelerationConfig : new Core.Config.HardwareAccelerationConfig()));
+    public static BgiOnnxFactory OnnxFactory => onnxFactory.Value;
     public static Action<Service.Notification.Model.BaseNotificationData>? Notification { get; set; }
     public static void ReportNotification(Service.Notification.Model.BaseNotificationData data)
     {
@@ -29,12 +34,20 @@ public static class RuntimeEnvironment
     public static void ReportPosition(Point2f position) => PositionChanged?.Invoke(position);
     public static IStringLocalizer<T> Localizer<T>() => new StringLocalizer<T>(localizers);
     private static readonly Dictionary<PaddleOcrService.PaddleOcrModelType, PaddleOcrService> ocrServices = new();
+    private static readonly object modelSync = new();
 
     public static string ResolveResource(string relativePath)
     {
         relativePath = relativePath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
-        var root = relativePath.StartsWith("GameTask" + Path.DirectorySeparatorChar, StringComparison.Ordinal)
-            ? Path.Combine(AppContext.BaseDirectory, "UpstreamAssets") : AssetRoot;
+        var segments = relativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+        var first = segments.Length > 0 ? segments[0] : "";
+        var root = first switch
+        {
+            "GameTask" => Path.Combine(AppContext.BaseDirectory, "UpstreamAssets"),
+            "User" when segments.Length > 1 && segments[1] is "AutoFight" or "AutoGeniusInvokation" or "AutoPathing" or "KeyMouseScript" => LibraryRoot ?? AssetRoot,
+            "User" or "log" or "Cache" => StateRoot,
+            _ => AssetRoot,
+        };
         return Path.GetFullPath(Path.Combine(root, relativePath));
     }
 
@@ -42,14 +55,20 @@ public static class RuntimeEnvironment
 
     public static PaddleOcrService GetOcrService(PaddleOcrService.PaddleOcrModelType model)
     {
-        if (!ocrServices.TryGetValue(model, out var service))
-            ocrServices.Add(model, service = new PaddleOcrService(OnnxFactory, model));
-        return service;
+        lock (modelSync)
+        {
+            if (!ocrServices.TryGetValue(model, out var service))
+                ocrServices.Add(model, service = new PaddleOcrService(OnnxFactory, model));
+            return service;
+        }
     }
 
     public static void DisposeModels()
     {
-        foreach (var service in ocrServices.Values) service.Dispose();
-        ocrServices.Clear();
+        lock (modelSync)
+        {
+            foreach (var service in ocrServices.Values) service.Dispose();
+            ocrServices.Clear();
+        }
     }
 }
