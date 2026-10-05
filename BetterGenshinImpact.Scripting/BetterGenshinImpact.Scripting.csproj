@@ -4,6 +4,7 @@
     <Version>0.66.0</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <DefineConstants>$(DefineConstants);BETTERGI_PORTABLE</DefineConstants>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
@@ -15,5 +16,16 @@
     <Compile Include="../BetterGenshinImpact/Core/Script/Project/ScriptProject.cs" Link="Project/ScriptProject.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Project/Manifest.cs" Link="Project/Manifest.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Project/Author.cs" Link="Project/Author.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/EngineExtend.Core.cs" Link="EngineExtend.Core.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/CancellationContext.cs" Link="CancellationContext.cs" />
+    <Compile Include="../BetterGenshinImpact/Model/Singleton.cs" Link="Model/Singleton.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/GlobalMethod.cs" Link="Dependence/GlobalMethod.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Genshin.Navigation.cs" Link="Dependence/Genshin.Navigation.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/LimitedFile.cs" Link="Dependence/LimitedFile.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Log.cs" Link="Dependence/Log.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/KeyMouseScript.cs" Link="Dependence/KeyMouseScript.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/ServerTime.cs" Link="Dependence/ServerTime.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/CustomHostFunctions.cs" Link="Dependence/CustomHostFunctions.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/BgiVision/*.cs" Link="BgiVision/%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

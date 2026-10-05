@@ -9,7 +9,14 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="BetterGenshinImpact.RuntimeTest" />
+    <InternalsVisibleTo Include="BetterGenshinImpact.Scripting" />
     <PackageReference Include="Semver" Version="3.0.0" />
+    <PackageReference Include="Vanara.PInvoke.User32" Version="4.1.3" />
+    <Compile Include="../BetterGenshinImpact/Core/Config/KeyIdConverter.VirtualKey.cs" Link="Core/Config/KeyIdConverter.VirtualKey.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Simulator/Extensions/SimulateKeyHelper.Mapping.cs" Link="Core/Simulator/Extensions/SimulateKeyHelper.Mapping.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/Navigation.cs" Link="GameTask/AutoPathing/Navigation.cs" />
+    <Compile Include="../BetterGenshinImpact/Helpers/User32Helper.cs" Link="Helpers/User32Helper.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Config/Global.cs" Link="Core/Config/Global.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Recorder/KeyMouseMacroPlayer.cs" Link="Core/Recorder/KeyMouseMacroPlayer.cs" />
     <Compile Include="../BetterGenshinImpact/Helpers/Extensions/PointExtension.cs" Link="Helpers/Extensions/PointExtension.cs" />

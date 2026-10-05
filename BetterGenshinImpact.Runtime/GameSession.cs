@@ -67,6 +67,13 @@ public sealed class GameSession : IDisposable
         PointerPosition += new Point(dx, dy);
     }
 
+    public void InputText(string text)
+    {
+        ObjectDisposedException.ThrowIf(disposed, this);
+        CancellationToken.ThrowIfCancellationRequested();
+        Host.InputText(text);
+    }
+
     public void Key(int key, bool down)
     {
         ObjectDisposedException.ThrowIf(disposed, this);

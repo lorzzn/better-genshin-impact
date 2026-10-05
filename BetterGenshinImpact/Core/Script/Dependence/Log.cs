@@ -1,10 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace BetterGenshinImpact.Core.Script.Dependence;
 
 public class Log
 {
+#if BETTERGI_PORTABLE
+    private ILogger _logger => Runtime.RuntimeEnvironment.Logger;
+#else
     private readonly ILogger<Log> _logger = App.GetLogger<Log>();
+#endif
 
     public void Debug(string? message, params object?[] args)
     {

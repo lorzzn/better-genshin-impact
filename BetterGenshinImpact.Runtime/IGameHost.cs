@@ -16,4 +16,5 @@ public interface IGameHost
     void SetPointerButton(int button, bool down);
     void SetKey(int virtualKey, bool down);
     void Scroll(int notches);
+    void InputText(string text) => throw new NotSupportedException("The bound game host does not support text input");
 }

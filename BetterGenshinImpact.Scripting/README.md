@@ -9,8 +9,15 @@
 取消可中断 V8 循环和未决 Promise，宿主异步操作还应绑定同一个取消令牌。
 包入口、模块及资源均限制在脚本目录内；普通目录前缀不能充当目录边界。
 
-当前 Windows 8 项测试覆盖异步完成、大小写绑定、模块与资源导入、异常、取消及目录越界。
-这一步只拆分官方引擎，完整游戏宿主对象和平台 MAA 切换仍待后续接通。
+`GameScriptHost` 复用官方 `EngineExtend` 基础注册、`GlobalMethod`、`Genshin` 地图方法、
+`BvPage/BvLocator/BvFlow`、`LimitedFile`、日志和宏回放；截图和输入落到当前 `GameSession`。
+键位映射从 WPF ViewModel 移入共享库，桌面应用也调用同一实现。
+UID 使用 64 位整数，保留官方 OCR 区域与数字提取规则。
+
+Windows 测试覆盖异步完成、大小写绑定、模块与资源导入、异常、取消及目录越界，
+并验证真实 V8 到假 Target 的键位映射、坐标、BvFlow 和取消松键。
+完整路径/战斗/任务调度宿主以及平台的配置、文件、日志和 MAA 切换仍待接通，
+基础宿主可运行不等于完整生态脚本可完成游戏任务。
 测试运行时需安装对应平台的 `Microsoft.ClearScript.V8.Native` 包；其他平台尚待实机验证。
 
 ```powershell

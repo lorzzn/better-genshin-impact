@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BetterGenshinImpact.Model;
 using System.Threading;
 
@@ -6,6 +6,11 @@ namespace BetterGenshinImpact.Core.Script;
 
 public class CancellationContext : Singleton<CancellationContext>
 {
+#if BETTERGI_PORTABLE
+    public CancellationToken Token => Runtime.GameSession.Current.CancellationToken;
+#else
+    public CancellationToken Token => Cts.Token;
+#endif
     private readonly object _sync = new();
     public CancellationTokenSource Cts { get; private set; } = new();
     public bool IsManualStop { get; private set; }

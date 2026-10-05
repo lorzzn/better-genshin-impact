@@ -34,6 +34,16 @@ public sealed class ScriptProjectTests
     }
 
     [Fact]
+    public async Task ModuleWithAsyncEntryWaitsForCommissionStyleCompletion()
+    {
+        using var files = new ScriptFiles("import { answer } from './module.js'; (async () => { await probe.pause(); probe.record(answer); })();");
+        files.Write("module.js", "export const answer = 'commission-style entry completed';");
+        var host = new ProbeHost();
+        await files.Project().ExecuteWithHostAsync(host);
+        Assert.Equal("commission-style entry completed", Assert.Single(host.Records));
+    }
+
+    [Fact]
     public async Task AsyncScriptFailurePropagates()
     {
         using var files = new ScriptFiles("(async () => { await probe.pause(); throw new Error('task failed'); })()");

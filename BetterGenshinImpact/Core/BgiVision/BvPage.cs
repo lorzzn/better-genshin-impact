@@ -9,7 +9,12 @@ using BetterGenshinImpact.Core.Simulator;
 using BetterGenshinImpact.GameTask.AutoGeniusInvokation.Exception;
 using BetterGenshinImpact.GameTask.Common;
 using BetterGenshinImpact.GameTask.Model.Area;
+#if BETTERGI_PORTABLE
+using IKeyboardSimulator = BetterGenshinImpact.Runtime.HostKeyboard;
+using IMouseSimulator = BetterGenshinImpact.Runtime.HostMouse;
+#else
 using Fischless.WindowsInput;
+#endif
 using Microsoft.Extensions.Logging;
 using OpenCvSharp;
 
@@ -17,7 +22,11 @@ namespace BetterGenshinImpact.Core.BgiVision;
 
 public class BvPage
 {
+#if BETTERGI_PORTABLE
+    private static ILogger Logger => Runtime.RuntimeEnvironment.Logger;
+#else
     private static readonly ILogger Logger = App.GetLogger<BvPage>();
+#endif
     private readonly CancellationToken _cancellationToken;
 
     public IKeyboardSimulator Keyboard => Simulation.SendInput.Keyboard;

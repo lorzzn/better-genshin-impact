@@ -370,7 +370,7 @@ public static partial class Bv
     /// 通过 OCR 识别当前角色的 UID
     /// </summary>
     /// <returns>UID 数字，如果识别失败则返回 0</returns>
-    public static int Uid()
+    public static long Uid()
     {
         try
         {
@@ -388,17 +388,22 @@ public static partial class Bv
             using var region = TaskControl.CaptureToRectArea();
             var recognitionObjectOcr = RecognitionObject.Ocr(x, y, width, height);
             var res = region.Find(recognitionObjectOcr);
-            if (res?.Text == null) return 0;
-            var matches = Regex.Matches(res.Text, @"\d+");
-            if (matches.Count == 0) return 0;
-            var numberStr = string.Join("", matches.Select(m => m.Value));
-            return int.TryParse(numberStr, out var uid) ? uid : 0;
+            return ParseUid(res?.Text);
         }
         catch (Exception e)
         {
             TaskControl.Logger.LogError(e, "OCR 识别 UID 异常");
             return 0;
         }
+    }
+
+    internal static long ParseUid(string? text)
+    {
+        if (text == null) return 0;
+        var matches = Regex.Matches(text, @"\d+");
+        if (matches.Count == 0) return 0;
+        var numberStr = string.Join("", matches.Select(m => m.Value));
+        return long.TryParse(numberStr, out var uid) ? uid : 0;
     }
 }
 

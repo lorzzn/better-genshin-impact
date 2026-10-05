@@ -1,4 +1,4 @@
-﻿using BetterGenshinImpact.Core.Config;
+using BetterGenshinImpact.Core.Config;
 using BetterGenshinImpact.GameTask;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 
 namespace BetterGenshinImpact.Core.Simulator.Extensions;
 
-public static class SimulateKeyHelper
+public static partial class SimulateKeyHelper
 {
 
     private static KeyBindingsConfig KeyConfig => TaskContext.Instance().Config.KeyBindingsConfig;

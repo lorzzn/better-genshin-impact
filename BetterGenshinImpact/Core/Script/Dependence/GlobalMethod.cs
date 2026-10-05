@@ -1,28 +1,29 @@
-﻿using BetterGenshinImpact.Core.Config;
+using BetterGenshinImpact.Core.Config;
 using BetterGenshinImpact.Core.Simulator;
 using BetterGenshinImpact.GameTask;
 using BetterGenshinImpact.GameTask.Model.Area;
 using BetterGenshinImpact.Helpers;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
+#if !BETTERGI_PORTABLE
 using System.Windows.Forms;
-using BetterGenshinImpact.GameTask.AutoFight.Model;
+#endif
 using BetterGenshinImpact.GameTask.Common;
 using Vanara.PInvoke;
 using static Vanara.PInvoke.User32;
-using BetterGenshinImpact.ViewModel.Pages;
+#if !BETTERGI_PORTABLE
 using Fischless.WindowsInput;
+#endif
+using BetterGenshinImpact.Core.Simulator.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace BetterGenshinImpact.Core.Script.Dependence;
 
-public class GlobalMethod
+public partial class GlobalMethod
 {
     public static async Task Sleep(int millisecondsTimeout)
     {
-        await Task.Delay(millisecondsTimeout, CancellationContext.Instance.Cts.Token);
+        await Task.Delay(millisecondsTimeout, CancellationContext.Instance.Token);
     }
     
     public static string GetVersion()
@@ -34,7 +35,7 @@ public class GlobalMethod
 
     public static void KeyDown(string key)
     {
-        var vk = KeyBindingsSettingsPageViewModel.MappingKey(ToVk(key));
+        var vk = SimulateKeyHelper.MappingKey(ToVk(key));
         switch (key)
         {
             case "VK_LBUTTON":
@@ -53,6 +54,9 @@ public class GlobalMethod
                 Simulation.SendInput.Mouse.XButtonDown(0x0001);
                 break;
             default:
+#if BETTERGI_PORTABLE
+                Simulation.SendInput.Keyboard.KeyDown((int)vk);
+#else
                 if (InputBuilder.IsExtendedKey(vk))
                 {
                     Simulation.SendInput.Keyboard.KeyDown(false, vk);
@@ -62,13 +66,14 @@ public class GlobalMethod
                     Simulation.SendInput.Keyboard.KeyDown(vk);
                 }
 
+#endif
                 break;
         }
     }
 
     public static void KeyUp(string key)
     {
-        var vk = KeyBindingsSettingsPageViewModel.MappingKey(ToVk(key));
+        var vk = SimulateKeyHelper.MappingKey(ToVk(key));
         switch (key)
         {
             case "VK_LBUTTON":
@@ -87,6 +92,9 @@ public class GlobalMethod
                 Simulation.SendInput.Mouse.XButtonUp(0x0001);
                 break;
             default:
+#if BETTERGI_PORTABLE
+                Simulation.SendInput.Keyboard.KeyUp((int)vk);
+#else
                 if (InputBuilder.IsExtendedKey(vk))
                 {
                     Simulation.SendInput.Keyboard.KeyUp(false, vk);
@@ -95,14 +103,14 @@ public class GlobalMethod
                 {
                     Simulation.SendInput.Keyboard.KeyUp(vk);
                 }
-
+#endif
                 break;
         }
     }
 
     public static void KeyPress(string key)
     {
-        var vk = KeyBindingsSettingsPageViewModel.MappingKey(ToVk(key));
+        var vk = SimulateKeyHelper.MappingKey(ToVk(key));
         switch (key)
         {
             case "VK_LBUTTON":
@@ -121,6 +129,9 @@ public class GlobalMethod
                 Simulation.SendInput.Mouse.XButtonClick(0x0001);
                 break;
             default:
+#if BETTERGI_PORTABLE
+                Simulation.SendInput.Keyboard.KeyPress((int)vk);
+#else
                 if (InputBuilder.IsExtendedKey(vk))
                 {
                     Simulation.SendInput.Keyboard.KeyPress(false, vk);
@@ -129,7 +140,7 @@ public class GlobalMethod
                 {
                     Simulation.SendInput.Keyboard.KeyPress(vk);
                 }
-                
+#endif
                 break;
         }
     }
@@ -259,14 +270,7 @@ public class GlobalMethod
         return TaskControl.CaptureToRectArea();
     }
 
-    public static string[] GetAvatars()
-    {
-        var combatScenes = new CombatScenes().InitializeTeam(CaptureGameRegion());
-        ReadOnlyCollection<Avatar> avatars = combatScenes.GetAvatars();
-        return avatars.Count > 0
-            ? avatars.Select(avatar => avatar.Name).ToArray()
-            : [];
-    }
+
     #endregion 识图操作
 
     #region 文字输入操作
@@ -278,6 +282,9 @@ public class GlobalMethod
             return;
         }
 
+#if BETTERGI_PORTABLE
+        Runtime.GameSession.Current.InputText(text);
+#else
         // 保存当前剪贴板内容 保存恢复的功能不太正常
         // string? originalClipboardText = null;
         // UIDispatcherHelper.Invoke(() => originalClipboardText = Clipboard.GetText());
@@ -308,6 +315,7 @@ public class GlobalMethod
             //     UIDispatcherHelper.Invoke(() => Clipboard.SetDataObject(originalClipboardText));
             // }
         }
+#endif
     }
 
     #endregion 文字输入操作

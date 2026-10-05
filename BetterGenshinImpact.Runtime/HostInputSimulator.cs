@@ -11,6 +11,9 @@ public sealed class HostInputSimulator
 
 public sealed class HostKeyboard
 {
+    public void KeyDown(Vanara.PInvoke.User32.VK key) => KeyDown((int)key);
+    public void KeyUp(Vanara.PInvoke.User32.VK key) => KeyUp((int)key);
+    public void KeyPress(Vanara.PInvoke.User32.VK key) => KeyPress((int)key);
     public void KeyDown(int key) => GameSession.Current.Key(key, true);
     public void KeyUp(int key) => GameSession.Current.Key(key, false);
     public void KeyPress(int key)
@@ -32,10 +35,11 @@ public sealed class HostMouse
         return this;
     }
     public void VerticalScroll(int notches) => GameSession.Current.Scroll(notches);
-    public void LeftButtonDown() => GameSession.Current.Button(0, true);
-    public void LeftButtonUp() => GameSession.Current.Button(0, false);
-    public void RightButtonDown() => GameSession.Current.Button(1, true);
-    public void RightButtonUp() => GameSession.Current.Button(1, false);
+    public HostMouse Sleep(int milliseconds) { TaskControl.Sleep(milliseconds); return this; }
+    public HostMouse LeftButtonDown() { GameSession.Current.Button(0, true); return this; }
+    public HostMouse LeftButtonUp() { GameSession.Current.Button(0, false); return this; }
+    public HostMouse RightButtonDown() { GameSession.Current.Button(1, true); return this; }
+    public HostMouse RightButtonUp() { GameSession.Current.Button(1, false); return this; }
     public void MiddleButtonDown() => GameSession.Current.Button(2, true);
     public void MiddleButtonUp() => GameSession.Current.Button(2, false);
     public void XButtonDown(int button) => GameSession.Current.Button(button == 1 ? 3 : 4, true);

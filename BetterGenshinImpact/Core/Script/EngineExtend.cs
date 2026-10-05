@@ -25,7 +25,7 @@ using Region = BetterGenshinImpact.GameTask.Model.Area.Region;
 
 namespace BetterGenshinImpact.Core.Script;
 
-public class EngineExtend
+public partial class EngineExtend
 {
     /// <summary>
     /// ！！！ 注意：这个方法会添加一些全局方法和对象，不要随便添加，以免安全风险！！！
@@ -35,15 +35,13 @@ public class EngineExtend
     /// <param name="searchPaths"></param>
     public static void InitHost(IScriptEngine engine, string workDir, string[]? searchPaths = null, object? config = null)
     {
+        InitCoreHost(engine, workDir, searchPaths);
+
         // engine.AddHostObject("xHost", new ExtendedHostFunctions());  // 有越权的安全风险
 
         // 添加我的自定义实例化对象
-        engine.AddHostObject("keyMouseScript", new KeyMouseScript(workDir));
         engine.AddHostObject("pathingScript", new AutoPathingScript(workDir, config));
-        engine.AddHostObject("genshin", new Dependence.Genshin());
         engine.AddHostObject("characterDevelopmentTask", new CharacterDevelopmentTask());
-        engine.AddHostObject("log", new Log());
-        engine.AddHostObject("file", new LimitedFile(workDir)); // 限制文件访问
         engine.AddHostObject("http", new Http()); // 限制文件访问
         engine.AddHostObject("notification", new Notification());
         
@@ -54,34 +52,22 @@ public class EngineExtend
         engine.AddHostType("AutoSkipConfig", typeof(AutoSkipConfig));
         
         // 添加取消令牌相关类型
-        engine.AddHostType("CancellationTokenSource", typeof(CancellationTokenSource));
-        engine.AddHostType("CancellationToken", typeof(CancellationToken));
 
         // PostMessage 作为类型实例化
         engine.AddHostType("PostMessage", typeof(Dependence.Simulator.PostMessage));
 
         // 直接添加方法
-        AddAllGlobalMethod(engine);
+        engine.AddHostObject("getAvatars", GlobalMethod.GetAvatars);
 
         // 识图模块相关
-        engine.AddHostType("Mat", typeof(Mat));
-        engine.AddHostType("Point2f", typeof(Point2f)); // 添加Point2f类型暴露
-        engine.AddHostType("RecognitionObject", typeof(RecognitionObject));
-        engine.AddHostType("DesktopRegion", typeof(DesktopRegion));
-        engine.AddHostType("GameCaptureRegion", typeof(GameCaptureRegion));
-        engine.AddHostType("ImageRegion", typeof(ImageRegion));
-        engine.AddHostType("Region", typeof(Region));
         
         engine.AddHostType("Pen", typeof(Pen));
-        engine.AddHostType("Color", typeof(Color));
         
         engine.AddHostType("CombatScenes", typeof(CombatScenes));
         engine.AddHostType("Avatar", typeof(Avatar));
         
         
-        engine.AddHostObject("OpenCvSharp", new HostTypeCollection("OpenCvSharp"));
 
-        engine.AddHostType("ServerTime", typeof(ServerTime));
         
         engine.AddHostType("AutoDomainParam", typeof(AutoDomainParam));  
         engine.AddHostType("AutoBossParam", typeof(AutoBossParam));
@@ -98,40 +84,12 @@ public class EngineExtend
         engine.AddHostType(typeof(Task));
         
         // 新的BvPage类
-        engine.AddHostType("BvPage", typeof(BvPage));
-        engine.AddHostType("BvLocator", typeof(BvLocator));
-        engine.AddHostType("BvImage", typeof(BvImage));
 
-        engine.AddHostObject("host", new CustomHostFunctions());
 
         // HTML 遮罩
         engine.AddHostObject("htmlMask", new HtmlMask(workDir));
 
-        // 导入 JavaScript 模块
-        // https://microsoft.github.io/ClearScript/2023/01/24/module-interop.html
-        // https://github.com/microsoft/ClearScript/blob/master/ClearScriptTest/V8ModuleTest.cs
-        engine.DocumentSettings.AccessFlags = DocumentAccessFlags.AllowCategoryMismatch;
-        if (searchPaths != null)
-        {
-            var normalizedPaths = new List<string>();
-            foreach (var path in searchPaths)
-            {
-                try
-                {
-                    var normalizedPath = ScriptUtils.NormalizePath(workDir, path);
-                    normalizedPaths.Add(normalizedPath);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception($"从 library 字段读取路径 '{path}' 失败: {ex.Message}", ex);
-                }
-            }
 
-            if (normalizedPaths.Count > 0)
-            {
-                engine.DocumentSettings.SearchPath = string.Join(';', normalizedPaths);
-            }
-        }
     }
 
     public static void AddAllGlobalMethod(IScriptEngine engine)
@@ -146,30 +104,7 @@ public class EngineExtend
         //     engine.AddHostObject(methodName, method);
         // }
 
-#pragma warning disable CS8974 // Converting method group to non-delegate type
-        engine.AddHostObject("sleep", GlobalMethod.Sleep);
-        engine.AddHostObject("getVersion", GlobalMethod.GetVersion);
-        engine.AddHostObject("keyDown", GlobalMethod.KeyDown);
-        engine.AddHostObject("keyUp", GlobalMethod.KeyUp);
-        engine.AddHostObject("keyPress", GlobalMethod.KeyPress);
-        engine.AddHostObject("setGameMetrics", GlobalMethod.SetGameMetrics);
-        engine.AddHostObject("getGameMetrics", GlobalMethod.GetGameMetrics);
-        engine.AddHostObject("moveMouseBy", GlobalMethod.MoveMouseBy);
-        engine.AddHostObject("moveMouseTo", GlobalMethod.MoveMouseTo);
-        engine.AddHostObject("click", GlobalMethod.Click);
-        engine.AddHostObject("leftButtonClick", GlobalMethod.LeftButtonClick);
-        engine.AddHostObject("leftButtonDown", GlobalMethod.LeftButtonDown);
-        engine.AddHostObject("leftButtonUp", GlobalMethod.LeftButtonUp);
-        engine.AddHostObject("rightButtonClick", GlobalMethod.RightButtonClick);
-        engine.AddHostObject("rightButtonDown", GlobalMethod.RightButtonDown);
-        engine.AddHostObject("rightButtonUp", GlobalMethod.RightButtonUp);
-        engine.AddHostObject("middleButtonClick", GlobalMethod.MiddleButtonClick);
-        engine.AddHostObject("middleButtonDown", GlobalMethod.MiddleButtonDown);
-        engine.AddHostObject("middleButtonUp", GlobalMethod.MiddleButtonUp);
-        engine.AddHostObject("verticalScroll", GlobalMethod.VerticalScroll);
-        engine.AddHostObject("captureGameRegion", GlobalMethod.CaptureGameRegion);
-        engine.AddHostObject("getAvatars", GlobalMethod.GetAvatars);
-        engine.AddHostObject("inputText", GlobalMethod.InputText);
-#pragma warning restore CS8974 // Converting method group to non-delegate type
+        AddCoreGlobalMethods(engine);
+        engine.AddHostObject("getAvatars", GlobalMethod.GetAvatars); // Converting method group to non-delegate type
     }
 }
