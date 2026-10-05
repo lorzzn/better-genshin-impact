@@ -15,6 +15,8 @@
     <Compile Include="../BetterGenshinImpact/GameTask/AutoMusicGame/**/*.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/AutoOpenChest/AutoOpenChestTask.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/QuickBuy/QuickBuyTask.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/QuickClaimReward/OneKeyClaimRewardTask.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/Macro/*.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/UseRedeemCode/UseRedemptionCodeTask.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/UseRedeemCode/Model/RedeemCode.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/Music/**/*.cs" Exclude="../BetterGenshinImpact/GameTask/Music/**/*.Windows.cs;../BetterGenshinImpact/GameTask/Music/Service/MusicCoverService.cs" />

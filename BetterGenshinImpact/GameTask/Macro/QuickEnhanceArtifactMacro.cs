@@ -1,6 +1,10 @@
 ﻿using BetterGenshinImpact.GameTask.Model.Area;
 using System.Threading;
+#if BETTERGI_PORTABLE
+using Toast = BetterGenshinImpact.Runtime.RuntimeUi;
+#else
 using Wpf.Ui.Violeta.Controls;
+#endif
 
 namespace BetterGenshinImpact.GameTask.Macro;
 

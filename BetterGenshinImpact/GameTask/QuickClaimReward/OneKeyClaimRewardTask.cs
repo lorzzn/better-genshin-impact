@@ -10,7 +10,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Vanara.PInvoke;
+#if BETTERGI_PORTABLE
+using Toast = BetterGenshinImpact.Runtime.RuntimeUi;
+#else
 using Wpf.Ui.Violeta.Controls;
+#endif
 
 namespace BetterGenshinImpact.GameTask.QuickClaimReward;
 
@@ -23,13 +27,21 @@ public partial class OneKeyClaimRewardTask : Singleton<OneKeyClaimRewardTask>
     private const int ScrollChunkSize = 10;
     private const int MaxBlankContinueChecks = 3;
     private const int ScrollRenderDelayMilliseconds = 120;
-    private static readonly ILogger<OneKeyClaimRewardTask> Logger = App.GetLogger<OneKeyClaimRewardTask>();
+    private static readonly ILogger<OneKeyClaimRewardTask> Logger = GameServices.GetLogger<OneKeyClaimRewardTask>();
 
     private readonly object _taskLock = new();
     private CancellationTokenSource? _cts;
     private Task? _claimTask;
     private volatile bool _isKeyDown;
     private DateTime _lastNoRewardLogTime = DateTime.MinValue;
+
+    /// <summary>Runs the same operation under an embedding task's lifetime.</summary>
+    public Task Start(CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        if (!CanRun()) throw new InvalidOperationException("当前游戏画面尚未就绪");
+        return IsHoldMode() ? ClaimWhileHoldingAsync(ct) : ClaimCurrentPageAsync(ct);
+    }
 
     public void KeyDown()
     {
@@ -187,16 +199,20 @@ public partial class OneKeyClaimRewardTask : Singleton<OneKeyClaimRewardTask>
         ct.ThrowIfCancellationRequested();
 
         using var capture = TaskControl.CaptureToRectArea();
-        var candidate = FindRewardCandidates(capture).FirstOrDefault();
-        if (candidate == null)
+        var candidates = FindRewardCandidates(capture);
+        try
         {
-            return false;
+            var candidate = candidates.FirstOrDefault();
+            if (candidate == null) return false;
+            candidate.Region.Click();
+            Logger.LogInformation("一键领取奖励：点击{IconName}图标", candidate.Name);
+            await PressEscIfBlankContinueShownAsync(ct);
+            return true;
         }
-
-        candidate.Region.Click();
-        Logger.LogInformation("一键领取奖励：点击{IconName}图标", candidate.Name);
-        await PressEscIfBlankContinueShownAsync(ct);
-        return true;
+        finally
+        {
+            foreach (var candidate in candidates) candidate.Region.Dispose();
+        }
     }
 
     private static List<RewardCandidate> FindRewardCandidates(ImageRegion capture)

@@ -140,6 +140,32 @@ public partial class Dispatcher
         // 根据名称执行任务
         switch (soloTask.Name)
         {
+            case "OneKeyClaimReward":
+                await new GameTask.QuickClaimReward.OneKeyClaimRewardTask().Start(cancellationToken);
+                return null;
+            case "QuickEnhanceArtifact":
+                GameTask.Macro.QuickEnhanceArtifactMacro.Done();
+                return null;
+            case "QuickSereniteaPot":
+                GameTask.QuickSereniteaPot.QuickSereniteaPotTask.Done();
+                return null;
+            case "AutoLeyLineOutcrop":
+                await RunAutoLeyLineOutcropTask(new AutoLeyLineOutcropParam(), cancellationToken);
+                return null;
+            case "AutoStygianOnslaught":
+                await RunAutoStygianOnslaughtTask(new AutoStygianOnslaughtParam(), cancellationToken);
+                return null;
+            case "ClaimMailRewards":
+                await new ClaimMailRewardsTask().Start(cancellationToken);
+                return null;
+            case "SwitchParty":
+                if (soloTask.Config is not ScriptObject partyConfig) throw new ArgumentException("请配置队伍名称 partyName");
+                return await new Genshin().SwitchParty(ScriptObjectConverter.GetValue(partyConfig, "partyName", ""));
+            case "SetTime":
+                if (soloTask.Config is not ScriptObject timeConfig) throw new ArgumentException("请配置游戏时间 hour、minute");
+                await new Genshin().SetTime(ScriptObjectConverter.GetValue(timeConfig, "hour", 12),
+                    ScriptObjectConverter.GetValue(timeConfig, "minute", 0), ScriptObjectConverter.GetValue(timeConfig, "skip", false));
+                return null;
             case "PlayMusic":
                 if (soloTask.Config is not ScriptObject musicConfig) throw new ArgumentException("请配置曲谱播放参数");
                 await MusicScript.Run(musicConfig, cancellationToken);
@@ -176,8 +202,10 @@ public partial class Dispatcher
                 return null;
             case "GoToAdventurersGuild":
             case "GoCraftResin":
+            case "GoToCraftingBench":
                 var country = soloTask.Config == null ? "蒙德" : ScriptObjectConverter.GetValue((ScriptObject)soloTask.Config, "country", "蒙德");
                 if (soloTask.Name == "GoCraftResin") await new Genshin().GoCraftResin(country);
+                else if (soloTask.Name == "GoToCraftingBench") await new Genshin().GoToCraftingBench(country);
                 else await new Genshin().GoToAdventurersGuild(country);
                 return null;
             case "AutoGeniusInvokation":
