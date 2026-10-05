@@ -30,4 +30,6 @@ public interface IGameHost
     bool IsHardwareKeyDown(int key) => throw new NotSupportedException("Target does not expose physical keyboard state");
     bool IsTogglingKeyInEffect(int key) => throw new NotSupportedException("Target does not expose toggle-key state");
     void InputText(string text) => throw new NotSupportedException("The bound game host does not support text input");
+    /// <summary>Writes only the Target clipboard. Null clears it; never reads the host clipboard.</summary>
+    void SetClipboardText(string? text) => throw new NotSupportedException("Target does not support clipboard writes");
 }

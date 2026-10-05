@@ -140,6 +140,16 @@ public partial class Dispatcher
         // 根据名称执行任务
         switch (soloTask.Name)
         {
+            case "PlayMusic":
+                if (soloTask.Config is not ScriptObject musicConfig) throw new ArgumentException("请配置曲谱播放参数");
+                await MusicScript.Run(musicConfig, cancellationToken);
+                return null;
+            case "UseRedemptionCode":
+                var codes = soloTask.Config is ScriptObject redeemConfig
+                    ? ScriptObjectConverter.GetValue<string>(redeemConfig, "codes")?.ToList() : null;
+                if (codes == null || codes.Count == 0) throw new ArgumentException("请配置兑换码 codes 列表");
+                await new GameTask.UseRedeemCode.UseRedemptionCodeTask(codes).Start(cancellationToken);
+                return null;
             case "AutoMusicGame":
                 await new GameTask.AutoMusicGame.AutoMusicGameTask(new()).Start(cancellationToken);
                 return null;

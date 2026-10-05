@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Dispatcher.Execution.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/MusicScript.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/IScriptTaskDefaults.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/TaskStrategyResolver.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/AutoPathingScript.cs" />

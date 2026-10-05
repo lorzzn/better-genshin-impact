@@ -10,6 +10,20 @@ namespace BetterGenshinImpact.GameTask;
 /// <summary>Services used by game execution, independent of the desktop application.</summary>
 public static class GameServices
 {
+    public static void SetClipboardText(string? text)
+    {
+#if BETTERGI_PORTABLE
+        Runtime.GameSession.Current.CancellationToken.ThrowIfCancellationRequested();
+        Runtime.GameSession.Current.Host.SetClipboardText(text);
+#else
+        Helpers.UIDispatcherHelper.Invoke(() =>
+        {
+            if (text == null) System.Windows.Clipboard.Clear();
+            else System.Windows.Clipboard.SetDataObject(text);
+        });
+#endif
+    }
+
     public static Model.IGamePixelSource CreatePixelSource(System.Threading.CancellationToken cancellationToken) =>
 #if BETTERGI_PORTABLE
         new Runtime.TargetPixelSource(cancellationToken);

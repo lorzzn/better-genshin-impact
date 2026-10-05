@@ -19,7 +19,7 @@ namespace BetterGenshinImpact.GameTask.Music.Service;
 
 public sealed class MusicInstrumentSwitcher : IMusicInstrumentSwitcher
 {
-    private readonly ILogger<MusicInstrumentSwitcher> _logger = App.GetLogger<MusicInstrumentSwitcher>();
+    private readonly ILogger<MusicInstrumentSwitcher> _logger = GameServices.GetLogger<MusicInstrumentSwitcher>();
 
     public async Task<bool> SwitchToAsync(string instrumentName, CancellationToken cancellationToken)
     {

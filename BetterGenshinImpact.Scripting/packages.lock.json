@@ -47,6 +47,11 @@
         "resolved": "1.1.0",
         "contentHash": "zD6IBJFzpn3IPsG7wn5dNuPUBUiJsCeosw3bGuLLmICrGHkpxf0f7ar/HodDGAdFDMWrVR4djlX7pJtY+XeMiA=="
       },
+      "Melanchall.DryWetMidi": {
+        "type": "Transitive",
+        "resolved": "8.0.3",
+        "contentHash": "U+Ubol4MhieY2xgZGqcI8H2F/4HWzWKq8/WPHd1SXS7WXaHyEWMnj56vtxKOJFM5FLbj+NOUny5+X2KAzI0YUg=="
+      },
       "Microsoft.ClearScript.Core": {
         "type": "Transitive",
         "resolved": "7.4.5",
@@ -456,6 +461,7 @@
           "CsTrees.MEAI": "[1.0.2, )",
           "Fischless.WindowsInput": "[1.0.0, )",
           "HungarianAlgorithm": "[1.1.0, )",
+          "Melanchall.DryWetMidi": "[8.0.3, )",
           "Microsoft.ClearScript.V8": "[7.4.5, )",
           "Microsoft.Extensions.AI": "[10.6.0, )",
           "Microsoft.Extensions.AI.OpenAI": "[10.6.0, )",

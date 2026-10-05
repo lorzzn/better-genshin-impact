@@ -36,6 +36,12 @@
         "resolved": "1.1.0",
         "contentHash": "zD6IBJFzpn3IPsG7wn5dNuPUBUiJsCeosw3bGuLLmICrGHkpxf0f7ar/HodDGAdFDMWrVR4djlX7pJtY+XeMiA=="
       },
+      "Melanchall.DryWetMidi": {
+        "type": "Direct",
+        "requested": "[8.0.3, )",
+        "resolved": "8.0.3",
+        "contentHash": "U+Ubol4MhieY2xgZGqcI8H2F/4HWzWKq8/WPHd1SXS7WXaHyEWMnj56vtxKOJFM5FLbj+NOUny5+X2KAzI0YUg=="
+      },
       "Microsoft.ClearScript.V8": {
         "type": "Direct",
         "requested": "[7.4.5, )",
