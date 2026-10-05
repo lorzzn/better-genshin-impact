@@ -79,6 +79,21 @@ public partial class ScriptProject
         cancellationToken.ThrowIfCancellationRequested();
         // 加载代码
         var code = await LoadCode();
+        return await ExecuteSourceWithHostAsync(host, code, Manifest.Main, context, cancellationToken, serializeResult);
+    }
+
+    /// <summary>
+    /// Execute an embedding application's entry against this package's original
+    /// module loader and host lifecycle, without replacing files or loading Main.
+    /// The entry path supplies the import origin and must remain in the package.
+    /// </summary>
+    public async Task<string?> ExecuteSourceWithHostAsync(IScriptHost host, string code, string entryPath,
+        object? context = null, CancellationToken cancellationToken = default, bool serializeResult = true)
+    {
+        ArgumentNullException.ThrowIfNull(host);
+        ArgumentException.ThrowIfNullOrWhiteSpace(code);
+        cancellationToken.ThrowIfCancellationRequested();
+        string mainScriptPath = ScriptUtils.NormalizePath(ProjectPath, entryPath);
         using var engine = BuildScriptEngine(host);
         using var cancellation = cancellationToken.Register(engine.Interrupt);
 
@@ -93,7 +108,7 @@ public partial class ScriptProject
 
         try
         {
-            bool useModule = Manifest.Library.Length != 0 ||
+            bool useModule = Manifest.Library is { Length: > 0 } ||
                              code.Contains("import ", StringComparison.Ordinal) ||
                              code.Contains("export ", StringComparison.Ordinal);
 
@@ -103,7 +118,6 @@ public partial class ScriptProject
                 // 清除Document缓存
                 DocumentLoader.Default.DiscardCachedDocuments();
 
-                string mainScriptPath = ScriptUtils.NormalizePath(ProjectPath, Manifest.Main);
                 string runtimeCode = loader.RewriteScriptCode(code, mainScriptPath);
                 
                 var documentInfo = new DocumentInfo(new Uri(mainScriptPath)) { Category = ModuleCategory.Standard };

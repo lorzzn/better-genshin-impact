@@ -40,6 +40,12 @@ public partial class EngineExtend
         engine.AddHostType("BvImage", typeof(BvImage));
         engine.AddHostObject("host", new CustomHostFunctions());
         AddCoreGlobalMethods(engine);
+        ConfigureModuleSearch(engine, workDir, searchPaths);
+    }
+
+    // Configuration hosts need the same module rules without game/input APIs.
+    public static void ConfigureModuleSearch(IScriptEngine engine, string workDir, string[]? searchPaths)
+    {
         // 导入 JavaScript 模块
         // https://microsoft.github.io/ClearScript/2023/01/24/module-interop.html
         // https://github.com/microsoft/ClearScript/blob/master/ClearScriptTest/V8ModuleTest.cs
