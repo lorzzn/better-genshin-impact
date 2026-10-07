@@ -46,4 +46,13 @@ public static class CaptureHelper
         var itemPointer = interop.CreateForWindow(hWnd, GraphicsCaptureItemGuid);
         return GraphicsCaptureItem.FromAbi(itemPointer);
     }
+
+    public static GraphicsCaptureItem CreateItemForMonitor(nint monitor)
+    {
+        var factory = WinrtModule.GetActivationFactory("Windows.Graphics.Capture.GraphicsCaptureItem");
+        var interop = factory.AsInterface<IGraphicsCaptureItemInterop>();
+        var itemPointer = interop.CreateForMonitor(monitor, GraphicsCaptureItemGuid);
+        try { return GraphicsCaptureItem.FromAbi(itemPointer); }
+        finally { Marshal.Release(itemPointer); }
+    }
 }

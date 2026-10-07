@@ -14,6 +14,11 @@
 
 本节代码和相关测试源码未运行测试、编译或校验；不代表桌面、Linux 或实际游戏验收。
 
+同日节点采集边界补充：`Fischless.GameCapture.Graphics.GraphicsCaptureV2.StartMonitor`
+与窗口 `Start` 共用 WGC 会话、GPU 读回和缓存；显示器来源不裁剪窗口客户区。
+此入口用于外部 Windows 节点的人工桌面预览，不改变官方游戏任务的窗口来源。
+仅源码开发，未编译或实机验证。
+
 `net8.0` 库，直接编译本仓库中的官方识别、图像区域、模型、地图、完整 `TpTask`、
 `ReturnMainUiTask`、`CameraRotateTask` 和 `KeyMouseMacroPlayer` 源码。
 `BETTERGI_PORTABLE` 只选择平台依赖边界；构建不执行源码补丁、文本替换或方法提取。

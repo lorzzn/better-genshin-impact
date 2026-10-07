@@ -26,6 +26,7 @@ public class GraphicsCaptureV2(bool captureHdr = false) : IGameCapture
     private readonly HashSet<Mat> _bgrBorrowed = new();
 
     private nint _hWnd;
+    private nint _monitor;
 
     private Direct3D11CaptureFramePool? _captureFramePool;
     private GraphicsCaptureItem? _captureItem;
@@ -172,12 +173,20 @@ public class GraphicsCaptureV2(bool captureHdr = false) : IGameCapture
         }
     }
 
-    private void StartCore(nint hWnd, Dictionary<string, object>? settings = null)
+    /// <summary>Captures a display without applying a window client-area crop.</summary>
+    public void StartMonitor(nint monitor, Dictionary<string, object>? settings = null)
+    {
+        if (monitor == 0) throw new ArgumentException("显示器句柄无效", nameof(monitor));
+        lock (_lock) StartCore(0, settings, monitor);
+    }
+
+    private void StartCore(nint hWnd, Dictionary<string, object>? settings = null, nint monitor = 0)
     {
         Stop();
         try
         {
             _hWnd = hWnd;
+            _monitor = monitor;
 
             // 识别节拍可通过 settings 传入（键 MinUpdateIntervalMs，毫秒）；0 = 不启用限流
             if (settings?.TryGetValue("MinUpdateIntervalMs", out var intervalObj) == true)
@@ -219,16 +228,19 @@ public class GraphicsCaptureV2(bool captureHdr = false) : IGameCapture
                 }
             }
 
-            (_region, _captureRect) = GetGameScreenInfo(hWnd);
+            if (_monitor == 0) (_region, _captureRect) = GetGameScreenInfo(hWnd);
+            else { _region = null; _captureRect = null; }
 
             IsCapturing = true;
 
             try
             {
-                _captureItem = CaptureHelper.CreateItemForWindow(_hWnd);
+                _captureItem = _monitor == 0 ? CaptureHelper.CreateItemForWindow(_hWnd) : CaptureHelper.CreateItemForMonitor(_monitor);
             }
             catch (Exception e)
             {
+                if (_monitor != 0)
+                    throw new InvalidOperationException($"创建 WGC 显示器捕获器失败，monitor=0x{_monitor.ToInt64():X8}，请检查显示器连接及系统图形捕获支持", e);
                 throw new InvalidOperationException(
                     $"创建 WGC 捕获器失败，hWnd=0x{_hWnd.ToInt64():X8}，可能原因：窗口句柄失效、游戏窗口被最小化/未启动、或被其他应用/系统不支持图形捕获", e);
             }
@@ -485,7 +497,7 @@ public class GraphicsCaptureV2(bool captureHdr = false) : IGameCapture
                     Debug.WriteLine($"[WGC V2] Recreate: {_capSize.Width}x{_capSize.Height} -> {contentSize.Width}x{contentSize.Height}");
                     _captureFramePool.Recreate(_d3dDevice, _pixelFormat, 2, contentSize);
                     _capSize = contentSize;
-                    (_region, _captureRect) = GetGameScreenInfo(_hWnd);
+                    if (_monitor == 0) (_region, _captureRect) = GetGameScreenInfo(_hWnd);
 
                     // 先挡住新的 Capture()，再等在途捕获退出（其可能正在锁外 Map staging/读缓存），
                     // 之后才允许销毁资源，否则会踩到已释放纹理
@@ -882,6 +894,7 @@ public class GraphicsCaptureV2(bool captureHdr = false) : IGameCapture
         {
             IsCapturing = false;
             _hWnd = 0;
+            _monitor = 0;
             if (_captureItem != null)
             {
                 _captureItem.Closed -= CaptureItemOnClosed;
