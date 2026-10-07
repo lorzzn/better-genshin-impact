@@ -198,6 +198,8 @@
     <Compile Include="../BetterGenshinImpact/GameTask/Common/Condition*.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/GameTask/FarmingPlan/FarmingSession.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/GameTask/ITaskTrigger.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="../BetterGenshinImpact/GameTask/GameLoading/GameLoading.cs" Link="Upstream/GameLoading.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Config/GenshinStartConfig.cs" Link="Upstream/GenshinStartConfig.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/CaptureContent.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/GameTask/Model/BaseIndependentTask.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/GameTask/Common/StateMachine/*.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />

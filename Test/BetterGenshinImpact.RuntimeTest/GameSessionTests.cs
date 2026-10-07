@@ -6,6 +6,30 @@ namespace BetterGenshinImpact.RuntimeTest;
 
 public sealed class GameSessionTests
 {
+    [Fact]
+    public void EmbeddedGameLoadingHasInvocationLocalEnabledState()
+    {
+        using var session = new GameSession(new TestHost());
+        var first = new GameTask.GameLoading.GameLoadingTrigger(activeFor: null);
+        var second = new GameTask.GameLoading.GameLoadingTrigger(activeFor: null);
+        first.Init();
+        second.Init();
+        first.InnerSetEnabled(false);
+        Assert.False(first.IsEnabled);
+        Assert.True(second.IsEnabled);
+    }
+
+    [Fact]
+    public void BackgroundClickUsesOfficialDefaultClientPoint()
+    {
+        var host = new TestHost();
+        using var session = new GameSession(host);
+        session.Move(900, 600);
+        new Core.Simulator.PostMessageSimulator().LeftButtonClickBackground();
+        Assert.Equal(new Point(16, 16), host.Pointer);
+        Assert.Empty(host.ButtonsDown);
+    }
+
     [Theory]
     [InlineData(1280, 720, 2d / 3d, 2d / 3d)]
     [InlineData(3840, 2160, 1d, 2d)]

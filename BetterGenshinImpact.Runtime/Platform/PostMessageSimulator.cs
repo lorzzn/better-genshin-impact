@@ -7,9 +7,18 @@ namespace BetterGenshinImpact.Core.Simulator;
 /// <summary>Background input is transported to the same Target, never a local HWND.</summary>
 public sealed class PostMessageSimulator
 {
-    public PostMessageSimulator LeftButtonClick(int x, int y) { GameSession.Current.Move(x, y); return LeftButtonClick(); }
+    public PostMessageSimulator LeftButtonClick(int x, int y)
+    {
+        // Match the desktop simulator's client coordinates and hold interval.
+        // Do not click wherever the operator last left the Target cursor.
+        GameSession.Current.Move(x, y);
+        LeftButtonDown();
+        try { TaskControl.Sleep(100); }
+        finally { LeftButtonUp(); }
+        return this;
+    }
     public PostMessageSimulator LeftButtonClickBackground(int x, int y) => LeftButtonClick(x, y);
-    public PostMessageSimulator LeftButtonClick() { Simulation.SendInput.Mouse.LeftButtonClick(); return this; }
+    public PostMessageSimulator LeftButtonClick() => LeftButtonClick(16, 16);
     public PostMessageSimulator LeftButtonClickBackground() => LeftButtonClick();
     public PostMessageSimulator LeftButtonDown() { Simulation.SendInput.Mouse.LeftButtonDown(); return this; }
     public PostMessageSimulator LeftButtonUp() { Simulation.SendInput.Mouse.LeftButtonUp(); return this; }

@@ -1,5 +1,19 @@
 # BetterGI 可引用运行库
 
+## 2026-10-07 官方自动开门入口（仅源码）
+
+运行库直接编入 `GameLoadingTrigger` 与 `GenshinStartConfig`。识别顺序、进入游戏、
+适龄提示、月卡和原石页面沿用原文件；注册表、Starward 和 Windows 渠道窗口处理移入
+`GameLoading.Windows.cs`，嵌入宿主通过既有 `IGameHost.GameChannel/ContinueChannelLogin`
+承接渠道边界，不访问服务器本机游戏安装。缺少渠道能力明确失败。
+
+桌面默认构造保留全局开关与五分钟窗口；嵌入调用可创建独立实例并显式传入
+`activeFor: null`，避免人工登录等待被桌面计时器终止。宿主负责同一会话的捕获驱动、
+取消及结束后确认，不将触发器停用等同于账号已核实。识别区域按帧释放；Target
+后台点击与原 Windows 模拟器一致使用客户区默认点 `(16,16)` 及 100ms 按下间隔。
+
+本节代码和相关测试源码未运行测试、编译或校验；不代表桌面、Linux 或实际游戏验收。
+
 `net8.0` 库，直接编译本仓库中的官方识别、图像区域、模型、地图、完整 `TpTask`、
 `ReturnMainUiTask`、`CameraRotateTask` 和 `KeyMouseMacroPlayer` 源码。
 `BETTERGI_PORTABLE` 只选择平台依赖边界；构建不执行源码补丁、文本替换或方法提取。

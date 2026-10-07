@@ -7,6 +7,7 @@ namespace BetterGenshinImpact.Runtime;
 /// <summary>Task configuration supplied by the embedding host; no UI or scheduler.</summary>
 public sealed class GameConfiguration
 {
+    public GenshinStartConfig GenshinStartConfig { get; set; } = new();
     public TpConfig TpConfig { get; set; } = new();
     public QuickTeleportConfig QuickTeleportConfig { get; set; } = new();
     public KeyBindingsConfig KeyBindingsConfig { get; set; } = new();
