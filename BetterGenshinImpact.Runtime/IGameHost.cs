@@ -19,6 +19,11 @@ public interface IGameHost
     /// <summary>Login channel of the bound game. The embedding host, not local process discovery, supplies it.</summary>
     string GameChannel => "official";
     bool ContinueChannelLogin(CancellationToken cancellationToken) => throw new NotSupportedException("Target does not provide channel login metadata");
+    /// <summary>
+    /// Positive identity stable for this bound source, used for detector reuse
+    /// and retry throttling. Null means unavailable. Remote hosts need not expose
+    /// an OS process ID; CreateAudioCapture resolves the actual audio source.
+    /// </summary>
     int? AudioSourceId => null;
     GameTask.AutoSkip.Audio.IAudioSampleSource CreateAudioCapture() => throw new NotSupportedException("Target has no audio capture driver");
     void MovePointer(double x, double y);

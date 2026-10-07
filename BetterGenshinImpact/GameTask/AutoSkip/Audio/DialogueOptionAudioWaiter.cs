@@ -202,7 +202,7 @@ internal sealed class DialogueOptionAudioWaiter
             var targetProcessId = GetGameProcessId();
             if (targetProcessId is not > 0)
             {
-                logger.LogWarning("自动剧情：未能获取游戏进程 PID，将使用固定延迟");
+                logger.LogWarning("自动剧情：未能获取游戏音频来源标识，将使用固定延迟");
                 return null;
             }
 
@@ -226,7 +226,7 @@ internal sealed class DialogueOptionAudioWaiter
                 _detector = DialogueOptionVoiceDetector.Create(processId);
                 _unavailableProcessId = null;
                 _detectorRetryAfter = DateTime.MinValue;
-                logger.LogDebug("自动剧情：Silero VAD 采样来源 游戏进程音频 PID={ProcessId}", processId);
+                logger.LogDebug("自动剧情：Silero VAD 游戏音频来源标识={AudioSourceId}", processId);
                 return _detector;
             }
             catch (Exception e)

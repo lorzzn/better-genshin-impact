@@ -15,7 +15,7 @@ internal sealed class ProcessLoopbackAudioCapture : IAudioSampleSource
     private const ushort ChannelCount = 1;
     private const ushort BitsPerSample = 16;
     private const ushort BlockAlign = (ushort)(ChannelCount * BitsPerSample / 8);
-    private const uint AverageBytesPerSecond = (uint)(SileroVadDetector.SampleRate * BlockAlign);
+    private const uint AverageBytesPerSecond = (uint)(IAudioSampleSource.SampleRate * BlockAlign);
 
     private readonly IAudioClient _audioClient;
     private readonly IAudioCaptureClient _captureClient;
@@ -132,7 +132,7 @@ internal sealed class ProcessLoopbackAudioCapture : IAudioSampleSource
         {
             WFormatTag = WaveFormatPcm,
             NChannels = ChannelCount,
-            NSamplesPerSec = SileroVadDetector.SampleRate,
+            NSamplesPerSec = IAudioSampleSource.SampleRate,
             NAvgBytesPerSec = AverageBytesPerSecond,
             NBlockAlign = BlockAlign,
             WBitsPerSample = BitsPerSample,

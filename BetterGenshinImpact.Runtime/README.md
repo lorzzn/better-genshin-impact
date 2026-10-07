@@ -1,5 +1,16 @@
 # BetterGI 可引用运行库
 
+## 2026-10-08 音频采集与模型的依赖拆分（仅源码）
+
+单声道 16 kHz 采样率常量归入已有 `IAudioSampleSource`；`SileroVadDetector`
+与 Windows `ProcessLoopbackAudioCapture` 共用此值。Windows 辅助程序可直接编入
+样本源接口和官方采集文件，无需依赖 ONNX 模型或整个游戏运行库。接口行为、
+格式、官方 WASAPI 实现与 VAD 判断保持不变，宿主负责绑定游戏进程和传输样本。
+`IGameHost.AudioSourceId` 是当前音频源的稳定正整数标识，供检测器复用与失败重试
+判断；远程宿主不必传递操作系统 PID，实际进程由 `CreateAudioCapture` 的适配确定。
+诊断日志改称来源标识，避免把远程宿主的逻辑标识误报为本机进程。
+本次只修改源码，未测试、编译或采集游戏音频。
+
 ## 2026-10-07 官方自动开门入口（仅源码）
 
 运行库直接编入 `GameLoadingTrigger` 与 `GenshinStartConfig`。识别顺序、进入游戏、

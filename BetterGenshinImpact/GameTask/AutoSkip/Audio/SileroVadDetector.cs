@@ -9,7 +9,7 @@ namespace BetterGenshinImpact.GameTask.AutoSkip.Audio;
 
 internal sealed class SileroVadDetector : IDisposable
 {
-    public const int SampleRate = 16000;
+    public const int SampleRate = IAudioSampleSource.SampleRate;
     public const int FrameSampleCount = 512;
 
     /// <summary>
