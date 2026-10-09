@@ -355,6 +355,7 @@ public partial class KeyMouseHook: IDisposable
             else
                 _keyDownDataCallbacks.Add(callback);
         }
+        UpdateDemand();
     }
 
     /// <summary>
@@ -372,6 +373,7 @@ public partial class KeyMouseHook: IDisposable
             else
                 _keyUpDataCallbacks.Add(callback);
         }
+        UpdateDemand();
     }
 
     public void OnMouseDown(ScriptObject callback)
@@ -381,6 +383,7 @@ public partial class KeyMouseHook: IDisposable
             if (Volatile.Read(ref _disposed) != 0) throw new ObjectDisposedException(nameof(KeyMouseHook));
             _mouseDownCallbacks.Add(callback);
         }
+        UpdateDemand();
     }
 
     public void OnMouseUp(ScriptObject callback)
@@ -390,6 +393,7 @@ public partial class KeyMouseHook: IDisposable
             if (Volatile.Read(ref _disposed) != 0) throw new ObjectDisposedException(nameof(KeyMouseHook));
             _mouseUpCallbacks.Add(callback);
         }
+        UpdateDemand();
     }
 
     /// <summary>
@@ -406,6 +410,7 @@ public partial class KeyMouseHook: IDisposable
             _mouseMoveCallbackIntervals[callback] = interval;
             _lastMouseMoveCallbackTimes[callback] = DateTime.MinValue;
         }
+        UpdateDemand();
     }
 
     public void OnMouseWheel(ScriptObject callback)
@@ -415,6 +420,7 @@ public partial class KeyMouseHook: IDisposable
             if (Volatile.Read(ref _disposed) != 0) throw new ObjectDisposedException(nameof(KeyMouseHook));
             _mouseWheelCallbacks.Add(callback);
         }
+        UpdateDemand();
     }
 
     public void RemoveAllListeners()
@@ -433,6 +439,20 @@ public partial class KeyMouseHook: IDisposable
             _mouseMoveCallbackIntervals.Clear();
             _lastMouseMoveCallbackTimes.Clear();
         }
+        UpdateDemand();
+    }
+
+    // Remote sources observe only the input kinds a script listens to.
+    private void UpdateDemand()
+    {
+        if (AppHook is not IScriptInputDemand demand) return;
+        bool keyboard, mouse;
+        lock (_callbacksLock)
+        {
+            keyboard = Volatile.Read(ref _disposed) == 0 && _keyDownDataCallbacks.Count + _keyUpDataCallbacks.Count + _keyDownCodeCallbacks.Count + _keyUpCodeCallbacks.Count > 0;
+            mouse = Volatile.Read(ref _disposed) == 0 && _mouseDownCallbacks.Count + _mouseUpCallbacks.Count + _mouseMoveCallbacks.Count + _mouseWheelCallbacks.Count > 0;
+        }
+        demand.Demand(this, keyboard, mouse);
     }
 
     private ScriptObject[] Snapshot(List<ScriptObject> callbacks)

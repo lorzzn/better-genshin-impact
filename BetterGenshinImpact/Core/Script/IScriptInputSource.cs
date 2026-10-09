@@ -14,6 +14,16 @@ public interface IScriptInputSource : IDisposable
     void Start();
 }
 
+/// <summary>
+/// Optional for sources that observe input on another computer. Each hook reports
+/// which input kinds currently have script callbacks, so the source starts only
+/// those; (hook, false, false) withdraws that hook's demand.
+/// </summary>
+public interface IScriptInputDemand
+{
+    void Demand(object hook, bool keyboard, bool mouse);
+}
+
 public sealed class ScriptKeyEvent(string keyCode, string keyData) : EventArgs
 {
     public string KeyCode { get; } = keyCode;
