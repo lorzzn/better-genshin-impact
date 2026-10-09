@@ -29,7 +29,7 @@ public partial class GameLoadingTrigger : ITaskTrigger
     public bool IsBackgroundRunning => true;
 
     private readonly GenshinStartConfig _config = TaskContext.Instance().Config.GenshinStartConfig;
-    private static ILogger<GameLoadingTrigger> _logger = App.GetLogger<GameLoadingTrigger>();
+    private static ILogger<GameLoadingTrigger> _logger = GameServices.GetLogger<GameLoadingTrigger>();
 
 
     private DateTime _prevExecuteTime = DateTime.MinValue;

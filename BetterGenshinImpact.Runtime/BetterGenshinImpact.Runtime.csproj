@@ -212,7 +212,6 @@
     <Compile Include="../BetterGenshinImpact/GameTask/QuickSereniteaPot/*.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/Helpers/AssertUtils.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="../BetterGenshinImpact/GameTask/QuickClaimReward/OneKeyClaimRewardTask.Constants.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="../BetterGenshinImpact/GameTask/AutoPathing/PathingSerialization.cs" Link="Upstream/%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../BetterGenshinImpact/Service/ConfigJson.cs" Link="Service/ConfigJson.cs" />

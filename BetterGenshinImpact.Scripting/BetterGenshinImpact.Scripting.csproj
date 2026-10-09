@@ -34,7 +34,7 @@
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/TaskStrategyResolver.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/AutoPathingScript.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/StrategyFile.cs" />
-    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Model/RealtimeTimer.cs" />
+    <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Model/RealTimeTimer.cs" />
     <Compile Include="../BetterGenshinImpact/Core/Script/Dependence/Simulator/PostMessage.cs" />
   </ItemGroup>
   <ItemGroup>
