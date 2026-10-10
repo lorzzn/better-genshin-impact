@@ -10,11 +10,6 @@ namespace BetterGenshinImpact.Core.Script.Project;
 
 public partial class ScriptProject
 {
-    public ScriptProject(string folderName) : this(new DirectoryInfo(Path.Combine(Global.ScriptPath(), folderName)))
-    {
-        FolderName = folderName;
-    }
-
     public ScrollViewer? LoadSettingUi(dynamic context)
     {
         var settingItems = Manifest.LoadSettingItems(ProjectPath);

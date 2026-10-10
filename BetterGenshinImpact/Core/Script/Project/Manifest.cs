@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json.Serialization;
 using System.Linq;
 using BetterGenshinImpact.Core.Script.Utils;
+using BetterGenshinImpact.Model;
+using BetterGenshinImpact.Service;
 
 namespace BetterGenshinImpact.Core.Script.Project;
 
@@ -77,5 +79,23 @@ public partial class Manifest
                 return this.Description;
             }
         }
+    }
+
+    public List<SettingItem> LoadSettingItems(string path)
+    {
+        if (string.IsNullOrWhiteSpace(SettingsUi))
+        {
+            return [];
+        }
+
+        var settingItems = new List<SettingItem>();
+        var settingFile = Path.Combine(path, SettingsUi);
+        if (File.Exists(settingFile))
+        {
+            var json = File.ReadAllText(settingFile);
+            settingItems = JsonSerializer.Deserialize<List<SettingItem>>(json, ConfigJson.JsonOptions) ?? [];
+        }
+
+        return settingItems;
     }
 }

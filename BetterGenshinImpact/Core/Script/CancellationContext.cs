@@ -13,6 +13,9 @@ public class CancellationContext : Singleton<CancellationContext>
     public bool IsCancellationRequested => Token.IsCancellationRequested;
     public void ManualCancel() { IsManualStop = true; Cts.Cancel(); }
     public void Cancel() => Cts.Cancel();
+    // The embedding host's GameSession owns cancellation; runners call Set()
+    // before starting, which needs no new source here.
+    public void Set() { }
 #else
     public CancellationToken Token => Cts.Token;
     private readonly object _sync = new();

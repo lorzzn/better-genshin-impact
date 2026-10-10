@@ -348,36 +348,8 @@ public partial class OneDragonFlowViewModel : ViewModel
         }
 
         TaskList.Clear();
-
-        // 旧格式兼容：TaskDefinitions 为空时，TaskEnabledList 键为任务名
-        bool isOldFormat = SelectedConfig.TaskDefinitions == null || SelectedConfig.TaskDefinitions.Count == 0;
-
-        // 使用 TaskOrder 恢复顺序；若无则回退到 TaskEnabledList 的键顺序
-        var orderedKeys = SelectedConfig.TaskOrder?.Count > 0
-            ? SelectedConfig.TaskOrder
-            : SelectedConfig.TaskEnabledList.Keys.ToList();
-
-        foreach (var key in orderedKeys)
+        foreach (var taskItem in OneDragonRunner.LoadTaskList(SelectedConfig))
         {
-            if (!SelectedConfig.TaskEnabledList.TryGetValue(key, out var enabled))
-            {
-                continue;
-            }
-
-            OneDragonTaskItem taskItem;
-            if (isOldFormat)
-            {
-                taskItem = new OneDragonTaskItem(key) { IsEnabled = enabled };
-            }
-            else
-            {
-                if (!SelectedConfig.TaskDefinitions.TryGetValue(key, out var name))
-                {
-                    continue;
-                }
-                taskItem = new OneDragonTaskItem(name, key) { IsEnabled = enabled };
-            }
-            taskItem.IsNextTask = key == SelectedConfig.NextTaskId;
             TaskList.Add(taskItem);
         }
     }
@@ -574,142 +546,50 @@ public partial class OneDragonFlowViewModel : ViewModel
     {
         _logger.LogInformation($"启用一条龙配置：{SelectedConfig.Name}");
 
-        // 启动等待之前先进行取消操作的初始化，便于在任务开始前终止任务.
-        CancellationContext.Instance.Set();
-
-        var taskListCopy = new List<OneDragonTaskItem>(TaskList);//避免执行过程中修改TaskList
-
-        // 如果设置了 NextTaskId，从指定任务开始执行
-        if (!string.IsNullOrEmpty(SelectedConfig.NextTaskId))
-        {
-            var taskIndex = taskListCopy.FindIndex(t => t.Id == SelectedConfig.NextTaskId);
-            if (taskIndex >= 0)
-            {
-                _logger.LogInformation("一条龙：任务将从 {Name} 开始执行", taskListCopy[taskIndex].Name);
-                taskListCopy = taskListCopy.Skip(taskIndex).ToList();
-            }
-            else
-            {
-                _logger.LogWarning("一条龙：未找到标记的任务，将从头开始执行");
-            }
-            SelectedConfig.NextTaskId = string.Empty;
-            LoadDisplayTaskListFromConfig();
-        }
-
-        foreach (var task in taskListCopy)
-        {
-            task.InitAction(SelectedConfig);
-        }
-
-        int finishOneTaskcount = 1;
-        int finishTaskcount = 1;
-        int enabledTaskCountall = taskListCopy.Count(t => t.IsEnabled);
-        _logger.LogInformation($"启用任务总数量: {enabledTaskCountall}");
-        
         ReadScriptGroup();
         foreach (var task in ScriptGroupsdefault)
         {
             ScriptGroups.Remove(task);
         }
 
-        if (SelectedConfig == null || taskListCopy.Count(t => t.IsEnabled) == 0)
+        if (SelectedConfig == null)
         {
             Toast.Warning("请先选择任务");
             _logger.LogInformation("没有配置,退出执行!");
             return;
         }
 
-        int enabledoneTaskCount = taskListCopy.Count(t => t.IsEnabled);
-        _logger.LogInformation($"启用一条龙任务的数量: {enabledoneTaskCount}");
+        await new OneDragonRunner(new DesktopOneDragonHost(this)).RunAsync(SelectedConfig, new List<OneDragonTaskItem>(TaskList));
+    }
 
-        await ScriptService.StartGameTask();
-        if (CancellationContext.Instance.IsCancellationRequested)
+    private sealed class DesktopOneDragonHost(OneDragonFlowViewModel viewModel) : IOneDragonRunnerHost
+    {
+        public Task StartGameTask() => ScriptService.StartGameTask();
+
+        public Task RunThreadAsync(Func<Task> action) => new TaskRunner().RunThreadAsync(action);
+
+        public async Task RunScriptGroup(string name)
         {
-            _logger.LogInformation("一条龙在启动阶段被取消");
-            return;
+            string filePath = Path.Combine(viewModel._basePath, viewModel._scriptGroupPath, $"{name}.json");
+            var group = ScriptGroup.FromJson(await File.ReadAllTextAsync(filePath));
+            IScriptService? scriptService = App.GetService<IScriptService>();
+            await scriptService!.RunMulti(ScriptControlViewModel.GetNextProjects(group), group.Name);
         }
 
-        SaveConfig();
-        int enabledTaskCount = taskListCopy.Count(t =>
-            t.IsEnabled && !ScriptGroupsdefault.Any(d => d.Name == t.Name));
-        _logger.LogInformation($"启用配置组任务的数量: {enabledTaskCount}");
+        public void SaveConfig(OneDragonFlowConfig config) => viewModel.SaveConfig();
 
-        if (enabledoneTaskCount <= 0)
+        public void OnNextTaskConsumed(OneDragonFlowConfig config) => viewModel.LoadDisplayTaskListFromConfig();
+
+        public void Warning(string message) => Toast.Warning(message);
+
+        public void Error(string message) => Toast.Error(message);
+
+        public void OnCompleted(OneDragonFlowConfig config)
         {
-            _logger.LogInformation("没有一条龙任务!");
-        }
-
-        Notify.Event(NotificationEvent.DragonStart).Success("一条龙启动");
-        foreach (var task in taskListCopy)
-        {
-            if (task is { IsEnabled: true, Action: not null })
-            {
-                if (ScriptGroupsdefault.Any(defaultSg => defaultSg.Name == task.Name))
-                {
-                    _logger.LogInformation($"一条龙任务执行: {finishOneTaskcount++}/{enabledoneTaskCount}");
-                    await new TaskRunner().RunThreadAsync(async () =>
-                    {
-                        await task.Action();
-                        await Task.Delay(1000);
-                    });
-                }
-                else
-                {
-                    try
-                    {
-                        if (enabledTaskCount <= 0)
-                        {
-                            _logger.LogInformation("没有配置组任务,退出执行!");
-                            return;
-                        }
-
-                        Notify.Event(NotificationEvent.DragonStart).Success("配置组任务启动");
-
-                        if (SelectedConfig.TaskEnabledList[task.Id])
-                        {
-                            _logger.LogInformation($"配置组任务执行: {finishTaskcount++}/{enabledTaskCount}");
-                            await Task.Delay(500);
-                            string filePath = Path.Combine(_basePath, _scriptGroupPath, $"{task.Name}.json");
-                            var group = ScriptGroup.FromJson(await File.ReadAllTextAsync(filePath));
-                            IScriptService? scriptService = App.GetService<IScriptService>();
-                            await scriptService!.RunMulti(ScriptControlViewModel.GetNextProjects(group), group.Name);
-                            await Task.Delay(1000);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogDebug(e, "执行配置组任务时失败");
-                        Toast.Error("执行配置组任务时失败");
-                    }
-                }
-                // 如果任务已经被取消，中断所有任务
-                if (CancellationContext.Instance.Cts.IsCancellationRequested)
-                {
-                    _logger.LogInformation("任务被取消，退出执行");
-                    if (CancellationContext.Instance.IsManualStop is false)
-                    {
-                        Notify.Event(NotificationEvent.DragonEnd).Success("一条龙和配置组任务结束");
-                    }
-                    return; // 后续的检查任务也不执行
-                }
-            }
-        }
-
-        // 检查和最终结束的任务
-        await new TaskRunner().RunThreadAsync(async () =>
-        {
-            await new CheckRewardsTask().Start(CancellationContext.Instance.Cts.Token);
-            await Task.Delay(500);
-            if (CancellationContext.Instance.IsManualStop is false)
-            {
-                Notify.Event(NotificationEvent.DragonEnd).Success("一条龙和配置组任务结束");
-            }
-            _logger.LogInformation("一条龙和配置组任务结束");
-
             // 执行完成后操作
-            if (SelectedConfig != null && !string.IsNullOrEmpty(SelectedConfig.CompletionAction))
+            if (!string.IsNullOrEmpty(config.CompletionAction))
             {
-                switch (SelectedConfig.CompletionAction)
+                switch (config.CompletionAction)
                 {
                     case "关闭游戏":
                         SystemControl.CloseGame();
@@ -727,7 +607,7 @@ public partial class OneDragonFlowViewModel : ViewModel
                         break;
                 }
             }
-        });
+        }
     }
 
     /// <summary>

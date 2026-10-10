@@ -8,42 +8,16 @@ using BetterGenshinImpact.Core.Config;
 using BetterGenshinImpact.GameTask.Common;
 using BetterGenshinImpact.Helpers;
 using Microsoft.Extensions.Logging;
-using Wpf.Ui.Violeta.Controls;
 
 namespace BetterGenshinImpact.GameTask.LogParse;
 
-public class TravelsDiaryDetailManager
+public partial class TravelsDiaryDetailManager
 {
-    public static List<(int year, int month)> GetInvolvedMonths(List<LogParse.ConfigGroupEntity> configGroups)
-    {
-        // HashSet 用于存储不重复的年份和月份
-        HashSet<(int year, int month)> involvedMonths = new HashSet<(int year, int month)>();
-
-        foreach (var group in configGroups)
-        {
-            // 如果 StartDate 有值，添加对应的年份和月份
-            if (group.StartDate.HasValue)
-            {
-                involvedMonths.Add((group.StartDate.Value.Year, group.StartDate.Value.Month));
-            }
-
-            // 如果 EndDate 有值，添加对应的年份和月份
-            if (group.EndDate.HasValue)
-            {
-                involvedMonths.Add((group.EndDate.Value.Year, group.EndDate.Value.Month));
-            }
-        }
-
-        // 返回按年份和月份排序的列表
-        return involvedMonths.OrderBy(m => m.year).ThenBy(m => m.month).ToList();
-    }
+    // 界面提示：桌面程序显示通知，嵌入程序写入日志。
+    private static partial void ShowInformation(string message);
+    private static partial void ShowWarning(string message);
 
     public static string basePath = Global.Absolute(@"log\logparse");
-
-    public static List<ActionItem> loadAllActionItems(GameInfo gameInfo, List<LogParse.ConfigGroupEntity> configGroups)
-    {
-      return loadAllActionItems(gameInfo,GetInvolvedMonths(configGroups));
-    }
 
     public static List<ActionItem> loadAllActionItems(GameInfo gameInfo,List<(int year, int month)> ms)
     {
@@ -173,7 +147,7 @@ public class TravelsDiaryDetailManager
                     writeFile(tddfile, _temp2);
                     if (!skipToast)
                     {
-                        Toast.Information($"{month.year}_{month.month}数据获取成功！");
+                        ShowInformation($"{month.year}_{month.month}数据获取成功！");
                     }
                     else
                     {
@@ -193,7 +167,7 @@ public class TravelsDiaryDetailManager
         {
             if (!skipToast)
             {
-                Toast.Warning("token未登录，请重新登录获取，此次将不新最新数据！");
+                ShowWarning("token未登录，请重新登录获取，此次将不新最新数据！");
             }
             else
             {

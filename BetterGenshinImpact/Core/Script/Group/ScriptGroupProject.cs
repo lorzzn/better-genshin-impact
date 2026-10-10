@@ -4,8 +4,6 @@ using BetterGenshinImpact.Core.Script.Project;
 using BetterGenshinImpact.GameTask;
 using BetterGenshinImpact.GameTask.AutoPathing;
 using BetterGenshinImpact.GameTask.AutoPathing.Model;
-using BetterGenshinImpact.GameTask.Shell;
-using BetterGenshinImpact.ViewModel.Pages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -231,7 +229,7 @@ public partial class ScriptGroupProject : ObservableObject
         else if (Type == "Pathing")
         {
             // 加载并执行
-            var task = PathingTask.BuildFromFilePath(Path.Combine(MapPathingViewModel.PathJsonPath, FolderName, Name));
+            var task = PathingTask.BuildFromFilePath(Path.Combine(Global.Absolute(@"User\AutoPathing"), FolderName, Name));
             if (task == null)
             {
                 return;
@@ -302,14 +300,7 @@ public partial class ScriptGroupProject : ObservableObject
         }
         else if (Type == "Shell")
         {
-            ShellConfig? shellConfig = null;
-            if (GroupInfo?.Config.EnableShellConfig ?? false)
-            {
-                shellConfig = GroupInfo?.Config.ShellConfig;
-            }
-
-            var task = new ShellTask(ShellTaskParam.BuildFromConfig(Name, shellConfig ?? new ShellConfig()));
-            await task.Start(CancellationContext.Instance.Cts.Token);
+            await RunShell();
         }
 
         if (Type != "Pathing")

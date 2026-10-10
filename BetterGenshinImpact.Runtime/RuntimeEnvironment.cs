@@ -16,8 +16,9 @@ public static class RuntimeEnvironment
     private static readonly ResourceManagerStringLocalizerFactory localizers = new(Options.Create(new LocalizationOptions()), NullLoggerFactory.Instance);
     static RuntimeEnvironment() => ServerTimeHelper.Initialize(new ServerTimeProvider(TimeProvider.System));
     public static string AssetRoot { get; set; } = AppContext.BaseDirectory;
-    // The embedding host owns task state. Shared libraries contain only inputs
-    // (subscribed routes, strategies and macros), never per-Target progress.
+    // The embedding host owns task state. The shared library holds what the
+    // administrator configures (scripts, routes, strategies, macros, scheduler
+    // groups, one-dragon flows); run records and caches stay in StateRoot.
     public static string StateRoot { get; set; } = Path.Combine(Path.GetTempPath(), "bettergi-runtime", Environment.ProcessId.ToString());
     public static string? LibraryRoot { get; set; }
     public static ILogger Logger { get; set; } = NullLogger.Instance;
@@ -44,7 +45,8 @@ public static class RuntimeEnvironment
         var root = first switch
         {
             "GameTask" => Path.Combine(AppContext.BaseDirectory, "UpstreamAssets"),
-            "User" when segments.Length > 1 && segments[1] is "AutoFight" or "AutoGeniusInvokation" or "AutoPathing" or "KeyMouseScript" => LibraryRoot ?? AssetRoot,
+            "User" when segments.Length > 1 && segments[1] is "AutoFight" or "AutoGeniusInvokation" or "AutoPathing" or "KeyMouseScript"
+                or "JsScript" or "ScriptGroup" or "OneDragon" => LibraryRoot ?? AssetRoot,
             "User" or "log" or "Cache" => StateRoot,
             _ => AssetRoot,
         };

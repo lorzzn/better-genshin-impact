@@ -43,6 +43,11 @@ public partial class ScriptProject
         Manifest.Validate(ProjectPath);
     }
 
+    public ScriptProject(string folderName) : this(new DirectoryInfo(Path.Combine(Global.ScriptPath(), folderName)))
+    {
+        FolderName = folderName;
+    }
+
     private IScriptEngine BuildScriptEngine(IScriptHost host)
     {
         V8ScriptEngine engine = new V8ScriptEngine(V8ScriptEngineFlags.UseCaseInsensitiveMemberBinding | V8ScriptEngineFlags.EnableTaskPromiseConversion);

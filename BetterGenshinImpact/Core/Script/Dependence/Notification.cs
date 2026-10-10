@@ -30,7 +30,9 @@ public class Notification
         try
         {
 #if BETTERGI_PORTABLE
-            return _config.NotificationConfig.JsNotificationEnabled;
+            var currentProject = Group.ScriptGroupRunner.CurrentProject;
+            return _config.NotificationConfig.JsNotificationEnabled &&
+                   (currentProject?.AllowJsNotification ?? true);
 #else
             var currentProject = TaskContext.Instance().CurrentScriptProject;
             return _config.NotificationConfig.JsNotificationEnabled &&

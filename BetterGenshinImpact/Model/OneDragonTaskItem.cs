@@ -1,8 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using BetterGenshinImpact.ViewModel.Pages.OneDragon;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Windows.Media;
 using BetterGenshinImpact.Core.Config;
 using BetterGenshinImpact.Core.Script;
 using BetterGenshinImpact.GameTask;
@@ -12,7 +10,6 @@ using BetterGenshinImpact.GameTask.AutoLeyLineOutcrop;
 using BetterGenshinImpact.GameTask.AutoStygianOnslaught;
 using BetterGenshinImpact.GameTask.Common;
 using BetterGenshinImpact.GameTask.Common.Job;
-using BetterGenshinImpact.ViewModel.Pages;
 using Microsoft.Extensions.Logging;
 
 namespace BetterGenshinImpact.Model;
@@ -23,13 +20,9 @@ public partial class OneDragonTaskItem : ObservableObject
 
     [ObservableProperty] private string _id = Guid.NewGuid().ToString();
 
-    [ObservableProperty] private Brush _statusColor = Brushes.Gray;
-
     [ObservableProperty] private bool _isEnabled = true;
 
     [ObservableProperty] private bool _isNextTask = false;
-
-    [ObservableProperty] private OneDragonBaseViewModel? _viewModel;
 
     public Func<Task>? Action { get; private set; }
 
@@ -53,6 +46,9 @@ public partial class OneDragonTaskItem : ObservableObject
     //     Name = ViewModel.Title;
     //     Action = action;
     // }
+
+    /// <summary>与任务设置页相同的战斗策略解析；返回 true 表示未找到策略。</summary>
+    private static partial bool GetFightStrategy(string strategyName, out string path);
 
     public void InitAction(OneDragonFlowConfig config)
     {
@@ -96,8 +92,7 @@ public partial class OneDragonTaskItem : ObservableObject
                         TaskContext.Instance().Config.AutoFightConfig.StrategyName = "根据队伍自动选择";
                     }
 
-                    var taskSettingsPageViewModel = App.GetService<TaskSettingsPageViewModel>();
-                    if (taskSettingsPageViewModel!.GetFightStrategy(out var path))
+                    if (GetFightStrategy(TaskContext.Instance().Config.AutoFightConfig.StrategyName, out var path))
                     {
                         TaskControl.Logger.LogError("自动秘境战斗策略{Msg}，跳过", "未配置");
                         return;
@@ -141,8 +136,7 @@ public partial class OneDragonTaskItem : ObservableObject
                         config.AutoBossStrategyName = "根据队伍自动选择";
                     }
 
-                    var taskSettingsPageViewModel = App.GetService<TaskSettingsPageViewModel>();
-                    if (taskSettingsPageViewModel!.GetFightStrategy(config.AutoBossStrategyName, out var path))
+                    if (GetFightStrategy(config.AutoBossStrategyName, out var path))
                     {
                         TaskControl.Logger.LogError("自动首领讨伐战斗策略{Msg}，跳过", "未配置");
                         return;
@@ -186,8 +180,7 @@ public partial class OneDragonTaskItem : ObservableObject
                         TaskContext.Instance().Config.AutoStygianOnslaughtConfig.StrategyName = "根据队伍自动选择";
                     }
 
-                    var taskSettingsPageViewModel = App.GetService<TaskSettingsPageViewModel>();
-                    if (taskSettingsPageViewModel!.GetFightStrategy(TaskContext.Instance().Config.AutoStygianOnslaughtConfig.StrategyName, out var path))
+                    if (GetFightStrategy(TaskContext.Instance().Config.AutoStygianOnslaughtConfig.StrategyName, out var path))
                     {
                         TaskControl.Logger.LogError("自动幽境危战战斗策略{Msg}，跳过", "未配置");
                         return;
