@@ -7,6 +7,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>$(DefineConstants);BETTERGI_PORTABLE</DefineConstants>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- Locked restores for the server (linux-x64) and node (win-x64) builds. -->
+    <RuntimeIdentifiers>linux-x64;win-x64</RuntimeIdentifiers>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="YoloSharp" Version="6.0.3" />
