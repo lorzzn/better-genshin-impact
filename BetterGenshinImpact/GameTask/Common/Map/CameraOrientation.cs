@@ -15,7 +15,8 @@ namespace BetterGenshinImpact.GameTask.Common.Map;
 
 public class CameraOrientation
 {
-    private static readonly MiniMapPreprocessor _coV2 = new();
+    // 计算器带有处理缓冲，每个游戏一份（见 TaskLocal）。
+    private static MiniMapPreprocessor _coV2 => TaskLocal.Get<MiniMapPreprocessor>();
     
     /// <summary>
     /// 计算当前小地图摄像机朝向的角度

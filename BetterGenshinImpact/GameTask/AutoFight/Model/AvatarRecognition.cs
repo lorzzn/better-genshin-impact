@@ -80,7 +80,9 @@ public static class AvatarRecognition
     /// 持续索敌跳过引用计数：&gt;0 表示至少有一个独占视角操作正在进行，
     /// 持续索敌循环应跳过本帧。使用引用计数支持嵌套独占操作。
     /// </summary>
-    private static int _skipSeekCount;
+    private sealed class SeekState { internal int SkipSeekCount; }
+    // 每个游戏各自的计数（见 TaskLocal）。
+    private static SeekState Seek => TaskLocal.Get<SeekState>();
 
     /// <summary>
     /// 开始独占视角操作（引用计数 +1，含锁保证互斥）。
@@ -91,7 +93,7 @@ public static class AvatarRecognition
     {
         lock (_seekLock)
         {
-            _skipSeekCount++;
+            Seek.SkipSeekCount++;
         }
         return new SkipSeekScope();
     }
@@ -105,7 +107,7 @@ public static class AvatarRecognition
         {
             lock (_seekLock)
             {
-                _skipSeekCount--;
+                Seek.SkipSeekCount--;
             }
         }
     }
@@ -422,7 +424,7 @@ public static class AvatarRecognition
             while (!ct.IsCancellationRequested && !(isFightEnd?.Invoke() ?? false))
             {
                 // 快速路径：排他计数 > 0 时跳过本轮，避免不必要的截图开销
-                if (Volatile.Read(ref _skipSeekCount) > 0)
+                if (Volatile.Read(ref Seek.SkipSeekCount) > 0)
                 {
                     await Task.Delay(frameIntervalMs, ct);
                     continue;
@@ -459,7 +461,7 @@ public static class AvatarRecognition
                         var offsetY = (nearest.y + nearest.height / 2) - preAimY;
                         lock (_seekLock)
                         {
-                            if (_skipSeekCount > 0) continue;
+                            if (Seek.SkipSeekCount > 0) continue;
                             Simulation.SendInput.Mouse.MoveMouseBy(
                                 (int)(offsetX * 0.35 * dpi), (int)(offsetY * 0.25 * dpi));
                         }
@@ -492,7 +494,7 @@ public static class AvatarRecognition
                             var offsetY = dcy - preAimY;
                             lock (_seekLock)
                             {
-                                if (_skipSeekCount > 0) continue;
+                                if (Seek.SkipSeekCount > 0) continue;
                                 Simulation.SendInput.Mouse.MoveMouseBy(
                                     (int)(offsetX * 0.35 * dpi), (int)(offsetY * 0.25 * dpi));
                             }
@@ -516,7 +518,7 @@ public static class AvatarRecognition
                             {
                                 lock (_seekLock)
                                 {
-                                    if (_skipSeekCount > 0) continue;
+                                    if (Seek.SkipSeekCount > 0) continue;
                                     Simulation.SendInput.Mouse.MoveMouseBy((int)(250 * dpi), 0);
                                 }
                             }

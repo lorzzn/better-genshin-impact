@@ -41,10 +41,16 @@ public static class ESkillCdTracker
     };
 
     /// <summary>角色名 → E 技能就绪的时间戳（UTC）</summary>
-    private static readonly ConcurrentDictionary<string, DateTime> EReadyAt = new(StringComparer.OrdinalIgnoreCase);
+    private sealed class CdState
+    {
+        internal readonly ConcurrentDictionary<string, DateTime> ReadyAt = new(StringComparer.OrdinalIgnoreCase);
+        internal CancellationTokenSource? Debounce;
+    }
+    // 每个游戏各自的冷却记录（见 TaskLocal）。
+    private static ConcurrentDictionary<string, DateTime> EReadyAt => TaskLocal.Get<CdState>().ReadyAt;
 
     /// <summary>E 键检测防抖：短时间多次触发仅最后一次生效</summary>
-    private static CancellationTokenSource? _debounceCts;
+    private static CancellationTokenSource? _debounceCts { get => TaskLocal.Get<CdState>().Debounce; set => TaskLocal.Get<CdState>().Debounce = value; }
     private static readonly object _debounceLock = new();
 
     private static readonly ILogger Logger = GameServices.GetLogger<ConditionEvaluator>(); // ESkillCdTracker 是静态类，不能用作泛型参数

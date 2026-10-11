@@ -223,7 +223,9 @@ namespace BetterGenshinImpact.GameTask.AutoFight
 
     public class AutoFightSeek
     {
-        public static int RotationCount = 0;
+        private sealed class RotationState { internal int Count; }
+        // 每个游戏各自的旋转次数（见 TaskLocal）。
+        public static int RotationCount { get => TaskLocal.Get<RotationState>().Count; set => TaskLocal.Get<RotationState>().Count = value; }
         
         private static readonly Dictionary<int, int> RotaryFactorMapping = new Dictionary<int, int> //旋转因子映射表
         {

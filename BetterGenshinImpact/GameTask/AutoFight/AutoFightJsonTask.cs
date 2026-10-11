@@ -77,7 +77,9 @@ public class AutoFightJsonTask : ISoloTask
     }
 
     // 战斗点位
-    public static WaypointForTrack? FightWaypoint { get; set; } = null;
+    private sealed class FightWaypointState { internal WaypointForTrack? Value = null; }
+    // 每个游戏的任务各自一份（见 TaskLocal）。
+    public static WaypointForTrack? FightWaypoint { get => TaskLocal.Get<FightWaypointState>().Value; set => TaskLocal.Get<FightWaypointState>().Value = value; }
 
     private AutoFightTask.TaskFightFinishDetectConfig _finishDetectConfig;
 

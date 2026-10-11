@@ -60,7 +60,9 @@ public class AutoFightParam : BaseTaskParam<AutoFightTask>
     public bool BurstEnabled { get; set; } = false;
     
     public bool QinDoublePickUp { get; set; } = false;
-    public static bool SwimmingEnabled  { get; set; } = false;
+    private sealed class SwimmingEnabledState { internal bool Value = false; }
+    // 每个游戏的任务各自一份（见 TaskLocal）。
+    public static bool SwimmingEnabled { get => TaskLocal.Get<SwimmingEnabledState>().Value; set => TaskLocal.Get<SwimmingEnabledState>().Value = value; }
     public bool EnableCombatTargeting { get; set; } = false;
     public int TargetingDetectionInterval { get; set; } = 50;
     public bool DrawRecognitionResults { get; set; } = true;

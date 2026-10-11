@@ -43,7 +43,9 @@ public class BgiYoloPredictor : IDisposable
     /// <returns>类别-矩形框</returns>
     public Dictionary<string, List<Rect>> Detect(ImageRegion region)
     {
-        var result = Predictor.Detect(region.CacheImage);
+        // 一个模型供同一进程的多个游戏共用，推理逐个进行。
+        Compunet.YoloSharp.Data.YoloResult<Compunet.YoloSharp.Data.Detection> result;
+        lock (_sync) result = Predictor.Detect(region.CacheImage);
 
 
         var dict = new Dictionary<string, List<Rect>>();
@@ -69,6 +71,8 @@ public class BgiYoloPredictor : IDisposable
 
         return dict;
     }
+
+    private readonly object _sync = new();
 
     public void Dispose()
     {

@@ -23,7 +23,9 @@ namespace BetterGenshinImpact.GameTask.AutoCombo.ComboRun;
 public static class AutoComboRuntime
 {
     /// <summary>最近一次建树任务产出的建树会话，未建树时为 null</summary>
-    public static ComboTreeSession? Session { get; set; }
+    private sealed class SessionState { internal ComboTreeSession? Value; }
+    // 每个游戏的任务各自一份（见 TaskLocal）。
+    public static ComboTreeSession? Session { get => TaskLocal.Get<SessionState>().Value; set => TaskLocal.Get<SessionState>().Value = value; }
 }
 
 /// <summary>
@@ -182,7 +184,8 @@ public partial class CheckFightFinish : Behaviour
     private readonly Avatar[] _avatars;
 
     /// <summary>上次完整检查时间（静态共享：多个检查节点实例共用同一节流周期）</summary>
-    private static DateTime _lastCheckTime = DateTime.MinValue;
+    private sealed class CheckState { internal DateTime LastCheckTime = DateTime.MinValue; }
+    private static DateTime _lastCheckTime { get => TaskLocal.Get<CheckState>().LastCheckTime; set => TaskLocal.Get<CheckState>().LastCheckTime = value; }
 
     private TaskFightFinishDetectConfig _detectConfig = null!;
 

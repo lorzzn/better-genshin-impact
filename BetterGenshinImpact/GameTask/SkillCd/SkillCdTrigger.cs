@@ -76,7 +76,9 @@ public class SkillCdTrigger : ITaskTrigger
     /// 外部任务挂起开关：任务运行期间接管 CD 显示时挂起本触发器（不渲染、不计时、不做识别），
     /// 任务收尾后恢复。由调用方保证 Suspend/Resume 成对调用（配合 try/finally）
     /// </summary>
-    private static volatile bool _suspended = false;
+    private sealed class SuspendState { internal volatile bool Suspended; }
+    // 每个游戏各自暂停（见 TaskLocal）。
+    private static bool _suspended { get => TaskLocal.Get<SuspendState>().Suspended; set => TaskLocal.Get<SuspendState>().Suspended = value; }
 
     /// <summary>
     /// 挂起本触发器：外部任务（如 AutoCombo）接管 CD 遮罩显示期间调用，

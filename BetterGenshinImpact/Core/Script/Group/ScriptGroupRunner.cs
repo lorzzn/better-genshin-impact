@@ -49,7 +49,9 @@ public class ScriptGroupRunner(IScriptGroupRunnerHost host)
     private readonly BlessingOfTheWelkinMoonTask _blessingOfTheWelkinMoonTask = new();
 
     /// <summary>当前正在执行的条目，供脚本通知等按条目权限判断。</summary>
-    public static ScriptGroupProject? CurrentProject { get; private set; }
+    private sealed class CurrentProjectState { internal ScriptGroupProject? Value; }
+    // 每个游戏的任务各自一份（见 TaskLocal）。
+    public static ScriptGroupProject? CurrentProject { get => TaskLocal.Get<CurrentProjectState>().Value; private set => TaskLocal.Get<CurrentProjectState>().Value = value; }
 
     private static bool IsCurrentHourEqual(string input)
     {

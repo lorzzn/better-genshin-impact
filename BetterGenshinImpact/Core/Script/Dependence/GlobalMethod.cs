@@ -161,9 +161,11 @@ public partial class GlobalMethod
 
     #region 鼠标操作
 
-    private static int _gameWidth = 1920;
-    private static int _gameHeight = 1080;
-    private static double _dpi = 1;
+    private sealed class Metrics { internal int Width = 1920, Height = 1080; internal double Dpi = 1; }
+    // 每个游戏的脚本各自设置（见 TaskLocal）。
+    private static int _gameWidth { get => TaskLocal.Get<Metrics>().Width; set => TaskLocal.Get<Metrics>().Width = value; }
+    private static int _gameHeight { get => TaskLocal.Get<Metrics>().Height; set => TaskLocal.Get<Metrics>().Height = value; }
+    private static double _dpi { get => TaskLocal.Get<Metrics>().Dpi; set => TaskLocal.Get<Metrics>().Dpi = value; }
 
     public static void SetGameMetrics(int width, int height, double dpi = 1)
     {

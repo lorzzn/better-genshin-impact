@@ -16,7 +16,14 @@ public sealed class GameSession : IDisposable
     public GameTask.TaskTriggerDispatcher Triggers { get; }
     private readonly HashSet<int> pressedKeys = [];
     private readonly HashSet<int> pressedButtons = [];
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<Type, object> locals = new();
     private bool disposed;
+    // One process may run several sessions at once, one per game (the node's
+    // session slots). Per-task state of the original code lives here, so two
+    // games never share it; models, maps and assets stay process-wide.
+    public T Local<T>() where T : class, new() => (T)locals.GetOrAdd(typeof(T), _ => new T());
+    // The original TaskControl.TaskSemaphore, one per game.
+    public SemaphoreSlim TaskSemaphore { get; } = new(1, 1);
     public static bool IsBound => current.Value != null;
     public static GameSession Current => current.Value ?? throw new InvalidOperationException("No game host is bound to this invocation");
     public IGameHost Host { get; }
@@ -147,7 +154,11 @@ public sealed class GameSession : IDisposable
         finally
         {
             try { Interlocked.Exchange(ref initialFrame, null)?.Dispose(); ReleaseInput(); }
-            finally { Runner.Reset(); disposed = true; current.Value = previous; Lifetime.Dispose(); }
+            finally
+            {
+                Runner.Reset(); disposed = true; current.Value = previous; Lifetime.Dispose();
+                foreach (var local in locals.Values) (local as IDisposable)?.Dispose();
+            }
         }
     }
 }

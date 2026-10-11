@@ -42,8 +42,14 @@ public class AutoFightTask : ISoloTask
 
     private readonly BgiYoloPredictor _predictor;
 
-    private static DateTime _lastFightFlagTime = DateTime.Now; // 战斗标志最近一次出现的时间
-    private static int _skipCheckCounter;
+    private sealed class FightState
+    {
+        internal DateTime LastFightFlagTime = DateTime.Now; // 战斗标志最近一次出现的时间
+        internal int SkipCheckCounter;
+    }
+    // 每个游戏各自的战斗状态（见 TaskLocal）。
+    private static DateTime _lastFightFlagTime { get => TaskLocal.Get<FightState>().LastFightFlagTime; set => TaskLocal.Get<FightState>().LastFightFlagTime = value; }
+    private static int _skipCheckCounter { get => TaskLocal.Get<FightState>().SkipCheckCounter; set => TaskLocal.Get<FightState>().SkipCheckCounter = value; }
 
     /// <summary>
     /// 重置"敌人可见时跳过战斗结束检查"的连续跳过计数（每场战斗开始时调用，TXT 与 JSON 策略共用）
@@ -52,7 +58,9 @@ public class AutoFightTask : ISoloTask
 
     private readonly double _dpi = TaskContext.Instance().DpiScale;
     
-    public static bool FightStatusFlag { get; set; } = false;
+    private sealed class FightStatusFlagState { internal bool Value = false; }
+    // 每个游戏的任务各自一份（见 TaskLocal）。
+    public static bool FightStatusFlag { get => TaskLocal.Get<FightStatusFlagState>().Value; set => TaskLocal.Get<FightStatusFlagState>().Value = value; }
     
     private static readonly object PickLock = new object(); 
     
@@ -61,17 +69,23 @@ public class AutoFightTask : ISoloTask
     private readonly ReturnMainUiTask _returnMainUiTask = new();
 
     // 战斗点位
-    public static WaypointForTrack? FightWaypoint  {get; set;} = null;
+    private sealed class FightWaypointState { internal WaypointForTrack? Value = null; }
+    // 每个游戏的任务各自一份（见 TaskLocal）。
+    public static WaypointForTrack? FightWaypoint { get => TaskLocal.Get<FightWaypointState>().Value; set => TaskLocal.Get<FightWaypointState>().Value = value; }
     
     /// <summary>
     /// 最近一次战斗结束检查的时间（TXT 与 JSON 策略共用，供更快触发战斗结束检查判断间隔使用）
     /// </summary>
-    public static DateTime LastFightFinishCheckTime { get; set; } = DateTime.Now;
+    private sealed class LastFightFinishCheckTimeState { internal DateTime Value = DateTime.Now; }
+    // 每个游戏的任务各自一份（见 TaskLocal）。
+    public static DateTime LastFightFinishCheckTime { get => TaskLocal.Get<LastFightFinishCheckTimeState>().Value; set => TaskLocal.Get<LastFightFinishCheckTimeState>().Value = value; }
 
     /// <summary>
     /// 本次战斗的开战时间（TXT 与 JSON 策略共用，供"开战后一段时间阻断战斗结束检查"使用）
     /// </summary>
-    public static DateTime FightStartTime { get; set; } = DateTime.Now;
+    private sealed class FightStartTimeState { internal DateTime Value = DateTime.Now; }
+    // 每个游戏的任务各自一份（见 TaskLocal）。
+    public static DateTime FightStartTime { get => TaskLocal.Get<FightStartTimeState>().Value; set => TaskLocal.Get<FightStartTimeState>().Value = value; }
     
     public class TaskFightFinishDetectConfig
     {

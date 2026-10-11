@@ -14,7 +14,8 @@ public class Navigation
 {
     private static bool _isWarmUp = false;
     
-    private static readonly NavigationInstance _instance = new();
+    // 上一位置等导航状态属于每个游戏的任务（见 TaskLocal）。
+    private static NavigationInstance _instance => TaskLocal.Get<NavigationInstance>();
 
     public static void WarmUp(string mapMatchMethod)
     {

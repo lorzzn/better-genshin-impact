@@ -724,7 +724,9 @@ public class Avatar
     internal static BurstReadyState IsBurstReadyByClassify(ImageRegion imageRegion)
     {
         using var qRa = imageRegion.DeriveCrop(AutoFightAssets.Get(imageRegion).QRectForClassify);
-        var result = QBurstClassifierLazy.Value.Predictor.Classify(qRa.CacheImage);
+        // 分类模型为全进程共用（多个游戏同时运行），推理逐个进行。
+        Compunet.YoloSharp.Data.YoloResult<Compunet.YoloSharp.Data.Classification> result;
+        lock (QBurstClassifierLazy) result = QBurstClassifierLazy.Value.Predictor.Classify(qRa.CacheImage);
         var topClass = result.GetTopClass();
         var topClassName = topClass.Name.Name;
         // Logger.LogInformation("Q技能冷却分类：{ClassName}，置信度：{Confidence:F2}", topClassName, topClass.Confidence);
@@ -762,7 +764,8 @@ public class Avatar
     public (SkillCdState State, string? Code) IsESkillReadyByClassify(ImageRegion imageRegion, bool onlyCode01Ready = true)
     {
         using var eRa = imageRegion.DeriveCrop(AutoFightAssets.Get(imageRegion).ERectForClassify);
-        var result = ESkillClassifierLazy.Value.Predictor.Classify(eRa.CacheImage);
+        Compunet.YoloSharp.Data.YoloResult<Compunet.YoloSharp.Data.Classification> result;
+        lock (ESkillClassifierLazy) result = ESkillClassifierLazy.Value.Predictor.Classify(eRa.CacheImage);
         var topClass = result.GetTopClass();
         var topClassName = topClass.Name.Name;
         // Logger.LogInformation("E技能就绪分类：{ClassName}，置信度：{Confidence:F2}", topClassName, topClass.Confidence);

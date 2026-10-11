@@ -305,16 +305,21 @@ public class PaddleOcrService : IOcrService, IDisposable
     public string OcrWithoutDetector(Mat mat)
     {
         var startTime = Stopwatch.GetTimestamp();
-        var str = _localRecModel.Run(mat).Text;
+        string str;
+        // 一个服务供同一进程的多个游戏共用，模型推理逐个进行。
+        lock (_sync) str = _localRecModel.Run(mat).Text;
         var time = Stopwatch.GetElapsedTime(startTime);
         // Debug.WriteLine($"PaddleOcrWithoutDetector 耗时 {time.TotalMilliseconds}ms 结果: {str}");
         return str;
     }
 
+    private readonly object _sync = new();
+
     private OcrResult _OcrResult(Mat mat)
     {
         var startTime = Stopwatch.GetTimestamp();
-        var result = RunAll(mat);
+        OcrResult result;
+        lock (_sync) result = RunAll(mat);
         var time = Stopwatch.GetElapsedTime(startTime);
         // Debug.WriteLine($"PaddleOcr 耗时 {time.TotalMilliseconds}ms 结果: {result.Text}");
         return result;

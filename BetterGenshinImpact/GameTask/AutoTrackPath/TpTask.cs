@@ -111,7 +111,13 @@ public class TpTask
     private const int TeleportCompletionStableMainUiChecks = 1;
     private const int BlessingCheckIntervalMs = 1000;
     private const double MapPositionRecognitionRecoveryZoomStep = 1.0;
-    private static string? s_lastSuccessfulTeleportMapName;
+    private sealed class TeleportState { internal string? LastSuccessfulMapName; }
+    // 每个游戏各自记录上次成功传送的地图（见 TaskLocal）。
+    private static string? s_lastSuccessfulTeleportMapName
+    {
+        get => TaskLocal.Get<TeleportState>().LastSuccessfulMapName;
+        set => TaskLocal.Get<TeleportState>().LastSuccessfulMapName = value;
+    }
     private double _mapZoomLevelPerWheelNotch = DefaultMapZoomLevelPerWheelNotch;
     private Point2f? _lastAreaSwitchCenterPoint;
     private string? _lastAreaSwitchCenterMapName;

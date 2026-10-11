@@ -10,7 +10,12 @@ using OpenCvSharp;
 
 namespace BetterGenshinImpact.Runtime;
 
-/// <summary>Process-level model resources. Run one game invocation per process.</summary>
+/// <summary>
+/// Process-level model resources, shared by every game invocation of the process.
+/// Several invocations may run at once (one per game); the state root, logger,
+/// notification and position callbacks belong to the invocation (async flow)
+/// that sets them.
+/// </summary>
 public static class RuntimeEnvironment
 {
     private static readonly ResourceManagerStringLocalizerFactory localizers = new(Options.Create(new LocalizationOptions()), NullLoggerFactory.Instance);
@@ -19,19 +24,24 @@ public static class RuntimeEnvironment
     // The embedding host owns task state. The shared library holds what the
     // administrator configures (scripts, routes, strategies, macros, scheduler
     // groups, one-dragon flows); run records and caches stay in StateRoot.
-    public static string StateRoot { get; set; } = Path.Combine(Path.GetTempPath(), "bettergi-runtime", Environment.ProcessId.ToString());
+    private static readonly AsyncLocal<string?> stateRoot = new();
+    private static readonly string defaultStateRoot = Path.Combine(Path.GetTempPath(), "bettergi-runtime", Environment.ProcessId.ToString());
+    public static string StateRoot { get => stateRoot.Value ?? defaultStateRoot; set => stateRoot.Value = value; }
     public static string? LibraryRoot { get; set; }
-    public static ILogger Logger { get; set; } = NullLogger.Instance;
+    private static readonly AsyncLocal<ILogger?> logger = new();
+    public static ILogger Logger { get => logger.Value ?? NullLogger.Instance; set => logger.Value = value; }
     private static readonly Lazy<BgiOnnxFactory> onnxFactory = new(() => new BgiOnnxFactory(Logger,
         GameSession.IsBound ? GameSession.Current.Config.HardwareAccelerationConfig : new Core.Config.HardwareAccelerationConfig()));
     public static BgiOnnxFactory OnnxFactory => onnxFactory.Value;
-    public static Action<Service.Notification.Model.BaseNotificationData>? Notification { get; set; }
+    private static readonly AsyncLocal<Action<Service.Notification.Model.BaseNotificationData>?> notification = new();
+    public static Action<Service.Notification.Model.BaseNotificationData>? Notification { get => notification.Value; set => notification.Value = value; }
     public static void ReportNotification(Service.Notification.Model.BaseNotificationData data)
     {
         if (Notification is { } notify) notify(data);
         else Logger.LogInformation("{Event}: {Result}: {Message}", data.Event, data.Result, data.Message);
     }
-    public static Action<Point2f>? PositionChanged { get; set; }
+    private static readonly AsyncLocal<Action<Point2f>?> positionChanged = new();
+    public static Action<Point2f>? PositionChanged { get => positionChanged.Value; set => positionChanged.Value = value; }
     public static void ReportPosition(Point2f position) => PositionChanged?.Invoke(position);
     public static IStringLocalizer<T> Localizer<T>() => new StringLocalizer<T>(localizers);
     private static readonly Dictionary<PaddleOcrService.PaddleOcrModelType, PaddleOcrService> ocrServices = new();

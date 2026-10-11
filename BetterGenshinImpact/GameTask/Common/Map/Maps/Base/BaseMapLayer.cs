@@ -42,7 +42,9 @@ public class BaseMapLayer(SceneBaseMap baseMap)
     /// <summary>
     /// 最近一次合并的特征块
     /// </summary>
-    private KeyPointFeatureBlock? _lastMergedBlock = null;
+    // 合并后的特征块按线程缓存：同一进程的多个游戏位置不同，共用一份会在使用中被替换。
+    private readonly ThreadLocal<KeyPointFeatureBlock?> _lastMergedBlockCache = new();
+    private KeyPointFeatureBlock? _lastMergedBlock { get => _lastMergedBlockCache.Value; set => _lastMergedBlockCache.Value = value; }
 
     /// <summary>
     /// 从本地文件加载分层地图信息

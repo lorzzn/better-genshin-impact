@@ -17,8 +17,10 @@ public class TrapEscaper(CancellationToken ct)
     private readonly CameraRotateTask _rotateTask = new(ct);
     private static readonly Random _random = new Random();
     private int _lastActionIndex = 0;
-    public static DateTime LastActionTime = DateTime.UtcNow;
-    private static int _randomAngle = 0;
+    private sealed class EscapeState { internal DateTime LastActionTime = DateTime.UtcNow; internal int RandomAngle; }
+    // 每个游戏各自的脱困状态（见 TaskLocal）。
+    public static DateTime LastActionTime { get => TaskLocal.Get<EscapeState>().LastActionTime; set => TaskLocal.Get<EscapeState>().LastActionTime = value; }
+    private static int _randomAngle { get => TaskLocal.Get<EscapeState>().RandomAngle; set => TaskLocal.Get<EscapeState>().RandomAngle = value; }
 
     private void IncreaseRandomAngle()
     {

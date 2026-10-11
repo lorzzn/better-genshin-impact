@@ -14,6 +14,7 @@
     <PackageReference Include="YoloSharp" Version="6.0.3" />
     <PackageReference Include="Melanchall.DryWetMidi" Version="8.0.3" />
     <Compile Include="../BetterGenshinImpact/GameTask/Model/IGamePixelSource.cs" />
+    <Compile Include="../BetterGenshinImpact/GameTask/TaskLocal.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/AutoMusicGame/**/*.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/AutoOpenChest/AutoOpenChestTask.cs" />
     <Compile Include="../BetterGenshinImpact/GameTask/QuickBuy/QuickBuyTask.cs" />

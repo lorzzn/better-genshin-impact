@@ -220,7 +220,9 @@ public class KeyMouseMacroPlayer
         }
     }
 
-    public static Size WorkingArea;
+    private sealed class Area { internal Size Size; }
+    // 每个游戏的画面尺寸（见 TaskLocal）。
+    public static Size WorkingArea { get => TaskLocal.Get<Area>().Size; set => TaskLocal.Get<Area>().Size = value; }
 
     public static double ToVirtualDesktopX(int x)
     {
