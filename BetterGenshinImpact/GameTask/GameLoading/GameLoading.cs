@@ -42,6 +42,12 @@ public partial class GameLoadingTrigger : ITaskTrigger
     private readonly bool _useGlobalEnabled = true;
     private bool _enabled = true;
 
+    /// <summary>
+    /// 新 Windows 账号首次启动游戏时会出现“用户协议和隐私政策提示”。桌面版保持
+    /// 原样由用户处理；平台节点（会话位、云电脑）由用户决定自动点击“同意”。
+    /// </summary>
+    public bool AcceptUserAgreement { get; init; }
+
     public GameLoadingTrigger()
     {
     }
@@ -104,7 +110,17 @@ public partial class GameLoadingTrigger : ITaskTrigger
             var loadingOcrRegions = content.CaptureRectArea.FindMulti(RecognitionObject.OcrThis);
             try
             {
-                if (loadingOcrRegions.Any(region =>
+                if (AcceptUserAgreement && loadingOcrRegions.Any(region => region.Text.Contains("用户协议和隐私政策")))
+                {
+                    // 按钮文字恰为“同意”；正文“阅读并同意”不会被当成按钮。
+                    var agree = loadingOcrRegions.FirstOrDefault(region => region.Text.Trim() == "同意");
+                    if (agree != null)
+                    {
+                        agree.Click();
+                        _logger.LogInformation("检测到用户协议和隐私政策提示，自动点击同意");
+                    }
+                }
+                else if (loadingOcrRegions.Any(region =>
                         region.Text.Contains("适龄") || region.Text.Contains("监护")))
                 {
                     // 适龄提示窗口自动关闭
